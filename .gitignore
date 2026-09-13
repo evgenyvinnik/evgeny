@@ -141,3 +141,9 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# tooling
+node_modules/
+.testbuild/
+test-results/
+playwright-report/
