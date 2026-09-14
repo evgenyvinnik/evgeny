@@ -198,8 +198,10 @@ html[data-era="w10"] .nav a{font:400 13px var(--segoe);letter-spacing:0;text-tra
   border:none;border-radius:0;padding:9px 12px 7px;border-bottom:2px solid transparent}
 html[data-era="w10"] .nav a:hover{color:#FFF;background:rgba(255,255,255,.08)}
 html[data-era="w10"] .nav a[aria-current="page"]{color:#FFF;background:transparent;border-bottom-color:#0078D7}
-html[data-era="aero"] .topbar{background:rgba(206,230,255,.16);border-bottom:1px solid rgba(255,255,255,.34);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.40)}
+html[data-era="aero"] .topbar{background:linear-gradient(180deg,rgba(30,60,100,.5),rgba(10,26,48,.62));
+  border-bottom:1px solid rgba(255,255,255,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.34);
+  text-shadow:0 0 8px rgba(0,16,40,.75)}
+html[data-era="aero"] .nav a{color:#D6E8FA}
 html[data-era="xp"] .topbar{background:linear-gradient(180deg,#4E93F7 0,#2064DC 10%,#0C4CC4 52%,#2E79E8 92%,#4E93F7 100%);
   border-bottom:1px solid #0A3E9E}
 html[data-era="w95"] .topbar,html[data-era="w98"] .topbar{
@@ -1443,6 +1445,8 @@ body[data-maxed] .route{z-index:80}
 /* ========================= responsive ========================= */
 @media (max-width:1120px){ .sh-ubuntu{display:none} }
 @media (max-width:900px){ #shells .sh{right:0} }
+/* below 900px the scrubber goes and the graph narrows; a tablet's window is
+   still wider than the desktop's 640px, so it keeps its side pane */
 @media (max-width:900px){
   .rail,.wrap{width:calc(100% - 32px)}
   .ruler{display:none}
@@ -1451,8 +1455,11 @@ body[data-maxed] .route{z-index:80}
   .win,.eramark{width:100%}
   .stamp .yr{font-size:19px}
   .stamp .os b{font-size:11px}
-  .mark{display:none}
   .nav a{padding:6px 8px;font-size:10px}
+  .sh-glass .dock i{width:44px;height:44px}
+}
+@media (max-width:640px){
+  .mark{display:none}
   .win .side{display:none}
   .win[data-chrome="w98"] .webside{display:none}
   .win .cb.s{display:none}
@@ -1462,7 +1469,7 @@ body[data-maxed] .route{z-index:80}
 }
 /* phones: the Dock keeps its ends, the menu bars drop their status items,
    and a Tahoe window folds its sidebar down to a strip that holds the lights */
-@media (max-width:900px){
+@media (max-width:640px){
   .sh-macos .dock i,.sh-glass .dock i{width:38px;height:38px}
   .dock i:nth-child(n+6):nth-child(-n+12){display:none}
   html[data-era] .extras.mac,html[data-era] .extras.ub{display:none}
@@ -2477,7 +2484,12 @@ let lastEra = '';
 function onScroll(){
   if (document.body.dataset.route !== 'timeline') return;
   const focus = window.scrollY + window.innerHeight * .42;
-  const year = Math.max(Y0, Math.min(Y1 + .99, yearAtPx(focus)));
+  // on a screen taller than the space under the last entry (an iPad held
+  // upright) the reading line never reaches the coda, so the end of the page
+  // is 1986 by definition rather than by position
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  const atEnd = max > 0 && window.scrollY >= max - 1;
+  const year = atEnd ? Y0 : Math.max(Y0, Math.min(Y1 + .99, yearAtPx(focus)));
 
   // wallpapers: newest is the base, each older era is revealed over it
   let covered = -1;

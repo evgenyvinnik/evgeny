@@ -392,9 +392,22 @@ and nothing translates on scroll.
 
 ## 10. Tests
 
-Playwright, two projects, seventy-six tests. `npm run test:visual` runs
-them; `npm run test:visual:update` accepts new baselines after a
-deliberate change.
+Playwright, five projects, thirty-eight tests in each. `npm run
+test:visual` runs them; `npm run test:visual:update` accepts new
+baselines after a deliberate change.
+
+| Project | Viewport | What it covers |
+|---|---|---|
+| `desktop` | 1280x900 | the full layout: scrubber, gutters, desktop icons, launcher |
+| `mobile` | 390x844, touch | a phone in Chrome |
+| `iphone` | 402x681 at 3x, touch | iPhone 17 Pro, the viewport Safari leaves under its toolbars |
+| `ipad` | 834x1194 at 2x, touch | iPad Pro 11 portrait, the phone layout at tablet width |
+| `ipad-landscape` | 1194x834 at 2x, touch | iPad Pro 11 landscape, the desktop layout without the icon gutter or the Ubuntu launcher |
+
+The Apple projects use Playwright's device descriptors but run in
+Chromium, so they check layout at those sizes rather than Safari's own
+rendering. Switching them to WebKit is one line in `playwright.config.js`
+once the WebKit browser is installed.
 
 The prototype is authored as an Artifact body, with no doctype and no
 `<head>`. Served raw it would render in quirks mode, so `tests/wrap.mjs`
@@ -446,6 +459,8 @@ Both of these were invisible to the eye and obvious to the tests.
 |---|---|
 | The year readout is written on an animation frame, so reading it straight after `scrollTo` samples the previous position | Wait a frame in the test |
 | `feGaussianBlur` on a full-bleed fixed layer cost up to 25s a capture | Radial-gradient falloff instead |
+| On an iPad held upright the reading line never reached the last entry, so the bottom of the page read 1987 | The readout is 1986 once the page is scrolled to the end |
+| iPad portrait is 834px wide, under the 900px phone breakpoint, so its windows lost their side panes while being wider than the desktop's | Side panes fold only at 640px and below |
 
 ### Capture cost per era
 
@@ -469,9 +484,10 @@ for what a phone will struggle with.
    experience you want, or should the timeline default to the last decade
    and load the rest on demand?
 2. **Mobile.** A phone cannot show four branch lanes, a side pane and a
-   640px window together. The prototype hides the scrubber, the task
-   panes and the Unity launcher below 900px, which is a compromise rather
-   than a design.
+   640px window together. The prototype hides the scrubber below 900px,
+   the Unity launcher below 1120px, and the windows' side panes only at
+   640px and below, so tablets keep them. On phones that is a compromise
+   rather than a design.
 3. **Authenticity ceiling.** The prototype draws real bevels, real
    taskbars and real dock geometry. The next increments are bitmap-exact
    fonts, window shadows per era, and hover states on the caption
