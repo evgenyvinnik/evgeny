@@ -315,17 +315,28 @@ public/
 
 ## 8. Hosting
 
-GitHub Pages from a GitHub Actions build, custom domain `evgeny.fyi`.
+GitHub Pages, built and deployed by `.github/workflows/pages.yml`.
 
-1. Add `public/CNAME` containing `evgeny.fyi`.
-2. Set the apex A and AAAA records at your registrar to GitHub's Pages
-   addresses, and a `CNAME` record for `www` pointing at
-   `<user>.github.io`. Take the current IPs from GitHub's Pages
-   documentation rather than copying them from anywhere else; they have
-   changed before.
-3. In repository settings, set the custom domain and enable **Enforce
-   HTTPS** once the certificate is issued.
-4. Deploy with the official `actions/deploy-pages` workflow.
+**Now.** Every pull request and every push to `main` runs the DOM invariants
+and window-control tests on Linux. A push to `main` that passes then runs
+`npm run build`, which wraps the prototype in a full HTML skeleton and copies
+the wallpapers into `dist/`, and publishes that folder. The site lives at
+`https://evgenyvinnik.github.io/evgeny/`. All paths in the page are relative,
+so it works under that subpath unchanged.
+
+The screenshot tests stay local. Their baselines are rendered on macOS, and
+Linux has none of the system fonts the Windows eras use, so every capture
+would differ.
+
+**Later, for evgeny.fyi.**
+
+1. Add `CNAME` containing `evgeny.fyi` to the published folder, so each
+   deploy keeps the domain.
+2. Point the apex A and AAAA records at GitHub's Pages addresses and add a
+   `CNAME` record for `www` to `evgenyvinnik.github.io`. Take the current IPs
+   from GitHub's Pages documentation; they have changed before.
+3. Set the custom domain in the repository's Pages settings, then enable
+   **Enforce HTTPS** once the certificate is issued.
 
 ---
 

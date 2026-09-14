@@ -5,7 +5,8 @@
 import { readFile, writeFile, mkdir, cp } from 'node:fs/promises';
 
 const SRC = new URL('../prototype/index.html', import.meta.url);
-const OUT_DIR = new URL('../.testbuild/', import.meta.url);
+// the test server reads .testbuild; `npm run build` passes dist for Pages
+const OUT_DIR = new URL('../' + (process.argv[2] || '.testbuild').replace(/\/*$/, '/'), import.meta.url);
 const OUT = new URL('index.html', OUT_DIR);
 
 const SKELETON = (body) => `<!doctype html>
@@ -28,4 +29,4 @@ await writeFile(OUT, SKELETON(await readFile(SRC, 'utf8')));
 // real wallpapers, where supplied, are part of what the page renders
 await cp(new URL('../prototype/wallpapers/', import.meta.url), new URL('wallpapers/', OUT_DIR),
   { recursive: true }).catch(() => {});
-console.log('wrapped prototype/index.html -> .testbuild/index.html');
+console.log('wrapped prototype/index.html -> ' + (process.argv[2] || '.testbuild') + '/index.html');

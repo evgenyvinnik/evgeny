@@ -2,11 +2,13 @@
   "name": "evgeny-fyi",
   "private": true,
   "version": "0.0.0",
-  "description": "evgeny.fyi — a biography told as a timeline that ages its own interface",
+  "description": "evgeny.fyi \u2014 a biography told as a timeline that ages its own interface",
   "scripts": {
+    "build": "node tests/wrap.mjs dist",
     "wrap": "node tests/wrap.mjs",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",
+    "test:ci": "playwright test --grep-invert screenshots",
     "test:report": "playwright show-report"
   },
   "devDependencies": {
