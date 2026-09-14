@@ -1,0 +1,15 @@
+{
+  "name": "evgeny-fyi",
+  "private": true,
+  "version": "0.0.0",
+  "description": "evgeny.fyi — a biography told as a timeline that ages its own interface",
+  "scripts": {
+    "wrap": "node tests/wrap.mjs",
+    "test:visual": "playwright test",
+    "test:visual:update": "playwright test --update-snapshots",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0"
+  }
+}

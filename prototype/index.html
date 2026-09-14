@@ -1,0 +1,2209 @@
+<title>Boot Sequence</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Ubuntu:wght@400;500;700&family=VT323&display=swap">
+<style>
+/* ==========================================================================
+   BOOT SEQUENCE — prototype for evgeny.fyi
+   Reverse chronology: 2026 at the top, 1986 at the bottom.
+   Scrolling down walks backwards through nine interface eras.
+   ========================================================================== */
+
+:root{
+  color-scheme: dark;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --sans:"IBM Plex Sans",system-ui,sans-serif;
+  --crt:"VT323","IBM Plex Mono",monospace;
+  --tahoma:Tahoma,Verdana,"DejaVu Sans",sans-serif;
+  --treb:"Trebuchet MS",Tahoma,sans-serif;
+  --segoe:"Segoe UI","Inter",system-ui,sans-serif;
+  --ubuntu:"Ubuntu","IBM Plex Sans",sans-serif;
+  --sf:"Inter",system-ui,-apple-system,sans-serif;
+
+  /* the page opens in 2026, so the default token set is Liquid Glass */
+  --fg:#F1F3FF; --dim:#9AA5D6; --accent:#8FE3FF;
+  --hair:rgba(255,255,255,.20); --panel:rgba(14,14,30,.55);
+  --thumb:#8FE3FF; --wire:#8FE3FF; --tb:54px;
+}
+html[data-era="macos"] { --fg:#1D1D1F; --dim:#6E6E76; --accent:#0A7CFF; --hair:rgba(0,0,0,.13);        --panel:rgba(250,250,252,.72); --thumb:#0A7CFF; --wire:#0060DF; --tb:28px; }
+html[data-era="ubuntu"]{ --fg:#F6EFEA; --dim:#B2879B; --accent:#E95420; --hair:rgba(233,84,32,.32);    --panel:rgba(34,0,22,.80);     --thumb:#E95420; --wire:#E95420; }
+html[data-era="aero"]  { --fg:#E8F2FD; --dim:#8FAFCE; --accent:#7EC8FF; --hair:rgba(180,220,255,.26);  --panel:rgba(12,28,48,.62);    --thumb:#7EC8FF; --wire:#7EC8FF; }
+html[data-era="xp"]    { --fg:#FFFFFF; --dim:#D3E2F7; --accent:#FFD24A; --hair:rgba(255,255,255,.34);  --panel:rgba(14,56,128,.72);   --thumb:#FFD24A; --wire:#FFD24A; }
+html[data-era="w98"]   { --fg:#000000; --dim:#3E3E3E; --accent:#1084D0; --hair:#7B7B7B;                --panel:#C0C0C0;               --thumb:#1084D0; --wire:#FFFFFF; }
+html[data-era="w95"]   { --fg:#000000; --dim:#3E3E3E; --accent:#000080; --hair:#7B7B7B;                --panel:#C0C0C0;               --thumb:#000080; --wire:#FFFFFF; }
+html[data-era="dos"]   { --fg:#000000; --dim:#2E2E2E; --accent:#AA0000; --hair:#555555;                --panel:#AAAAAA;               --thumb:#FFFF55; --wire:#FFFF55; }
+html[data-era="mono"]  { --fg:#FFC046; --dim:#8E6C24; --accent:#FFB000; --hair:rgba(255,176,0,.24);    --panel:rgba(8,7,4,.86);       --thumb:#FFB000; --wire:#FFB000; }
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:#07070F;color:var(--fg);
+  font-family:var(--sans);-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;transition:color .5s ease;
+}
+::selection{background:var(--accent);color:#0A0A12}
+a{color:inherit}
+
+/* ========================= wallpapers =========================
+   Nine fixed layers. The newest era is the base; each older era is
+   revealed over it as the year counts down. Only opacity animates. */
+#desktops{position:fixed;inset:0;z-index:0;pointer-events:none}
+#desktops .bd{position:absolute;inset:0;will-change:opacity}
+#desktops .art{position:absolute;inset:0;display:block;width:100%;height:100%}
+/* a real photograph, where one has been supplied, replaces the drawing */
+#desktops .bd[data-photo]{background-size:cover;background-position:center}
+#desktops .bd[data-photo] .art{display:none}
+#desktops .bd[data-photo]::after{display:none}
+
+.bd-glass{background:
+  radial-gradient(16% 12% at 74% 8%,rgba(255,255,255,.30),transparent 70%),
+  radial-gradient(11% 9% at 22% 72%,rgba(255,240,200,.26),transparent 70%),
+  radial-gradient(40% 32% at 14% 6%,rgba(132,84,255,.78),transparent 64%),
+  radial-gradient(36% 28% at 88% 22%,rgba(255,72,168,.58),transparent 64%),
+  radial-gradient(48% 38% at 62% 96%,rgba(40,226,240,.54),transparent 66%),
+  radial-gradient(30% 24% at 92% 76%,rgba(255,168,64,.34),transparent 68%),
+  linear-gradient(163deg,#08081A 0%,#141032 46%,#0A0620 72%,#05050E 100%)}
+.bd-glass::after{content:"";position:absolute;inset:0;opacity:.5;
+  background:repeating-linear-gradient(118deg,transparent 0 38px,rgba(255,255,255,.05) 38px 40px)}
+.bd-macos{background:#E7DFF0}
+.bd-ubuntu{background:
+  radial-gradient(56% 42% at 6% 94%,rgba(233,84,32,.36),transparent 62%),
+  radial-gradient(48% 38% at 94% 6%,rgba(119,41,83,.58),transparent 64%),
+  linear-gradient(170deg,#2C001E 0%,#1A0012 100%)}
+.bd-aero{background:
+  radial-gradient(58% 44% at 80% 12%,rgba(126,200,255,.32),transparent 64%),
+  radial-gradient(68% 48% at 10% 84%,rgba(58,128,220,.28),transparent 66%),
+  linear-gradient(160deg,#061426 0%,#0C2A4C 46%,#06182E 100%)}
+
+.bd-xp{background:#3B88DD}
+.bd-w98{background:#008080}          /* Win98 kept 95's teal; the blue came with 2000 */
+.bd-w95{background:#008080}          /* Win95 default teal */
+.bd-w95::after,.bd-w98::after{content:"";position:absolute;inset:0;opacity:.5;
+  background-image:linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px),
+                   linear-gradient(180deg,rgba(0,0,0,.045) 1px,transparent 1px);
+  background-size:2px 2px,2px 2px}
+/* Turbo Vision desktop: blue with the shade-character dither */
+.bd-dos{background:#0000AA}
+.bd-dos::after{content:"";position:absolute;inset:0;opacity:.5;
+  background-image:radial-gradient(rgba(0,0,170,0) 40%,rgba(85,85,255,.55) 41%);
+  background-size:4px 4px}
+.bd-mono{background:radial-gradient(120% 88% at 50% 0%,rgba(255,176,0,.09),transparent 60%),#07070A}
+.bd-mono::after{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(180deg,rgba(255,176,0,.06) 0 1px,transparent 1px 3px),
+             radial-gradient(126% 100% at 50% 50%,transparent 52%,rgba(0,0,0,.62) 100%)}
+
+/* ========================= site top bar =========================
+   Persistent navigation that takes on each era's personality. */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:90;
+  display:flex;align-items:center;gap:16px;padding:10px 18px;height:var(--tb);
+  background:var(--panel);border-bottom:1px solid var(--hair);
+  backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);
+  transition:background-color .5s ease,border-color .5s ease,color .5s ease;
+}
+.mark{font-family:var(--mono);font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap}
+.mark s{text-decoration:none;color:var(--accent)}
+.stamp{display:flex;align-items:baseline;gap:10px;min-width:0}
+.stamp .yr{font-family:var(--mono);font-size:25px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.stamp .os{display:flex;flex-direction:column;gap:2px;min-width:0}
+.stamp .os b{font-size:12px;font-weight:600;white-space:nowrap}
+.stamp .os i{font-family:var(--mono);font-size:9.5px;font-style:normal;color:var(--dim);letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+.nav{margin-left:auto;display:flex;gap:3px}
+.nav a{
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  text-decoration:none;padding:7px 11px;border-radius:5px;border:1px solid transparent;color:var(--dim);
+  transition:color .2s,border-color .2s,background-color .2s;
+}
+.nav a:hover{color:var(--fg);border-color:var(--hair)}
+.nav a[aria-current="page"]{color:var(--fg);border-color:var(--hair);background:rgba(255,255,255,.10)}
+.nav a:focus-visible,.mark:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* era-specific top bar treatments */
+html[data-era="glass"] .topbar{margin:10px;border:none;border-radius:22px;
+  background:linear-gradient(176deg,rgba(255,255,255,.13),rgba(14,14,34,.20) 48%,rgba(255,255,255,.07));
+  backdrop-filter:blur(3px) saturate(185%) brightness(1.07);
+  -webkit-backdrop-filter:blur(3px) saturate(185%) brightness(1.07);
+  box-shadow:inset 0 1.5px 1px -.5px rgba(255,255,255,.72),
+    inset 5px 5px 18px -9px rgba(255,255,255,.5),inset -5px -5px 18px -9px rgba(255,255,255,.36),
+    0 20px 46px -14px rgba(6,6,20,.55)}
+html[data-era="glass"] .topbar::after{content:"";position:absolute;inset:0;border-radius:inherit;
+  pointer-events:none;border:1.6px solid transparent;
+  background:linear-gradient(135deg,rgba(255,247,238,.94),rgba(255,255,255,.3) 16%,
+    rgba(255,255,255,.05) 40%,rgba(255,255,255,.05) 62%,rgba(226,240,255,.42) 86%,
+    rgba(210,234,255,.88)) border-box;
+  -webkit-mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);
+  mask-composite:exclude}
+/* macOS: the top bar is the menu bar. 28px of translucent white, the app name
+   in bold, menus in regular weight, status items and the clock on the right */
+html[data-era="macos"] .topbar{padding:0 12px 0 16px;gap:4px;border-bottom:none;
+  background:rgba(246,246,250,.64);backdrop-filter:blur(30px) saturate(1.8);-webkit-backdrop-filter:blur(30px) saturate(1.8);
+  box-shadow:0 .5px 0 rgba(0,0,0,.14)}
+html[data-era="macos"] .mark{order:0;font:700 13px var(--sf);color:#1D1D1F;margin-right:12px}
+html[data-era="macos"] .mark s{color:inherit}
+html[data-era="macos"] .nav{order:1;margin-left:0;gap:0}
+html[data-era="macos"] .nav a{font:400 13px var(--sf);letter-spacing:0;text-transform:none;color:#1D1D1F;
+  padding:3px 9px;border-radius:5px;border:none}
+html[data-era="macos"] .nav a:hover{background:rgba(0,0,0,.08)}
+html[data-era="macos"] .nav a[aria-current="page"]{background:rgba(0,0,0,.1);color:#1D1D1F}
+html[data-era="macos"] .restore{order:2;margin-left:8px}
+.extras{display:none;align-items:center;gap:15px;color:#1D1D1F}
+.extras i{display:flex}
+.extras svg{width:16px;height:16px;display:block}
+html[data-era="macos"] .extras{display:flex;order:3;margin-left:auto;margin-right:16px}
+html[data-era="macos"] .stamp{order:4;flex-direction:row-reverse;align-items:center;gap:7px}
+html[data-era="macos"] .stamp .yr{font:500 13px var(--sf);letter-spacing:0}
+html[data-era="macos"] .stamp .yr::after{content:"14:32";margin-left:8px;font-weight:400}
+html[data-era="macos"] .stamp .os b{font:400 13px var(--sf)}
+html[data-era="macos"] .stamp .os i{display:none}
+html[data-era="ubuntu"] .topbar{background:linear-gradient(180deg,#3B2C36,#241A21);border-bottom:1px solid #120C10}
+html[data-era="aero"] .topbar{background:rgba(206,230,255,.16);border-bottom:1px solid rgba(255,255,255,.34);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.40)}
+html[data-era="xp"] .topbar{background:linear-gradient(180deg,#4E93F7 0,#2064DC 10%,#0C4CC4 52%,#2E79E8 92%,#4E93F7 100%);
+  border-bottom:1px solid #0A3E9E}
+html[data-era="w95"] .topbar,html[data-era="w98"] .topbar{
+  background:#C0C0C0;border:none;backdrop-filter:none;-webkit-backdrop-filter:none;
+  box-shadow:inset 0 1px 0 #FFF,inset 0 -2px 0 #808080,inset 0 -3px 0 #DFDFDF}
+html[data-era="w95"] .nav a,html[data-era="w98"] .nav a{border-radius:0;color:#000}
+html[data-era="w95"] .nav a[aria-current="page"],html[data-era="w98"] .nav a[aria-current="page"]{
+  background:#000080;color:#FFF;border-color:transparent}
+/* MS-DOS: the top bar is Turbo Pascal's menu bar. Grey, black text, the
+   hotkey letter in red, the open menu in green, the system menu as ≡ */
+html[data-era="dos"] .topbar{background:#AAAAAA;border-bottom:none;backdrop-filter:none;-webkit-backdrop-filter:none;color:#000}
+html[data-era="dos"] .mark{font-family:var(--crt);font-size:19px;font-weight:400;color:#000}
+html[data-era="dos"] .mark::before{content:"≡";margin-right:12px}
+html[data-era="dos"] .nav a{border-radius:0;color:#000;border-color:transparent;font-family:var(--crt);
+  font-size:18px;letter-spacing:0;text-transform:none}
+html[data-era="dos"] .nav a::first-letter{color:#AA0000}
+html[data-era="dos"] .nav a:hover{border-color:transparent;background:#00AA00}
+html[data-era="dos"] .nav a[aria-current="page"]{background:#00AA00;color:#000;border-color:transparent}
+html[data-era="dos"] .stamp .os b{font-family:var(--crt);font-size:18px;font-weight:400}
+html[data-era="dos"] .stamp .os i{font-family:var(--crt);font-size:15px;letter-spacing:0;text-transform:none;color:#000080}
+html[data-era="dos"] .restore{font-family:var(--crt);font-size:16px;border-radius:0;text-transform:none}
+html[data-era="dos"] .stamp .yr,html[data-era="mono"] .stamp .yr{font-family:var(--crt);font-size:30px}
+html[data-era="mono"] .topbar{border-bottom:1px solid rgba(255,176,0,.3)}
+
+/* ========================= year scrubber ========================= */
+.ruler{
+  position:fixed;right:0;top:var(--tb);bottom:0;width:64px;z-index:55;
+  display:flex;flex-direction:column;background:var(--panel);
+  border-left:1px solid var(--hair);backdrop-filter:blur(14px);
+  transition:background-color .5s ease,border-color .5s ease;
+}
+.ruler .band{position:relative;flex:0 0 auto;border:none;padding:0;cursor:pointer;background:none;
+  border-bottom:1px solid rgba(0,0,0,.30)}
+.ruler .band i{position:absolute;inset:0;opacity:.88}
+.ruler .band em{position:absolute;left:0;right:0;top:6px;text-align:center;font-style:normal;
+  font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.03em;
+  text-shadow:0 1px 2px rgba(0,0,0,.75);pointer-events:none}
+.ruler .band:hover i{opacity:1}
+.ruler .band:focus-visible{outline:2px solid #FFF;outline-offset:-3px}
+.thumb{position:absolute;left:0;right:0;height:24px;z-index:2;pointer-events:none;
+  display:grid;place-items:center;background:rgba(0,0,0,.58);
+  border-top:1px solid var(--thumb);border-bottom:1px solid var(--thumb);transition:border-color .5s ease}
+.thumb b{font-family:var(--mono);font-size:11px;color:#FFF;font-variant-numeric:tabular-nums}
+
+.proto{position:fixed;left:14px;bottom:88px;z-index:60;font-family:var(--mono);font-size:10px;
+  letter-spacing:.07em;text-transform:uppercase;padding:6px 10px;border-radius:999px;
+  background:var(--panel);border:1px solid var(--hair);color:var(--dim);backdrop-filter:blur(12px);
+  transition:background-color .5s,border-color .5s,color .5s}
+
+/* ========================= timeline scaffold ========================= */
+main{position:relative;z-index:10}
+/* lift the whole timeline layer while a window is maximised, so the window
+   clears the scrubber and the taskbar but still sits under the top bar */
+body[data-maxed] main{z-index:80}
+.stage{position:relative;padding:74px 0 170px}
+.rail{position:relative;margin:0 auto;width:min(1040px,100% - 128px)}
+#graph{position:absolute;left:0;top:0;width:118px;overflow:visible}
+#graph .seg{fill:none;transition:stroke .5s ease}
+#graph .spine{stroke:var(--wire);stroke-width:2.5}
+#graph .br{stroke:var(--wire);stroke-width:1.7;opacity:.72}
+#graph .lead{stroke:var(--wire);stroke-width:1;opacity:.34;stroke-dasharray:2 4}
+#graph .node{stroke:var(--wire);stroke-width:2;transition:stroke .5s ease}
+#graph{color:var(--wire)}
+.entries{position:relative;margin-left:142px}
+
+/* era boundary rule: announces the interface change inside the flow */
+.eramark{position:absolute;left:0;width:min(640px,100%);height:30px;
+  display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:10.5px;
+  font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--wire);transition:color .5s ease;
+  text-shadow:0 1px 3px rgba(0,0,0,.45)}
+.eramark s{text-decoration:none;opacity:.62;font-variant-numeric:tabular-nums;letter-spacing:.06em}
+.eramark i{flex:1;height:1px;background:currentColor;opacity:.28;font-style:normal}
+
+/* ========================= window controls =========================
+   The caption buttons do what they say. Close hides the entry for the
+   session, minimise collapses it to its caption, maximise lifts it out of
+   the timeline to fill the viewport with its body scrolling inside. */
+.win .wbtns b,.win .tvclose,.win .tvzoom{cursor:pointer}
+.win .wbtns b:focus-visible,.win .tvclose:focus-visible,.win .tvzoom:focus-visible{
+  outline:2px solid var(--wire);outline-offset:2px}
+.win[data-state="closed"]{display:none}
+
+/* minimised: everything below the caption folds away */
+.win[data-state="min"] .frame > :not(.bar):not(.mac):not(.tvwin),
+.win[data-state="min"] .mcol > :not(.bar),
+.win[data-state="min"] .side > :not(.lights),
+.win[data-state="min"] .tvinner,.win[data-state="min"] .tvpos{display:none}
+.win[data-state="min"] .bar{cursor:pointer}
+.win[data-chrome="macos"][data-state="min"] .side{flex:0 0 auto;padding:0 9px;background:none;border-right:none}
+.win[data-chrome="macos"][data-state="min"] .lights{padding:11px 4px}
+.win[data-chrome="glass"][data-state="min"] .frame{--rim:9px}
+
+/* maximised: out of the flow, filling the viewport, body scrolling inside */
+.win[data-state="max"]{position:fixed !important;left:0;right:0;top:0;bottom:0;
+  width:auto !important;top:0 !important;z-index:70;padding:calc(var(--tb) + 8px) 14px 14px;margin:0}
+.win[data-state="max"] .frame{height:100%;display:flex;flex-direction:column}
+.win[data-state="max"] .pane,.win[data-state="max"] .field,.win[data-state="max"] .tvinner,
+.win[data-state="max"] .mac{flex:1;min-height:0}
+.win[data-state="max"] .body{flex:1;min-height:0;max-height:none !important;overflow-y:auto}
+.win[data-state="max"] .tvwin{flex:1;min-height:0;display:flex;flex-direction:column}
+.win[data-state="max"] .web{height:100%}
+.win[data-state="max"] .blurb{max-width:78ch}
+
+/* long entries scroll inside their own window */
+.win[data-long] .body{max-height:var(--bmax,296px);overflow-y:auto;overscroll-behavior:contain;
+  -webkit-mask-image:linear-gradient(#000 calc(100% - 24px),transparent);
+  mask-image:linear-gradient(#000 calc(100% - 24px),transparent)}
+.win[data-state="max"] .body{-webkit-mask-image:none;mask-image:none}
+.win .pane .body{min-height:0}
+.win .blurb + .blurb{margin-top:9px}
+
+/* period-correct scrollbars, because a sunken trough is half the era */
+.win[data-chrome="w95"] .body::-webkit-scrollbar,.win[data-chrome="w98"] .body::-webkit-scrollbar{width:16px}
+.win[data-chrome="w95"] .body::-webkit-scrollbar-track,.win[data-chrome="w98"] .body::-webkit-scrollbar-track{
+  background:repeating-conic-gradient(#C0C0C0 0 25%,#DFDFDF 0 50%) 0 0/2px 2px}
+.win[data-chrome="w95"] .body::-webkit-scrollbar-thumb,.win[data-chrome="w98"] .body::-webkit-scrollbar-thumb{
+  background:#C0C0C0;box-shadow:inset 1px 1px 0 #FFF,inset -1px -1px 0 #000,
+  inset 2px 2px 0 #DFDFDF,inset -2px -2px 0 #808080}
+.win[data-chrome="xp"] .body::-webkit-scrollbar{width:16px}
+.win[data-chrome="xp"] .body::-webkit-scrollbar-track{background:#F1F0E8;border-left:1px solid #D0CCB8}
+.win[data-chrome="xp"] .body::-webkit-scrollbar-thumb{border-radius:3px;border:1px solid #6C8ABE;
+  background:linear-gradient(90deg,#DCE8FB,#9CBEEE)}
+.win[data-chrome="aero"] .body::-webkit-scrollbar{width:15px}
+.win[data-chrome="aero"] .body::-webkit-scrollbar-track{background:#F3F6F9;border-left:1px solid #DDE6EE}
+.win[data-chrome="aero"] .body::-webkit-scrollbar-thumb{border-radius:3px;
+  background:linear-gradient(90deg,#E8F1F8,#B9CFE2);border:1px solid #A9C2DC}
+.win[data-chrome="ubuntu"] .body::-webkit-scrollbar{width:6px}
+.win[data-chrome="ubuntu"] .body::-webkit-scrollbar-thumb{border-radius:999px;background:#E95420}
+.win[data-chrome="macos"] .body::-webkit-scrollbar{width:9px}
+.win[data-chrome="macos"] .body::-webkit-scrollbar-thumb{border-radius:999px;background:rgba(0,0,0,.28)}
+.win[data-chrome="glass"] .body::-webkit-scrollbar{width:9px}
+.win[data-chrome="glass"] .body::-webkit-scrollbar-thumb{border-radius:999px;background:rgba(255,255,255,.34)}
+.win[data-chrome="mono"] .body::-webkit-scrollbar,.win[data-chrome="dos"] .body::-webkit-scrollbar{width:13px}
+.win[data-chrome="mono"] .body::-webkit-scrollbar-track{
+  background:repeating-conic-gradient(#241A06 0 25%,#0B0A07 0 50%) 0 0/4px 4px}
+.win[data-chrome="mono"] .body::-webkit-scrollbar-thumb{background:#FFB000}
+.win[data-chrome="dos"] .body::-webkit-scrollbar-track{
+  background:repeating-conic-gradient(#3535D8 0 25%,#0000AA 0 50%) 0 0/4px 4px}
+.win[data-chrome="dos"] .body::-webkit-scrollbar-thumb{background:#AAAAAA}
+
+/* restore control, shown in the top bar only once something is hidden */
+.restore{display:none;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.07em;text-transform:uppercase;padding:6px 10px;border-radius:6px;
+  border:1px solid var(--hair);background:transparent;color:var(--fg);cursor:pointer}
+.restore[data-n]{display:inline-flex}
+.restore:hover{border-color:var(--accent)}
+.restore:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+html[data-era="w95"] .restore,html[data-era="w98"] .restore{border:none;border-radius:0;background:#C0C0C0;color:#000;
+  font:11px var(--tahoma);letter-spacing:0;text-transform:none;padding:5px 12px;
+  box-shadow:inset -1px -1px 0 #0A0A0A,inset 1px 1px 0 #FFF,inset -2px -2px 0 #808080,inset 2px 2px 0 #DFDFDF}
+html[data-era="xp"] .restore{border:1px solid #003C74;border-radius:3px;color:#000;font:11px var(--tahoma);
+  letter-spacing:0;text-transform:none;padding:4px 12px;background:linear-gradient(180deg,#FFF,#ECEBE6 86%,#D6D0C5)}
+html[data-era="aero"] .restore{border:1px solid #707070;border-radius:3px;color:#000;font:12px var(--segoe);
+  letter-spacing:0;text-transform:none;padding:4px 12px;background:linear-gradient(180deg,#F2F2F2 0,#EBEBEB 50%,#DDD 51%,#CFCFCF)}
+html[data-era="ubuntu"] .restore{border:1px solid #1E1A1D;border-radius:4px;color:#F2EDE9;font:12px var(--ubuntu);
+  letter-spacing:0;text-transform:none;padding:4px 12px;background:linear-gradient(180deg,#5A5450,#3C3835)}
+html[data-era="macos"] .restore{border:.5px solid rgba(0,0,0,.18);border-radius:6px;color:#1D1D1F;font:500 13px var(--sf);
+  letter-spacing:0;text-transform:none;padding:3px 11px;background:#FFF;box-shadow:0 .5px 1px rgba(0,0,0,.14)}
+html[data-era="glass"] .restore{border:1px solid rgba(255,255,255,.2);border-radius:999px;color:#FFF;font:500 12px var(--sf);
+  letter-spacing:0;text-transform:none;padding:5px 13px;background:rgba(255,255,255,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+html[data-era="mono"] .restore{border:1px solid #FFB000;border-radius:0;color:#FFD98A;font:16px var(--crt);
+  letter-spacing:.04em;text-transform:uppercase;background:#0B0A07}
+
+/* ========================= window: shared ========================= */
+.win{position:absolute;left:0;width:min(640px,100%)}
+.win .frame{overflow:hidden}
+.win .bar{display:flex;align-items:center;gap:7px;user-select:none}
+.win .bar .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.win .wbtns{display:flex;gap:2px;flex:0 0 auto}
+.win .body{padding:14px 16px 16px}
+.win .kind{margin:0 0 6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+.win h3{margin:0 0 3px;font-size:16.5px;font-weight:600;line-height:1.24;text-wrap:balance}
+.win .org{margin:0 0 8px;font-size:12.5px;opacity:.7}
+.win .blurb{margin:0;font-size:13px;line-height:1.58;max-width:58ch}
+.win .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:11px}
+.win .tags b{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.06em;
+  text-transform:uppercase;padding:3px 6px;border:1px solid currentColor;opacity:.6}
+/* menus, toolbars, side panes, status bars — shared geometry */
+.win .menu{display:flex;gap:14px;align-items:center}
+.win .menu b{font-weight:400}
+.win .menu u{text-decoration:underline}
+.win .tool{display:flex;align-items:center;gap:8px}
+.win .tool .sep{width:1px;align-self:stretch;margin:2px 2px}
+.win .addr{display:flex;align-items:center;gap:7px}
+.win .addr .combo{flex:1;display:flex;align-items:center;justify-content:space-between;min-width:0;overflow:hidden}
+.win .addr .combo span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.win .pane{display:flex;align-items:stretch}
+.win .pane .body{flex:1;min-width:0}
+.win .side{flex:0 0 148px;padding:11px 10px;font-size:11px;line-height:1.9}
+.win .side i{display:block;font-style:normal;font-weight:700;opacity:.75;margin-bottom:3px}
+.win .side u{display:block;text-decoration:none;opacity:.85}
+.win .status{display:flex;gap:4px;align-items:center}
+.win .status s{text-decoration:none;font-size:10.5px;padding:2px 6px}
+
+/* Each frame states its own ink. Without this, anything that forgets to set
+   a colour inherits --fg, which is tuned for chrome over the bare wallpaper
+   and is white in half the eras. */
+.win[data-chrome="mono"] .frame{color:#FFC046}
+.win[data-chrome="dos"] .frame{color:#AAAAAA}
+.win[data-chrome="w95"] .frame,.win[data-chrome="w98"] .frame{color:#000}
+.win[data-chrome="xp"] .frame{color:#1A1A1A}
+.win[data-chrome="aero"] .frame{color:#12243A}
+.win[data-chrome="ubuntu"] .frame{color:#2C2B29}
+.win[data-chrome="macos"] .frame{color:#1D1D1F}
+.win[data-chrome="glass"] .frame{color:rgba(240,242,255,.90)}
+
+/* ---- text mode: the amber CRT and Turbo Vision share one construction -----
+   Text mode had no window manager. A window was a box of double-line
+   characters with its title, close box and zoom box notched into the border,
+   and the focused box was the only one drawn double. VT323's box-drawing
+   glyphs are a cell and a half wide, so the frame is a CSS double border
+   rather than characters. */
+.win[data-chrome="mono"],.win[data-chrome="dos"]{font-family:var(--crt);font-size:17px}
+.win[data-chrome="mono"] .frame,.win[data-chrome="dos"] .frame{overflow:visible;background:none;padding:10px 0}
+.win .tvwin{position:relative;border:4px double}
+.win .tvtitle{position:absolute;top:-10px;left:52px;right:84px;text-align:center;line-height:18px;
+  white-space:nowrap;overflow:hidden;pointer-events:none}
+.win .tvtitle span{padding:0 7px}
+.win .tvclose{position:absolute;top:-10px;left:8px;line-height:18px;padding:0 3px;font-weight:400}
+.win .tvr{position:absolute;top:-10px;right:8px;display:flex;line-height:18px}
+.win .tvr > *{font-weight:400;padding:0 3px}
+.win .tvpos{position:absolute;bottom:-10px;left:14px;line-height:18px;padding:0 6px;font-weight:400}
+.win .tvinner{display:flex;align-items:stretch}
+.win .tvinner .body{flex:1;min-width:0}
+/* an unfocused box is single-lined; the notches move with the thinner border */
+.win[data-chrome="mono"]:not([data-active]) .tvwin,
+.win[data-chrome="dos"]:not([data-active]) .tvwin{border-width:1px;border-style:solid;padding:3px}
+.win:not([data-active]) .tvtitle,.win:not([data-active]) .tvclose,
+.win:not([data-active]) .tvr{top:-7px}
+.win:not([data-active]) .tvpos{bottom:-7px}
+
+/* ---- 1986–1990 · amber monochrome CRT ---- */
+.win[data-chrome="mono"] .tvwin{border-color:#FFB000;background:#0B0A07;
+  box-shadow:0 0 24px rgba(255,176,0,.15),inset 0 0 22px rgba(255,176,0,.05)}
+.win[data-chrome="mono"]:not([data-active]) .tvwin{border-color:rgba(255,176,0,.6)}
+/* phosphor persistence: the raster is visible through the box as well */
+.win[data-chrome="mono"] .tvwin::after{content:"";position:absolute;inset:0;pointer-events:none;
+  mix-blend-mode:screen;
+  background:repeating-linear-gradient(180deg,rgba(255,176,0,.07) 0 1px,transparent 1px 3px)}
+.win[data-chrome="mono"] .tvtitle span,.win[data-chrome="mono"] .tvclose,
+.win[data-chrome="mono"] .tvr > *,.win[data-chrome="mono"] .tvpos{background:#0B0A07;color:#B08A3A}
+/* focus was shown in inverse video */
+.win[data-chrome="mono"][data-active] .tvtitle span{background:#FFB000;color:#0B0A07;
+  box-shadow:0 0 12px rgba(255,176,0,.45)}
+.win[data-chrome="mono"][data-active] .tvclose,.win[data-chrome="mono"][data-active] .tvr > *,
+.win[data-chrome="mono"][data-active] .tvpos{color:#FFD98A;text-shadow:0 0 8px rgba(255,176,0,.6)}
+.win[data-chrome="mono"] .body{color:#FFC046;padding:15px 16px 13px;text-shadow:0 0 7px rgba(255,176,0,.50)}
+.win[data-chrome="mono"] .kind{font-family:var(--crt);font-size:15px;letter-spacing:.14em;opacity:.75}
+.win[data-chrome="mono"] h3{font-family:var(--crt);font-size:25px;font-weight:400;letter-spacing:.01em;
+  color:#FFD98A;text-shadow:0 0 12px rgba(255,176,0,.72),0 0 3px rgba(255,208,128,.9)}
+.win[data-chrome="mono"] .org{font-size:16px;font-family:var(--crt)}
+.win[data-chrome="mono"] .blurb{font-size:16px;line-height:1.42;font-family:var(--crt);max-width:64ch}
+.win[data-chrome="mono"] .tags b{font-family:var(--crt);font-size:14px;padding:0 5px;letter-spacing:.04em;
+  border-color:rgba(255,176,0,.5)}
+.win[data-chrome="mono"] .prompt{margin-top:11px;font-size:16px;color:#FFB000}
+.cur{display:inline-block;width:.55em;height:1em;background:currentColor;vertical-align:-.12em;
+  animation:blink 1.06s steps(1,end) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---- 1991–1994 · MS-DOS, Borland Turbo Pascal --------------------------------
+   One menu bar across the top of the screen and one status line across the
+   bottom, both taken over by the site chrome in this era, so the windows
+   carry only what Turbo Vision put in a frame: close box, window number,
+   zoom box, cursor position and scroll bar. Editor text was yellow on blue. */
+.win[data-chrome="dos"] .tvwin{border-color:#FFFFFF;background:#0000AA;
+  box-shadow:14px 17px 0 rgba(0,0,0,.62)}
+.win[data-chrome="dos"]:not([data-active]) .tvwin{border-color:#AAAAAA}
+.win[data-chrome="dos"] .tvtitle span,.win[data-chrome="dos"] .tvclose,
+.win[data-chrome="dos"] .tvr > *,.win[data-chrome="dos"] .tvpos{background:#0000AA;color:#FFFFFF}
+.win[data-chrome="dos"] .tvclose,.win[data-chrome="dos"] .tvzoom{color:#55FF55}
+.win[data-chrome="dos"]:not([data-active]) .tvtitle span,.win[data-chrome="dos"]:not([data-active]) .tvr > *,
+.win[data-chrome="dos"]:not([data-active]) .tvpos,.win[data-chrome="dos"]:not([data-active]) .tvclose{color:#AAAAAA}
+.win[data-chrome="dos"] .tvscroll{flex:0 0 14px;display:flex;flex-direction:column;align-items:center;
+  font-size:14px;line-height:1;padding:3px 0}
+.win[data-chrome="dos"] .tvscroll s{text-decoration:none;width:14px;text-align:center;
+  background:#00AAAA;color:#0000AA}
+.win[data-chrome="dos"] .tvscroll i{flex:1;width:14px;font-style:normal;position:relative;
+  background:repeating-conic-gradient(#00AAAA 0 25%,#0000AA 0 50%) 0 0/4px 4px}
+.win[data-chrome="dos"] .tvscroll i::before{content:"";position:absolute;left:0;right:0;top:12%;
+  height:17px;background:#0000AA;box-shadow:inset 0 0 0 3px #00AAAA}
+.win[data-chrome="dos"] .body{color:#FFFF55;padding:15px 12px 12px 14px}
+.win[data-chrome="dos"] .kind{font-family:var(--crt);font-size:15px;color:#55FFFF;letter-spacing:.13em;opacity:1}
+.win[data-chrome="dos"] h3{font-family:var(--crt);font-size:24px;font-weight:400;color:#FFFFFF}
+.win[data-chrome="dos"] .org{font-size:16px;font-family:var(--crt);color:#AAAAAA;opacity:1}
+.win[data-chrome="dos"] .blurb{font-size:16px;line-height:1.44;font-family:var(--crt);max-width:64ch}
+.win[data-chrome="dos"] .tags b{font-family:var(--crt);font-size:14px;padding:0 5px;border-color:#55FFFF;
+  color:#55FFFF;opacity:1}
+
+/* ---- Windows 95 and 98: shared bevels ---------------------------------------
+   Both drew windows with no drop shadow at all, a 16x14 caption button with a
+   four-line bevel that inverts when pressed, and a caption that went grey the
+   moment another window took focus. */
+.win[data-chrome="w95"],.win[data-chrome="w98"]{font-family:var(--tahoma);font-size:11px}
+.win[data-chrome="w95"] .frame,.win[data-chrome="w98"] .frame{background:#C0C0C0;padding:3px;
+  box-shadow:inset -1px -1px 0 #0A0A0A,inset 1px 1px 0 #DFDFDF,inset -2px -2px 0 #808080,inset 2px 2px 0 #FFF}
+.win[data-chrome="w95"] .bar,.win[data-chrome="w98"] .bar{height:18px;color:#FFF;padding:0 2px 0 3px;
+  font-size:11px;font-weight:700;gap:3px}
+.win[data-chrome="w95"] .bar{background:#000080}
+.win[data-chrome="w98"] .bar{background:linear-gradient(90deg,#000080 0,#1084D0 100%)}
+.win[data-chrome="w95"]:not([data-active]) .bar{background:#808080;color:#C0C0C0}
+.win[data-chrome="w98"]:not([data-active]) .bar{background:linear-gradient(90deg,#808080 0,#C0C0C0 100%);color:#C0C0C0}
+.win[data-chrome="w95"] .ico,.win[data-chrome="w98"] .ico{display:flex;flex:0 0 auto;width:16px;height:16px}
+.win .ico svg{width:16px;height:16px;display:block}
+.win[data-chrome="w95"] .wbtns,.win[data-chrome="w98"] .wbtns{gap:0}
+.win[data-chrome="w95"] .wbtns b,.win[data-chrome="w98"] .wbtns b{position:relative;width:16px;height:14px;
+  background:#C0C0C0;display:grid;place-items:center;
+  box-shadow:inset -1px -1px 0 #0A0A0A,inset 1px 1px 0 #FFF,inset -2px -2px 0 #808080,inset 2px 2px 0 #DFDFDF}
+.win[data-chrome="w95"] .wbtns b:active,.win[data-chrome="w98"] .wbtns b:active{
+  box-shadow:inset 1px 1px 0 #0A0A0A,inset -1px -1px 0 #FFF,inset 2px 2px 0 #808080,inset -2px -2px 0 #DFDFDF}
+.win[data-chrome="w95"] .b-cls,.win[data-chrome="w98"] .b-cls{margin-left:2px}
+.win[data-chrome="w95"] .b-min::before,.win[data-chrome="w98"] .b-min::before{
+  content:"";width:6px;height:2px;background:#000;margin:6px 2px 0 0}
+.win[data-chrome="w95"] .b-max::before,.win[data-chrome="w98"] .b-max::before{
+  content:"";width:9px;height:9px;box-sizing:border-box;border:1px solid #000;border-top-width:2px}
+.win[data-chrome="w95"] .b-cls::before,.win[data-chrome="w95"] .b-cls::after,
+.win[data-chrome="w98"] .b-cls::before,.win[data-chrome="w98"] .b-cls::after{content:"";position:absolute;
+  left:4px;top:6px;width:8px;height:2px;background:#000;transform:rotate(45deg)}
+.win[data-chrome="w95"] .b-cls::after,.win[data-chrome="w98"] .b-cls::after{transform:rotate(-45deg)}
+.win[data-chrome="w95"] .menu,.win[data-chrome="w98"] .menu{padding:3px 2px 2px;color:#000;gap:0}
+.win[data-chrome="w95"] .menu b,.win[data-chrome="w98"] .menu b{padding:1px 6px}
+.win[data-chrome="w95"] .tool .sep,.win[data-chrome="w95"] .fmt .sep,.win[data-chrome="w98"] .tool .sep{
+  width:2px;align-self:stretch;margin:3px 4px;background:none;box-shadow:inset 1px 0 0 #808080,inset -1px 0 0 #FFF}
+.win[data-chrome="w95"] .field,.win[data-chrome="w98"] .field{background:#FFF;
+  box-shadow:inset 1px 1px 0 #808080,inset -1px -1px 0 #FFF,inset 2px 2px 0 #0A0A0A,inset -2px -2px 0 #DFDFDF}
+.win[data-chrome="w95"] .status,.win[data-chrome="w98"] .status{margin-top:2px;color:#000;gap:2px}
+.win[data-chrome="w95"] .status s,.win[data-chrome="w98"] .status s{font-size:11px;padding:2px 6px;
+  box-shadow:inset 1px 1px 0 #808080,inset -1px -1px 0 #FFF}
+.win[data-chrome="w95"] .status s:first-child,.win[data-chrome="w98"] .status s:first-child{flex:1}
+/* sunken combo box with its drop button */
+.win .cb{display:flex;align-items:center;height:21px;background:#FFF;color:#000;padding:0 2px 0 4px;margin-right:4px;
+  font:11px/1 var(--tahoma);
+  box-shadow:inset 1px 1px 0 #808080,inset -1px -1px 0 #FFF,inset 2px 2px 0 #0A0A0A,inset -2px -2px 0 #DFDFDF}
+.win .cb span{flex:1;overflow:hidden;white-space:nowrap}
+.win .cb i,.win[data-chrome="w98"] .addr .combo .dd{position:relative;flex:0 0 auto;width:16px;height:17px;background:#C0C0C0;
+  box-shadow:inset -1px -1px 0 #0A0A0A,inset 1px 1px 0 #FFF,inset -2px -2px 0 #808080,inset 2px 2px 0 #DFDFDF}
+.win .cb i::after,.win[data-chrome="w98"] .addr .combo .dd::after{content:"";position:absolute;left:4px;top:7px;
+  border:4px solid transparent;border-top:4px solid #000;border-bottom:0}
+.win .cb.w{width:150px}.win .cb.n{width:42px}.win .cb.s{width:90px}
+
+/* ---- 1995–1998 · Windows 95: WordPad ----------------------------------------
+   A Windows 95 window was an application with a document in it, captioned
+   "Document - Application", with the status bar telling you to press F1. */
+.win[data-chrome="w95"] .tool,.win[data-chrome="w95"] .fmt{display:flex;align-items:center;gap:0;
+  padding:2px 3px;box-shadow:inset 0 1px 0 #FFF,inset 0 -1px 0 #808080}
+.win .w9tb{width:23px;height:22px;display:grid;place-items:center}
+.win .w9tb svg{width:16px;height:16px;display:block}
+.win .w9fb{width:23px;height:22px;display:grid;place-items:center;font:700 14px/1 "Times New Roman",Times,serif;color:#000}
+.win .w9fb.i{font-style:italic;font-weight:400}
+.win .w9fb.u{text-decoration:underline;font-weight:400}
+.win .wruler{position:relative;height:20px;margin:2px 0 2px;background:#C0C0C0}
+.win .wruler i{position:absolute;left:24px;right:24px;top:3px;bottom:3px;background-color:#FFF;
+  box-shadow:inset 1px 1px 0 #808080,inset -1px -1px 0 #DFDFDF;
+  background-image:repeating-linear-gradient(90deg,#000 0 1px,transparent 1px 36px),
+                   repeating-linear-gradient(90deg,#000 0 1px,transparent 1px 9px);
+  background-size:100% 5px,100% 2px;background-position:0 100%,0 100%;background-repeat:repeat-x}
+.win .wruler b{position:absolute;top:4px;font:400 9px/1 Arial,sans-serif;color:#000;transform:translateX(-50%)}
+.win[data-chrome="w95"] .doc{font-family:"Times New Roman",Times,serif;color:#000;padding:12px 18px 18px 26px}
+.win[data-chrome="w95"] .doc .kind{display:none}
+.win[data-chrome="w95"] .doc h3{font:700 19px/1.2 "Times New Roman",Times,serif;margin:0 0 2px}
+.win[data-chrome="w95"] .doc .org{font:italic 14px/1.3 "Times New Roman",Times,serif;opacity:1;margin:0 0 10px}
+.win[data-chrome="w95"] .doc .blurb{font:15px/1.36 "Times New Roman",Times,serif;max-width:60ch}
+.win[data-chrome="w95"] .doc .tags{display:block;margin-top:12px;font:11px/1.3 Arial,sans-serif}
+.win[data-chrome="w95"] .doc .tags::before{content:"Keywords: "}
+.win[data-chrome="w95"] .doc .tags b{display:inline;border:none;padding:0;background:none;box-shadow:none;
+  font:inherit;letter-spacing:0;text-transform:none;opacity:1;color:#000}
+.win[data-chrome="w95"] .doc .tags b + b::before{content:", "}
+
+/* ---- 1999–2000 · Windows 98: Explorer with the folder web view --------------
+   Internet Explorer 4 turned every folder into a web page: a panel on the
+   left with the folder's name set large over a gradient rule, and a coolbar
+   of big buttons whose icons stayed grey until the pointer reached them. */
+.win[data-chrome="w98"] .tool{display:flex;align-items:stretch;gap:0;padding:2px 3px 2px 2px;color:#000;
+  box-shadow:inset 0 1px 0 #FFF,inset 0 -1px 0 #808080}
+.win[data-chrome="w98"] .tool::before,.win[data-chrome="w98"] .addr::before{content:"";flex:0 0 auto;width:3px;
+  align-self:stretch;margin:2px 4px 2px 1px;box-shadow:inset 1px 0 0 #FFF,inset -1px 0 0 #808080}
+.win .w9big{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  min-width:47px;padding:3px 3px 2px;font:400 11px/1 var(--tahoma);color:#000}
+.win .w9big svg{width:20px;height:20px;display:block;filter:grayscale(1) contrast(.92)}
+.win .w9big:hover svg{filter:none}
+.win[data-chrome="w98"] .addr{padding:3px 4px 4px 2px;color:#000;gap:5px;box-shadow:inset 0 1px 0 #FFF}
+.win[data-chrome="w98"] .addr s{text-decoration:none}
+.win[data-chrome="w98"] .addr .combo{background:#FFF;padding:2px 2px 2px 3px;
+  box-shadow:inset 1px 1px 0 #808080,inset -1px -1px 0 #FFF,inset 2px 2px 0 #0A0A0A,inset -2px -2px 0 #DFDFDF}
+.win .addr .combo span{flex:1}
+.win .addr .combo .aico{display:flex;flex:0 0 auto;width:16px;margin-right:4px;font-style:normal}
+.win .addr .combo .aico svg{width:16px;height:16px;display:block}
+.win[data-chrome="w98"] .web{display:flex;align-items:stretch;min-height:100%}
+.win[data-chrome="w98"] .webside{flex:0 0 178px;padding:14px 14px 18px;overflow:hidden;
+  background:radial-gradient(130% 60% at 0% 100%,#DCE7F5 0,#FFF 62%)}
+.win[data-chrome="w98"] .webside svg{width:32px;height:32px;display:block}
+.win[data-chrome="w98"] .wname{display:block;margin:8px 0 6px;font:700 19px/1.12 Verdana,var(--tahoma);
+  color:#000;overflow-wrap:anywhere}
+.win[data-chrome="w98"] .wrule{display:block;height:3px;margin:0 0 11px;
+  background:linear-gradient(90deg,#000080 0,#1084D0 45%,rgba(16,132,208,0) 100%)}
+.win[data-chrome="w98"] .wtext{margin:0 0 9px;font:11px/1.45 var(--tahoma);color:#000}
+.win[data-chrome="w98"] .wtext.dim{color:#6A6A6A}
+.win[data-chrome="w98"] .web .body{flex:1;min-width:0;color:#000;padding:13px 14px 15px;border-left:1px solid #EAEAEA}
+.win[data-chrome="w98"] h3{font:700 14px/1.25 var(--tahoma)}
+.win[data-chrome="w98"] .blurb{font-size:11.5px;line-height:1.56}
+.win[data-chrome="w98"] .kind{font-family:var(--tahoma);font-size:10px;font-weight:700;letter-spacing:.04em}
+.win[data-chrome="w98"] .tags b{border:none;background:#C0C0C0;color:#000;opacity:1;font-family:var(--tahoma);
+  font-size:9.5px;letter-spacing:0;box-shadow:inset 1px 1px 0 #808080,inset -1px -1px 0 #FFF}
+.win .status .mc{display:flex;align-items:center;gap:4px}
+.win .status .mc svg{width:16px;height:16px;display:block}
+
+/* ---- 2001–2006 · Windows XP, Luna blue ---- */
+.win[data-chrome="xp"]{font-family:var(--tahoma);font-size:11px}
+.win[data-chrome="xp"] .frame{background:#ECE9D8;border:3px solid #0831D9;border-top:none;
+  border-radius:8px 8px 3px 3px;box-shadow:0 9px 28px rgba(0,18,60,.42)}
+.win[data-chrome="xp"] .bar{background:linear-gradient(180deg,#4E93F7 0,#2064DC 10%,#0C4CC4 52%,#2E79E8 92%,#4E93F7 100%);
+  color:#FFF;padding:3px 4px 4px 7px;font-family:var(--treb);font-size:13px;font-weight:700;
+  text-shadow:1px 1px 1px rgba(0,0,0,.45);border-radius:6px 6px 0 0;gap:5px}
+.win[data-chrome="xp"]:not([data-active]) .frame{border-color:#7A96DF;box-shadow:0 5px 16px rgba(0,18,60,.26)}
+.win[data-chrome="xp"]:not([data-active]) .bar{
+  background:linear-gradient(180deg,#A9C1EE 0,#8AA6E6 10%,#7A96DF 52%,#8FAAE8 92%,#A9C1EE 100%);
+  color:#D8E4F8;text-shadow:none}
+.win[data-chrome="xp"] .ico{display:flex;flex:0 0 auto;width:16px;height:16px}
+/* caption buttons with their glyphs drawn, not typed */
+.win[data-chrome="xp"] .wbtns{gap:2px}
+.win[data-chrome="xp"] .wbtns b{position:relative;width:21px;height:21px;border-radius:3px;border:1px solid #FFF;
+  background:radial-gradient(130% 130% at 30% 18%,#6AA2F7 0,#2E6FEA 52%,#1F57CF 100%);
+  box-shadow:inset -1px -1px 1px rgba(0,26,110,.35),inset 1px 1px 1px rgba(255,255,255,.35)}
+.win[data-chrome="xp"] .wbtns .b-cls{background:radial-gradient(130% 130% at 30% 18%,#F3A38B 0,#E25A35 52%,#C63C1E 100%)}
+.win[data-chrome="xp"]:not([data-active]) .wbtns b{opacity:.66;filter:saturate(.5)}
+.win[data-chrome="xp"] .b-min::before{content:"";position:absolute;left:5px;bottom:4px;width:8px;height:3px;background:#FFF}
+.win[data-chrome="xp"] .b-max::before{content:"";position:absolute;left:4px;top:4px;width:11px;height:11px;
+  box-sizing:border-box;border:1px solid #FFF;border-top-width:3px}
+.win[data-chrome="xp"] .b-cls::before,.win[data-chrome="xp"] .b-cls::after{content:"";position:absolute;
+  left:3px;top:8px;width:13px;height:3px;background:#FFF;transform:rotate(45deg)}
+.win[data-chrome="xp"] .b-cls::after{transform:rotate(-45deg)}
+.win[data-chrome="xp"] .menu{padding:3px 8px;color:#000;gap:13px;background:#ECE9D8}
+.win[data-chrome="xp"] .tool{display:flex;align-items:center;gap:1px;padding:2px 6px;color:#000;
+  background:linear-gradient(180deg,#F8F7F1,#E4E1D2);border-top:1px solid #FFF;border-bottom:1px solid #D0CCB8}
+.win .xb{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;font-weight:400;color:#000}
+.win .xb svg{width:22px;height:22px;display:block}
+.win .xb em{font-style:normal;font-size:8px;margin-left:1px}
+.win .xb.dis{opacity:.5}
+.win[data-chrome="xp"] .tool .sep{width:1px;align-self:stretch;margin:3px 4px;background:#D0CCB8}
+.win[data-chrome="xp"] .addr{padding:3px 8px;background:#ECE9D8;border-bottom:1px solid #D0CCB8;color:#000}
+.win[data-chrome="xp"] .addr s{text-decoration:none;color:#5A5747}
+.win[data-chrome="xp"] .addr .combo{background:#FFF;border:1px solid #7F9DB9;padding:1px 1px 1px 3px}
+.win[data-chrome="xp"] .addr .combo .dd{font-style:normal;flex:0 0 auto;width:16px;height:17px;
+  display:grid;place-items:center;font-size:8px;color:#4D6185;border-radius:2px;
+  background:linear-gradient(180deg,#E6EEFC,#B9D1F8);border:1px solid #B4C8F0}
+.win[data-chrome="xp"] .addr .go{display:flex;align-items:center;gap:4px;padding:1px 4px;font-weight:400;color:#000}
+.win[data-chrome="xp"] .addr .go svg{width:15px;height:15px;display:block}
+/* the Luna task pane: saturated blue ground, light panels with chevron headers */
+.win[data-chrome="xp"] .side{flex:0 0 176px;padding:12px 11px;color:#215DC6;line-height:1.5;
+  background:linear-gradient(180deg,#7BA2E7 0,#6375D6 100%)}
+.win[data-chrome="xp"] .xg{margin:0 0 12px;border-radius:4px 4px 0 0;overflow:hidden;
+  box-shadow:0 1px 0 rgba(0,0,50,.16)}
+.win[data-chrome="xp"] .xg > i{display:flex;align-items:center;justify-content:space-between;margin:0;
+  padding:4px 4px 4px 11px;font-style:normal;font-weight:700;color:#215DC6;opacity:1;
+  background:linear-gradient(90deg,#FFF 0,#C6D3F7 100%)}
+.win[data-chrome="xp"] .xg > i s{position:relative;flex:0 0 auto;width:17px;height:17px;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,#FFF,#DCE6FA);box-shadow:inset 0 0 0 1px #B7C8EE}
+.win[data-chrome="xp"] .xg > i s::before,.win[data-chrome="xp"] .xg > i s::after{content:"";position:absolute;
+  left:5.5px;width:4px;height:4px;border-left:2px solid #215DC6;border-top:2px solid #215DC6;transform:rotate(45deg)}
+.win[data-chrome="xp"] .xg > i s::before{top:4px}
+.win[data-chrome="xp"] .xg > i s::after{top:8px}
+.win[data-chrome="xp"] .xg > div{padding:8px 11px 9px;background:#D6DFF7}
+.win[data-chrome="xp"] .xg u{display:block;color:#215DC6;text-decoration:none;opacity:1;padding:1px 0}
+.win[data-chrome="xp"] .xg b{display:block;color:#000;font-weight:700;margin-bottom:2px}
+.win[data-chrome="xp"] .xg p{margin:0;color:#000}
+.win[data-chrome="xp"] .body{background:#FFF;color:#111}
+.win[data-chrome="xp"] h3{font-size:16px;font-weight:700;color:#0A3E9E}
+.win[data-chrome="xp"] .blurb{font-size:11.5px;line-height:1.6}
+.win[data-chrome="xp"] .body .kind{display:none}
+.win[data-chrome="xp"] .tags{gap:12px;margin-top:12px}
+.win[data-chrome="xp"] .tags b{border:none;padding:0;border-radius:0;font:400 11px/1.3 var(--tahoma);
+  letter-spacing:0;text-transform:none;color:#215DC6;opacity:1;text-decoration:underline}
+.win[data-chrome="xp"] .status{background:#ECE9D8;border-top:1px solid #D0CCB8;padding:2px 4px;color:#3A3728}
+.win[data-chrome="xp"] .status s:first-child{flex:1}
+
+/* ---- 2007–2011 · Windows 7, Aero glass frame with opaque content ---- */
+.win[data-chrome="aero"]{font-family:var(--segoe);font-size:12px}
+.win[data-chrome="aero"] .frame{position:relative;padding:8px 8px 0;border-radius:8px 8px 4px 4px;
+  background:rgba(226,240,255,.46);backdrop-filter:blur(20px) saturate(1.3);
+  -webkit-backdrop-filter:blur(20px) saturate(1.3);border:1px solid rgba(255,255,255,.52);
+  box-shadow:0 16px 48px rgba(0,12,32,.52),inset 0 1px 0 rgba(255,255,255,.55)}
+.win[data-chrome="aero"] .bar{padding:6px 0 12px 5px;color:#12243A;font-size:13px;font-weight:600;
+  text-shadow:0 0 8px rgba(255,255,255,.98),0 0 3px rgba(255,255,255,.98)}
+/* the Aero reflection: a bright arc caught in the top-left of the frame */
+.win[data-chrome="aero"] .frame::after{content:"";position:absolute;left:0;top:0;right:0;height:74px;
+  border-radius:8px 8px 0 0;pointer-events:none;
+  background:radial-gradient(120% 150% at 6% -40%,rgba(255,255,255,.42),rgba(255,255,255,.10) 44%,transparent 70%)}
+.win[data-chrome="aero"] .wbtns{gap:0;margin:-8px -8px 0 0;border-left:1px solid rgba(255,255,255,.5);
+  border-bottom:1px solid rgba(255,255,255,.5);border-radius:0 6px 0 6px;overflow:hidden;z-index:2}
+.win[data-chrome="aero"] .wbtns b{width:28px;height:19px;display:grid;place-items:center;
+  font:600 10px/1 var(--segoe);color:#13293F;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(210,230,250,.30));
+  border-right:1px solid rgba(255,255,255,.45)}
+.win[data-chrome="aero"] .wbtns b:last-child{width:42px;border-right:none;color:#FFF;
+  background:linear-gradient(180deg,#F09A86,#D3462A)}
+.win[data-chrome="aero"] .b-min::before{content:"";width:8px;height:2px;background:#13293F;margin-top:5px}
+.win[data-chrome="aero"] .b-max::before{content:"";width:8px;height:7px;border:1.5px solid #13293F}
+.win[data-chrome="aero"] .crumbs{display:flex;align-items:center;gap:5px;padding:0 0 7px}
+.win[data-chrome="aero"] .crumbs b{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;
+  font-size:10px;color:#0E2740;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.7)}
+.win[data-chrome="aero"] .crumbs .crumb{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+  background:rgba(255,255,255,.88);border:1px solid #A9C2DC;border-radius:3px;padding:3px 8px;color:#1B3A5C}
+.win[data-chrome="aero"] .crumbs .crumb i{font-style:normal;color:#7A93AC;padding:0 4px}
+.win[data-chrome="aero"] .crumbs .search{flex:0 0 116px;background:rgba(255,255,255,.88);border:1px solid #A9C2DC;
+  border-radius:3px;padding:3px 8px;color:#7A8EA2;overflow:hidden;white-space:nowrap}
+.win[data-chrome="aero"] .tool{background:#F5F7FA;border:1px solid #CBD8E4;border-bottom:none;
+  border-radius:3px 3px 0 0;padding:5px 8px;color:#15528C}
+.win[data-chrome="aero"] .tool b{font-weight:400;padding:2px 6px;border-radius:3px}
+.win[data-chrome="aero"] .pane{background:#FFF;border:1px solid #CBD8E4;border-top:none}
+.win[data-chrome="aero"] .side{background:#F7F9FB;border-right:1px solid #E2E9F0;color:#1B3A5C;flex:0 0 138px}
+.win[data-chrome="aero"] .side i{color:#5A7791}
+.win[data-chrome="aero"] .side u{color:#15528C}
+.win[data-chrome="aero"] .body{color:#1A1A1E}
+.win[data-chrome="aero"] h3{color:#12365C;font-weight:600}
+.win[data-chrome="aero"] .body .kind{display:none}
+.win[data-chrome="aero"] .tags{display:block;margin-top:12px;font:12px/1.4 var(--segoe);color:#5A6E82}
+.win[data-chrome="aero"] .tags::before{content:"Tags: ";color:#6D7F91}
+.win[data-chrome="aero"] .tags b{display:inline;border:none;padding:0;font:inherit;letter-spacing:0;
+  text-transform:none;opacity:1;color:#12365C}
+.win[data-chrome="aero"] .tags b + b::before{content:"; ";color:#6D7F91}
+.win[data-chrome="aero"] .status{padding:5px 6px;color:#12243A;
+  text-shadow:0 0 6px rgba(255,255,255,.9)}
+/* Explorer's details pane, pinned under the content */
+.win[data-chrome="aero"] .details{display:flex;align-items:center;gap:10px;padding:8px 10px;
+  background:#F0F3F7;border:1px solid #CBD8E4;border-top:none;color:#3A5A78}
+.win[data-chrome="aero"] .details i{flex:0 0 auto;width:28px;height:28px;border-radius:3px;
+  background:linear-gradient(180deg,#FFE8A0,#D79B22);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+.win[data-chrome="aero"] .details span{display:block;font-size:11.5px;line-height:1.45}
+.win[data-chrome="aero"] .details span b{font-weight:600;color:#12365C}
+
+/* ---- 2012–2015 · Ubuntu, Unity and Ambiance ---- */
+.win[data-chrome="ubuntu"]{font-family:var(--ubuntu);font-size:12.5px}
+.win[data-chrome="ubuntu"] .frame{background:#3B3A37;border:1px solid #191816;border-radius:7px 7px 3px 3px;
+  box-shadow:0 16px 40px rgba(0,0,0,.58)}
+.win[data-chrome="ubuntu"] .bar{background:linear-gradient(180deg,#57534E,#403C38);color:#F7F7F7;
+  padding:7px 10px;font-size:12.5px;font-weight:500;border-bottom:1px solid #262320;border-radius:6px 6px 0 0}
+.win[data-chrome="ubuntu"] .bar .t{text-align:center;text-shadow:0 -1px 0 rgba(0,0,0,.5)}
+.win[data-chrome="ubuntu"] .wbtns b{width:15px;height:15px;border-radius:50%;display:grid;place-items:center;
+  font:700 9px/1 var(--ubuntu);color:#FFF;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 1px 1px rgba(0,0,0,.4)}
+.win[data-chrome="ubuntu"] .b-cls{background:radial-gradient(circle at 35% 28%,#F5A388,#DB4B22)}
+.win[data-chrome="ubuntu"] .b-min,.win[data-chrome="ubuntu"] .b-max{
+  background:radial-gradient(circle at 35% 28%,#6E6862,#403C38);color:#D8D3CD}
+.win[data-chrome="ubuntu"] .tool{background:linear-gradient(180deg,#F4F2F0,#DEDAD6);
+  border-bottom:1px solid #B8B2AC;padding:6px 8px;color:#3B3A37}
+.win[data-chrome="ubuntu"] .tool b{font-weight:400;padding:2px 7px;border:1px solid #B8B2AC;border-radius:4px;
+  background:linear-gradient(180deg,#FCFBFA,#E8E4E0)}
+.win[data-chrome="ubuntu"] .tool .path{flex:1;display:flex;gap:0;min-width:0}
+.win[data-chrome="ubuntu"] .tool .path i{font-style:normal;padding:2px 9px;border:1px solid #B8B2AC;
+  border-right:none;background:linear-gradient(180deg,#FCFBFA,#E8E4E0);white-space:nowrap}
+.win[data-chrome="ubuntu"] .tool .path i:last-child{border-right:1px solid #B8B2AC;
+  background:linear-gradient(180deg,#F0A98E,#E95420);color:#FFF;border-color:#B4400F}
+.win[data-chrome="ubuntu"] .pane{background:#FCFCFC}
+.win[data-chrome="ubuntu"] .side{background:#F1EEEC;border-right:1px solid #DAD5D1;color:#3B3A37;flex:0 0 132px}
+.win[data-chrome="ubuntu"] .side i{color:#8A817B;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.win[data-chrome="ubuntu"] .side u{color:#3B3A37}
+.win[data-chrome="ubuntu"] .body{position:relative;color:#2C2B29;padding-right:24px}
+/* Unity's overlay scrollbar: a thin orange pill, not a trough */
+.win[data-chrome="ubuntu"] .body::after{content:"";position:absolute;top:12px;right:7px;
+  width:5px;height:46%;border-radius:999px;background:#E95420;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+.win[data-chrome="ubuntu"] h3{color:#1F1E1C;font-weight:500}
+.win[data-chrome="ubuntu"] .kind{color:#C7451B;opacity:1;font:500 12px var(--ubuntu);letter-spacing:0;
+  text-transform:capitalize}
+.win[data-chrome="ubuntu"] .tags b{font:400 11.5px/1 var(--ubuntu);letter-spacing:0;text-transform:none;
+  padding:4px 9px;border-radius:999px;border:1px solid #D2CBC4;opacity:1;color:#3B3A37;
+  background:linear-gradient(180deg,#FFFFFF,#EEEAE6)}
+.win[data-chrome="ubuntu"] .status{background:#F1EEEC;border-top:1px solid #DAD5D1;padding:3px 8px;color:#6E6862}
+.win[data-chrome="ubuntu"] .status s:first-child{flex:1}
+
+/* ---- 2016–2024 · macOS ------------------------------------------------------
+   Big Sur's window is two materials. The sidebar is vibrancy: translucent,
+   blurred and tinted by whatever sits behind the window, running full height
+   with the traffic lights floating on it. The content pane is opaque. The
+   toolbar is unified with the content, the title sits left and bold beside
+   the chevrons, and toolbar buttons have no border until the pointer lands. */
+.win[data-chrome="macos"]{font-family:var(--sf);font-size:13px}
+.win[data-chrome="macos"] .frame{position:relative;border-radius:12px;background:rgba(246,246,250,.42);
+  backdrop-filter:blur(34px) saturate(1.9);-webkit-backdrop-filter:blur(34px) saturate(1.9);
+  box-shadow:0 0 0 .5px rgba(0,0,0,.22),0 22px 56px rgba(30,24,70,.30),0 2px 6px rgba(30,24,70,.14),
+             inset 0 0 0 .5px rgba(255,255,255,.55)}
+.win[data-chrome="macos"] .mac{display:flex;align-items:stretch}
+.win[data-chrome="macos"] .side{flex:0 0 176px;padding:0 10px 14px;font-size:13px;line-height:1.3;color:#1D1D1F;
+  background:rgba(236,236,242,.30)}
+.win[data-chrome="macos"] .mcol{flex:1;min-width:0;display:flex;flex-direction:column;background:#FFF;
+  box-shadow:-.5px 0 0 rgba(0,0,0,.1)}
+/* traffic lights: 12px, 8px apart, their glyphs showing when the pointer reaches the group */
+.win[data-chrome="macos"] .lights{display:flex;gap:8px;padding:18px 10px 20px}
+.win[data-chrome="macos"] .lights b{position:relative;width:12px;height:12px;border-radius:50%;font-size:0;
+  box-shadow:inset 0 0 0 .5px rgba(0,0,0,.14)}
+.win[data-chrome="macos"] .tl-r{background:#FF5F57}
+.win[data-chrome="macos"] .tl-y{background:#FEBC2E}
+.win[data-chrome="macos"] .tl-g{background:#28C840}
+.win[data-chrome="macos"] .lights b::before,.win[data-chrome="macos"] .lights b::after{content:"";position:absolute;opacity:0}
+.win[data-chrome="macos"] .lights:hover b::before,.win[data-chrome="macos"] .lights:hover b::after,
+.win[data-chrome="macos"] .lights b:focus-visible::before,.win[data-chrome="macos"] .lights b:focus-visible::after{opacity:1}
+.win[data-chrome="macos"] .tl-r::before,.win[data-chrome="macos"] .tl-r::after{left:2.5px;top:5.4px;width:7px;height:1.2px;
+  background:#4D0000;transform:rotate(45deg)}
+.win[data-chrome="macos"] .tl-r::after{transform:rotate(-45deg)}
+.win[data-chrome="macos"] .tl-y::before{left:2.5px;top:5.4px;width:7px;height:1.2px;background:#995700}
+.win[data-chrome="macos"] .tl-g::before{left:3px;top:3px;border:2.7px solid transparent;border-top-color:#006500;border-left-color:#006500}
+.win[data-chrome="macos"] .tl-g::after{right:3px;bottom:3px;border:2.7px solid transparent;border-bottom-color:#006500;border-right-color:#006500}
+/* sidebar: grey section labels, 28px rows, symbols in the accent colour, tag dots */
+.win[data-chrome="macos"] .side i{display:block;font-style:normal;font-weight:600;color:rgba(60,60,67,.62);
+  font-size:11px;letter-spacing:.01em;margin:12px 0 3px;padding-left:8px}
+.win[data-chrome="macos"] .side i:first-of-type{margin-top:0}
+.win[data-chrome="macos"] .side u{display:flex;align-items:center;gap:7px;height:28px;padding:0 8px;
+  text-decoration:none;color:#1D1D1F;border-radius:6px}
+.win[data-chrome="macos"] .side u.sel{background:rgba(0,0,0,.09)}
+.win[data-chrome="macos"] .sym{flex:0 0 auto;width:16px;height:16px;display:grid;place-items:center;color:#0A7CFF}
+.win[data-chrome="macos"] .sym svg{width:16px;height:16px;display:block}
+.win[data-chrome="macos"] .dot{flex:0 0 auto;width:10px;height:10px;margin:0 3px;border-radius:50%;
+  background:var(--c);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.18)}
+/* unified toolbar */
+.win[data-chrome="macos"] .bar{height:52px;flex:0 0 auto;padding:0 10px 0 8px;gap:4px;color:#1D1D1F;
+  border-bottom:.5px solid rgba(0,0,0,.1)}
+.win[data-chrome="macos"] .nav2{display:flex;gap:0;flex:0 0 auto}
+.win[data-chrome="macos"] .nav2 b,.win[data-chrome="macos"] .tbtn{height:28px;min-width:28px;display:grid;
+  place-items:center;border-radius:6px;color:#6E6E73;font-weight:400}
+.win[data-chrome="macos"] .nav2 b.off{color:#C7C7CC}
+.win[data-chrome="macos"] .nav2 b:hover,.win[data-chrome="macos"] .tbtn:hover{background:rgba(0,0,0,.06)}
+.win[data-chrome="macos"] .nav2 svg,.win[data-chrome="macos"] .tbtn svg{width:16px;height:16px;display:block}
+.win[data-chrome="macos"] .ttl{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding-left:4px}
+.win[data-chrome="macos"] .ttl .t{flex:none;font-size:15px;font-weight:700;letter-spacing:-.012em;line-height:1.15}
+.win[data-chrome="macos"] .ttl small{font-size:11px;color:#8E8E93;line-height:1.25;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;text-transform:capitalize}
+.win[data-chrome="macos"] .tgroup{display:flex;gap:1px;flex:0 0 auto}
+.win[data-chrome="macos"] .tbtn.dd{grid-auto-flow:column;gap:1px;padding:0 3px 0 5px}
+.win[data-chrome="macos"] .tbtn.dd em{display:flex;color:#8E8E93}
+.win[data-chrome="macos"] .tbtn.dd em svg{width:9px;height:9px}
+/* content */
+.win[data-chrome="macos"] .body{color:#1D1D1F;padding:16px 20px 18px}
+.win[data-chrome="macos"] h3{font-size:17px;font-weight:600;letter-spacing:-.02em}
+.win[data-chrome="macos"] .org{color:#6E6E73;opacity:1}
+.win[data-chrome="macos"] .blurb{font-size:13px;line-height:1.55}
+.win[data-chrome="macos"] .body .kind{display:none}
+/* token-field capsules, the way macOS draws tags inside a text field */
+.win[data-chrome="macos"] .tags b{font-family:var(--sf);font-size:11px;font-weight:500;letter-spacing:0;
+  text-transform:none;padding:2px 8px;border:none;border-radius:999px;background:rgba(10,124,255,.12);
+  color:#0A64D0;opacity:1}
+/* only the key window is in colour: every other window's lights go grey
+   until the pointer reaches them, its title dims and its shadow shrinks */
+.win[data-chrome="macos"]:not([data-active]) .lights b{background:#D4D4D8;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.14)}
+.win[data-chrome="macos"]:not([data-active]) .lights:hover .tl-r{background:#FF5F57}
+.win[data-chrome="macos"]:not([data-active]) .lights:hover .tl-y{background:#FEBC2E}
+.win[data-chrome="macos"]:not([data-active]) .lights:hover .tl-g{background:#28C840}
+.win[data-chrome="macos"]:not([data-active]) .ttl{color:#8E8E93}
+.win[data-chrome="macos"]:not([data-active]) .side u.sel{background:rgba(0,0,0,.05)}
+.win[data-chrome="macos"]:not([data-active]) .sym{color:#8E8E93}
+.win[data-chrome="macos"]:not([data-active]) .frame{background:rgba(240,240,244,.62);
+  box-shadow:0 0 0 .5px rgba(0,0,0,.16),0 12px 30px rgba(30,24,70,.16),0 1px 2px rgba(30,24,70,.1)}
+
+/* ---- 2025–2026 · Liquid Glass ------------------------------------------
+   Not frosted glass. A lens. Frosted glass blurs its whole surface; Liquid
+   Glass keeps the interior nearly clear and does the optical work at the
+   rim, where the backdrop is smeared and over-saturated, then caught by a
+   specular highlight that runs corner to corner rather than top to bottom.
+   Three layers: the material body, the refractive edge zone, the specular
+   hairline. Radii stay concentric and controls are true capsules. */
+.lg{
+  position:relative;border-radius:var(--r,28px);
+  background:linear-gradient(176deg,
+    rgba(255,255,255,.13) 0%, rgba(14,14,34,.20) 48%, rgba(255,255,255,.07) 100%);
+  backdrop-filter:blur(3px) saturate(185%) brightness(1.07);
+  -webkit-backdrop-filter:blur(3px) saturate(185%) brightness(1.07);
+  box-shadow:
+    inset 0 1.5px 1px -.5px rgba(255,255,255,.78),
+    inset 0 -1.5px 1px -.5px rgba(255,255,255,.30),
+    inset 5px 5px 18px -9px rgba(255,255,255,.58),
+    inset -5px -5px 18px -9px rgba(255,255,255,.42),
+    inset 0 0 34px -12px rgba(10,10,34,.44),
+    0 1px 2px rgba(8,8,22,.32),
+    0 24px 56px -14px rgba(6,6,20,.60);
+}
+.lg::before,.lg::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
+/* refractive edge: blurrier and more saturated than the interior, which is
+   the inverse of glassmorphism and the thing that makes it read as a lens */
+.lg::before{
+  border:var(--rim,12px) solid transparent;
+  backdrop-filter:blur(10px) saturate(265%) brightness(1.10);
+  -webkit-backdrop-filter:blur(10px) saturate(265%) brightness(1.10);
+  -webkit-mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);
+  mask-composite:exclude;
+}
+/* specular hairline: warm where the light lands, cool on the far edge */
+.lg::after{
+  border:1.6px solid transparent;
+  background:linear-gradient(135deg,
+    rgba(255,247,238,.94) 0%, rgba(255,255,255,.34) 15%,
+    rgba(255,255,255,.05) 37%, rgba(255,255,255,.05) 63%,
+    rgba(226,240,255,.44) 85%, rgba(210,234,255,.88) 100%) border-box;
+  -webkit-mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);
+  mask-composite:exclude;
+}
+.lg > *{position:relative;z-index:1}
+/* Over a photograph the lens needs the dimming layer Apple adds for legibility:
+   the body smears more of what is behind it and darkens, so white text survives
+   a bright sky or pale granite. The rim still blurs harder than the body. */
+html[data-photos~="glass"] .lg{
+  background:linear-gradient(176deg,rgba(255,255,255,.12) 0%,rgba(8,16,34,.42) 42%,rgba(8,16,34,.34) 100%);
+  backdrop-filter:blur(12px) saturate(160%) brightness(.92);
+  -webkit-backdrop-filter:blur(12px) saturate(160%) brightness(.92)}
+html[data-photos~="glass"] .lg::before{
+  backdrop-filter:blur(18px) saturate(240%) brightness(1.04);
+  -webkit-backdrop-filter:blur(18px) saturate(240%) brightness(1.04)}
+html[data-photos~="glass"][data-era="glass"] .topbar{
+  background:linear-gradient(176deg,rgba(255,255,255,.12),rgba(8,16,34,.44) 48%,rgba(8,16,34,.36));
+  backdrop-filter:blur(12px) saturate(160%) brightness(.92);-webkit-backdrop-filter:blur(12px) saturate(160%) brightness(.92)}
+html[data-photos~="glass"][data-era="glass"] .nav a{color:rgba(240,243,255,.84)}
+html[data-photos~="glass"][data-era="glass"] .nav a[aria-current="page"]{color:#FFF}
+html[data-photos~="glass"][data-era="glass"] .stamp .os i{color:rgba(230,236,255,.74)}
+
+.win[data-chrome="glass"]{font-family:var(--sf);font-size:13px}
+.win[data-chrome="glass"] .frame{--r:28px;--rim:13px;overflow:visible}
+.win[data-chrome="glass"] .bar{padding:16px 18px 0}
+.win[data-chrome="glass"] .bar .t{flex:0 0 auto;font-family:var(--mono);font-size:9.5px;font-weight:500;
+  letter-spacing:.13em;text-transform:uppercase;color:rgba(244,246,255,.86);
+  padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.11);
+  border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.34)}
+.win[data-chrome="glass"] .wbtns{margin-left:auto;gap:7px;padding:6px 9px;border-radius:999px;
+  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.15);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.win[data-chrome="glass"] .wbtns b{width:11px;height:11px;border-radius:50%;font-size:0;
+  box-shadow:inset 0 0 0 .5px rgba(0,0,0,.18),0 1px 2px rgba(0,0,0,.3)}
+.win[data-chrome="glass"] .b-cls{background:radial-gradient(circle at 38% 30%,#FF8B84,#EE4B42)}
+.win[data-chrome="glass"] .b-min{background:radial-gradient(circle at 38% 30%,#FFD46B,#E5A013)}
+.win[data-chrome="glass"] .b-max{background:radial-gradient(circle at 38% 30%,#63E077,#1FAE36)}
+.win[data-chrome="glass"] .body{color:rgba(240,242,255,.90);padding:13px 19px 9px;
+  text-shadow:0 1px 3px rgba(6,6,20,.45)}
+.win[data-chrome="glass"] h3{color:#FFF;font-size:18.5px;letter-spacing:-.02em;
+  text-shadow:0 1px 4px rgba(6,6,20,.5)}
+.win[data-chrome="glass"] .org{color:rgba(240,242,255,.66)}
+.win[data-chrome="glass"] .kind{display:none}
+.win[data-chrome="glass"] .tags b{border-radius:999px;border-color:rgba(255,255,255,.26);
+  background:rgba(255,255,255,.09);opacity:1;color:rgba(244,246,255,.84);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28)}
+/* concentric: the capsule sits 15px inside a 28px corner */
+.win[data-chrome="glass"] .pill{display:flex;gap:5px;margin:5px 15px 15px;padding:5px;
+  border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.15);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -6px 12px -8px rgba(10,10,34,.5)}
+.win[data-chrome="glass"] .pill b{font-family:var(--mono);font-size:9.5px;font-weight:500;
+  letter-spacing:.09em;text-transform:uppercase;padding:7px 14px;border-radius:999px;
+  color:rgba(240,242,255,.80)}
+.win[data-chrome="glass"] .pill b:first-child{color:#0C0C1C;background:rgba(255,255,255,.88);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 1px 3px rgba(8,8,22,.35)}
+
+/* ---- focus, in the eras that marked it more quietly ------------------------ */
+/* the glass keeps its density so status text stays readable; focus is carried
+   by the shadow, the reflection and the close button instead */
+.win[data-chrome="aero"]:not([data-active]) .frame{
+  box-shadow:0 8px 26px rgba(0,12,32,.38),inset 0 1px 0 rgba(255,255,255,.4)}
+.win[data-chrome="aero"]:not([data-active]) .frame::after{opacity:.45}
+/* Windows 7 only lit the close button red on the focused window */
+.win[data-chrome="aero"]:not([data-active]) .wbtns b:last-child{color:#13293F;
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(210,230,250,.30))}
+.win[data-chrome="ubuntu"]:not([data-active]) .bar{background:linear-gradient(180deg,#4A4743,#3A3733);color:#A29C95}
+.win[data-chrome="ubuntu"]:not([data-active]) .wbtns b{color:#BEB8B1;
+  background:radial-gradient(circle at 35% 28%,#77716B,#4A4642);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+.win[data-chrome="glass"]:not([data-active]) .wbtns b{background:rgba(255,255,255,.34);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.win[data-chrome="glass"]:not([data-active]) .frame.lg::after{opacity:.55}
+
+/* ========================= era furniture =========================
+   The desktop shell of each era, cross-faded on the same clock as the
+   wallpaper. Decorative: it never takes the pointer. */
+#shells{position:fixed;inset:0;z-index:50;pointer-events:none}
+#shells .sh{position:absolute;left:0;right:64px;bottom:0;opacity:0;will-change:opacity}
+
+/* mono: DOS status line */
+.sh-mono{background:#FFB000;color:#0B0A07;font-family:var(--crt);font-size:16px;
+  display:flex;gap:22px;padding:1px 12px;letter-spacing:.04em}
+.sh-mono b{font-weight:400}
+.sh-mono b:last-child{margin-left:auto}
+
+/* dos: Turbo Pascal's status line, key names in red */
+.sh-dos{background:#AAAAAA;color:#000;font-family:var(--crt);font-size:17px;display:flex;gap:20px;padding:0 10px}
+.sh-dos b{font-weight:400;white-space:nowrap}
+.sh-dos b s{text-decoration:none;color:#AA0000}
+
+/* w95 / w98: the taskbar */
+.sh-w95,.sh-w98{background:#C0C0C0;height:30px;display:flex;align-items:center;gap:4px;padding:2px 3px;
+  box-shadow:inset 0 1px 0 #FFF,inset 0 2px 0 #DFDFDF}
+.sh-w95 .start,.sh-w98 .start{display:flex;align-items:center;gap:4px;padding:2px 7px 3px 4px;
+  font:700 11px/1 var(--tahoma);color:#000;background:#C0C0C0;
+  box-shadow:inset 1px 1px 0 #FFF,inset -1px -1px 0 #000,inset 2px 2px 0 #DFDFDF,inset -2px -2px 0 #808080}
+.flag{width:15px;height:13px;display:grid;grid-template:1fr 1fr/1fr 1fr;gap:1px;transform:skewY(-8deg)}
+.flag i{display:block}
+.flag i:nth-child(1){background:#E8453C}.flag i:nth-child(2){background:#4DA64D}
+.flag i:nth-child(3){background:#3B7DDD}.flag i:nth-child(4){background:#F2C230}
+.sh-w95 .vsep,.sh-w98 .vsep{width:2px;align-self:stretch;margin:1px 2px;
+  box-shadow:inset 1px 0 0 #808080,inset -1px 0 0 #FFF}
+.sh-w95 .task,.sh-w98 .task{display:flex;align-items:center;gap:4px;width:160px;padding:3px 7px 3px 4px;
+  font:400 11px/1 var(--tahoma);color:#000;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  box-shadow:inset 1px 1px 0 #FFF,inset -1px -1px 0 #000,inset 2px 2px 0 #DFDFDF,inset -2px -2px 0 #808080}
+.sh-w95 .task.on,.sh-w98 .task.on{background:
+  repeating-conic-gradient(#C0C0C0 0 25%,#DFDFDF 0 50%) 0 0/2px 2px;
+  box-shadow:inset 1px 1px 0 #808080,inset -1px -1px 0 #FFF,inset 2px 2px 0 #000,inset -2px -2px 0 #DFDFDF}
+.sh-w95 .tray,.sh-w98 .tray{margin-left:auto;display:flex;align-items:center;gap:6px;padding:2px 7px;
+  font:400 11px/1 var(--tahoma);color:#000;
+  box-shadow:inset 1px 1px 0 #808080,inset -1px -1px 0 #FFF}
+.sh-w95 .task span,.sh-w98 .task span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sh-w95 .task.on span,.sh-w98 .task.on span{font-weight:700}
+.sh-w95 i,.sh-w98 i{display:flex;flex:0 0 auto}
+.sh-w95 svg,.sh-w98 svg{width:16px;height:16px;display:block}
+.sh-w98 .ql{display:flex;gap:5px;padding:0 3px}
+
+/* xp: the blue taskbar and the green Start button */
+.sh-xp{height:32px;display:flex;align-items:stretch;
+  background:linear-gradient(180deg,#3D82E4 0,#2361D8 8%,#1348C8 42%,#2B72E2 88%,#4A90F2 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.sh-xp .start{display:flex;align-items:center;gap:5px;padding:0 22px 0 9px;
+  border-radius:0 12px 12px 0;font-family:var(--treb);font-size:15px;font-weight:700;font-style:italic;
+  color:#FFF;text-shadow:0 1px 2px rgba(0,0,0,.5);
+  background:linear-gradient(180deg,#65C465 0,#3C9C3C 46%,#2E8A2E 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.sh-xp .band{flex:1;min-width:0;display:flex;align-items:center;padding:0 8px}
+.sh-xp .xtask{display:flex;align-items:center;gap:6px;width:170px;height:24px;padding:0 8px;border-radius:3px;
+  font:400 11px/1 var(--tahoma);color:#FFF;background:linear-gradient(180deg,#1E52B7 0,#1A4BAE 100%);
+  box-shadow:inset 1px 1px 2px rgba(0,0,40,.55),inset -1px -1px 0 rgba(255,255,255,.14)}
+.sh-xp .xtask span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sh-xp i{display:flex;flex:0 0 auto}
+.sh-xp svg{width:16px;height:16px;display:block}
+.sh-xp .tray{display:flex;align-items:center;gap:9px;padding:0 12px;font:400 11px/1 var(--tahoma);color:#FFF;
+  background:linear-gradient(180deg,#3E8CE8 0,#1C64D4 40%,#2C78E4 100%);
+  box-shadow:inset 2px 0 0 rgba(255,255,255,.22)}
+
+
+/* aero: glass taskbar with the Start orb */
+.sh-aero{height:40px;display:flex;align-items:center;gap:6px;padding:0 10px;
+  background:linear-gradient(180deg,rgba(30,60,100,.55),rgba(10,26,48,.72));
+  backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);
+  border-top:1px solid rgba(255,255,255,.30);box-shadow:inset 0 1px 0 rgba(255,255,255,.24)}
+.sh-aero .orb{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 34% 28%,#9FD8FF,#1C6FC4 62%,#0B3E78);
+  border:1px solid rgba(255,255,255,.55);box-shadow:0 0 14px rgba(126,200,255,.55)}
+.sh-aero .orb .flag{width:13px;height:11px;transform:skewY(-8deg) scale(.9)}
+.sh-aero .pin{width:38px;height:30px;border-radius:4px;background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.20);display:grid;place-items:center}
+.sh-aero .pin.on{background:rgba(180,220,255,.28);border-color:rgba(255,255,255,.42);
+  box-shadow:inset 0 0 12px rgba(150,210,255,.45)}
+.sh-aero .pin svg{width:24px;height:24px;display:block;color:#EAF4FF}
+.sh-aero .clock{margin-left:auto;font:400 11.5px/1.35 var(--segoe);color:#EAF4FF;text-align:center;
+  text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.sh-aero .peek{width:11px;align-self:stretch;margin-left:8px;background:rgba(255,255,255,.10);
+  border-left:1px solid rgba(255,255,255,.28)}
+
+/* ubuntu: the Unity launcher, on the left where it belongs */
+.sh-ubuntu{top:54px;right:auto;width:60px;bottom:0;display:flex;flex-direction:column;align-items:center;
+  gap:8px;padding:9px 0;background:linear-gradient(180deg,rgba(58,46,56,.90),rgba(38,26,36,.90));
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-right:1px solid rgba(0,0,0,.5)}
+.sh-ubuntu .dash{width:42px;height:42px;border-radius:6px;display:grid;place-items:center;
+  background:radial-gradient(circle at 34% 28%,#F5A388,#DD4814);box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.sh-ubuntu .dash i{position:relative;width:20px;height:20px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.92)}
+/* Circle of Friends: three dots at the top, lower-left and lower-right */
+.sh-ubuntu .dash i::after{content:"";position:absolute;width:6px;height:6px;border-radius:50%;
+  background:#FFF;left:5px;top:-5px;box-shadow:-8.7px 15px 0 #FFF,8.7px 15px 0 #FFF}
+/* each launcher icon sits on a glossy backlight tinted with its own colour */
+.sh-ubuntu .tile{position:relative;width:42px;height:42px;border-radius:5px;display:grid;place-items:center;
+  color:#FFF;box-shadow:0 2px 5px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.12)}
+.sh-ubuntu .tile svg{position:relative;width:26px;height:26px;display:block;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
+.sh-ubuntu .t-files{background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 52%),linear-gradient(180deg,#8A837C,#57524C)}
+.sh-ubuntu .t-web{background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 52%),linear-gradient(180deg,#5E9BE0,#285FA8)}
+.sh-ubuntu .t-term{background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 52%),linear-gradient(180deg,#4A2A40,#2A1624)}
+.sh-ubuntu .t-bag{background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 52%),linear-gradient(180deg,#F0A060,#D65A18)}
+.sh-ubuntu .tile.on::before{content:"";position:absolute;left:-7px;top:50%;margin-top:-4px;
+  border:4px solid transparent;border-left-color:#E95420}
+.sh-ubuntu .tile.on::after{content:"";position:absolute;right:-7px;top:50%;margin-top:-4px;
+  border:4px solid transparent;border-right-color:rgba(255,255,255,.75)}
+
+/* macos: the dock */
+.sh-macos{display:flex;justify-content:center;padding:0 0 9px;background:none}
+.sh-macos .dock{display:flex;align-items:flex-end;gap:9px;padding:7px 9px;border-radius:19px;
+  background:rgba(250,250,253,.58);backdrop-filter:blur(26px) saturate(1.8);
+  -webkit-backdrop-filter:blur(26px) saturate(1.8);border:1px solid rgba(255,255,255,.6);
+  box-shadow:0 12px 34px rgba(30,32,44,.26)}
+/* Big Sur squircles: a tinted ground, a white glyph, a top sheen */
+.sh-macos .dock i{position:relative;width:42px;height:42px;border-radius:11px;display:grid;place-items:center;
+  color:#FFF;box-shadow:0 2px 5px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 .5px rgba(0,0,0,.1)}
+.sh-macos .dock i svg{width:26px;height:26px;display:block}
+.sh-macos .dock i svg [stroke]{stroke-width:2.3}
+.sh-macos .d-finder{background:linear-gradient(180deg,#6CB4FF,#1F74E8)}
+.sh-macos .d-web{background:linear-gradient(180deg,#FFFFFF,#E4E8EE);color:#1F74E8}
+.sh-macos .d-mail{background:linear-gradient(180deg,#5DC1FF,#1E7CF0)}
+.sh-macos .d-notes{background:linear-gradient(180deg,#FFD84A 0,#FFD84A 28%,#FFFDF4 28%,#F2EEE2 100%);color:#B8A878}
+.sh-macos .d-term{background:linear-gradient(180deg,#3A3A40,#141418);color:#E6E6EA}
+.sh-macos .d-gear{background:linear-gradient(180deg,#A8A8B0,#6E6E76)}
+.sh-macos .d-trash{background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(214,216,226,.72));color:#48484E}
+.sh-macos .dock .div{width:1px;height:42px;border-radius:0;background:rgba(0,0,0,.14);box-shadow:none}
+.sh-macos .dock i.run::after{content:"";position:absolute;left:50%;bottom:-6px;width:4px;height:4px;
+  margin-left:-2px;border-radius:50%;background:rgba(0,0,0,.45)}
+
+/* glass: a floating control pill */
+.sh-glass{display:flex;justify-content:center;padding:0 0 18px;background:none}
+.sh-glass .bar2{--r:999px;--rim:10px;display:flex;align-items:center;gap:7px;padding:8px 10px}
+/* a tab bar: glyphs in a capsule, the selected one sitting on its own lens */
+.sh-glass .bar2 i{width:40px;height:34px;border-radius:999px;display:grid;place-items:center;
+  color:rgba(245,247,255,.84)}
+.sh-glass .bar2 i svg{width:20px;height:20px;display:block}
+.sh-glass .bar2 i.sel{color:#8FE3FF;background:rgba(255,255,255,.16);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -4px 8px -6px rgba(10,10,34,.6)}
+
+/* ========================= desktop icons =========================
+   Windows kept its icons down the left of the desktop, macOS put the disk
+   on the right. Both sit behind the windows and fade on the era clock. */
+#icons{position:fixed;left:0;right:64px;top:var(--tb);bottom:0;z-index:4;pointer-events:none}
+#icons .ic{position:absolute;top:16px;left:10px;display:flex;flex-direction:column;gap:16px;opacity:0;will-change:opacity}
+#icons .ic.right{left:auto;right:14px}
+#icons .di{width:78px;display:flex;flex-direction:column;align-items:center;gap:4px}
+#icons .di svg{width:32px;height:32px;display:block}
+#icons .di span{max-width:78px;padding:1px 3px;text-align:center;line-height:1.25}
+.ic-w95 .di span,.ic-w98 .di span{font:11px var(--tahoma);color:#FFF}
+.ic-w95 .di.sel span,.ic-w98 .di.sel span{background:#000080;outline:1px dotted #FFFF80;outline-offset:-1px}
+.ic-xp .di span{font:11px var(--tahoma);color:#FFF;text-shadow:1px 1px 1px #000,0 0 2px rgba(0,0,0,.6)}
+.ic-aero .di span{font:12px var(--segoe);color:#FFF;text-shadow:0 0 6px rgba(0,0,0,.9),0 1px 2px #000}
+.ic-macos .di span{font:600 12px var(--sf);color:#1D1D1F;text-shadow:0 0 6px rgba(255,255,255,.9)}
+/* on a photograph macOS draws desktop labels white with a shadow */
+html[data-photos~="macos"] .ic-macos .di span{color:#FFF;text-shadow:0 1px 3px rgba(0,0,0,.65),0 0 1px rgba(0,0,0,.8)}
+@media (max-width:1239px){ #icons{display:none} }
+@media (max-width:900px){ html[data-era="macos"] .extras{display:none} }
+
+/* ========================= /projects and /links ========================= */
+.route{display:none;position:relative;z-index:10;padding:96px 0 150px}
+.route.on{display:block}
+body[data-route="projects"] main,body[data-route="links"] main{display:none}
+.wrap{width:min(1040px,100% - 128px);margin:0 auto}
+.route h2{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);margin:0 0 7px}
+.route .h{font-size:clamp(26px,4vw,38px);font-weight:600;letter-spacing:-.022em;margin:0 0 9px;text-wrap:balance}
+.route .sub{font-size:14.5px;line-height:1.62;max-width:62ch;color:var(--dim);margin:0 0 34px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(276px,1fr));gap:15px}
+.pcard{--r:24px;--rim:11px;padding:18px;display:flex;flex-direction:column;gap:8px;
+  transition:transform .22s ease}
+.pcard:hover{transform:translateY(-3px)}
+.pcard:hover::after{background:linear-gradient(135deg,rgba(255,255,255,1) 0%,rgba(255,255,255,.5) 15%,
+  rgba(255,255,255,.14) 37%,rgba(255,255,255,.14) 63%,rgba(226,240,255,.6) 85%,
+  rgba(210,234,255,1) 100%) border-box}
+.pcard .yr{font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim)}
+.pcard h3{margin:0;font-size:16.5px;font-weight:600;letter-spacing:-.012em;color:#FFF}
+.pcard p{margin:0;font-size:13px;line-height:1.56;color:var(--dim);flex:1}
+.pcard .foot{display:flex;flex-wrap:wrap;gap:5px}
+.pcard .foot b{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 7px;border-radius:999px;border:1px solid rgba(255,255,255,.16);color:var(--dim)}
+.lnks{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:11px}
+.lnk{--r:18px;--rim:9px;display:flex;align-items:center;gap:13px;padding:15px 17px;
+  text-decoration:none;transition:transform .2s ease}
+.lnk:hover{transform:translateY(-2px)}
+.lnk .g{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--accent);width:26px}
+.lnk b{display:block;font-size:14px;font-weight:500;color:#FFF}
+.lnk small{display:block;font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.02em}
+.credits{margin:30px 0 0;max-width:72ch;font:11px/1.65 var(--mono);color:var(--dim)}
+.credits a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+
+/* ========================= responsive ========================= */
+@media (max-width:1120px){ .sh-ubuntu{display:none} }
+@media (max-width:900px){ #shells .sh{right:0} }
+@media (max-width:900px){
+  .rail,.wrap{width:calc(100% - 32px)}
+  .ruler{display:none}
+  #graph{width:54px}
+  .entries{margin-left:66px}
+  .win,.eramark{width:100%}
+  .stamp .yr{font-size:19px}
+  .stamp .os b{font-size:11px}
+  .mark{display:none}
+  .nav a{padding:6px 8px;font-size:10px}
+  .win .side{display:none}
+  .win[data-chrome="w98"] .webside{display:none}
+  .win .cb.s{display:none}
+  .win .cb.w{width:112px}
+  .sh-dos b:nth-child(n+6){display:none}
+  .sh-mono b:nth-child(2){display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  .pcard:hover{transform:none}
+}
+</style>
+
+<div id="desktops">
+  <div class="bd bd-glass"  data-era="glass"></div>
+  <div class="bd bd-macos"  data-era="macos"><svg class="art" viewBox="0 0 1024 768"
+    preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>
+    <linearGradient id="mcSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C6D4F3"/><stop offset=".36" stop-color="#E3DCF1"/>
+      <stop offset=".58" stop-color="#F6DDD6"/><stop offset=".68" stop-color="#FBE7DA"/></linearGradient>
+    <radialGradient id="mcSun" cx=".26" cy=".56" r=".42">
+      <stop offset="0" stop-color="#FFF4E8" stop-opacity=".95"/><stop offset="1" stop-color="#FFF4E8" stop-opacity="0"/></radialGradient>
+    <linearGradient id="mcSea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D2DDF4"/><stop offset="1" stop-color="#A9BBE6"/></linearGradient>
+    <linearGradient id="mcNear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8A84C8"/><stop offset="1" stop-color="#5E5BA9"/></linearGradient></defs>
+    <rect width="1024" height="768" fill="url(#mcSky)"/>
+    <rect width="1024" height="768" fill="url(#mcSun)"/>
+    <rect y="520" width="1024" height="248" fill="url(#mcSea)"/>
+    <path d="M150 590h120M210 628h90M120 664h130" stroke="#EEF3FC" stroke-width="1.5" opacity=".3"/>
+    <g transform="translate(1024 0) scale(-1 1)">
+      <path fill="#D0C6E8" d="M0 430C120 380 220 360 330 390c100 28 190 80 310 110 60 15 120 20 180 20H0z"/>
+      <path fill="#AAA0D8" d="M0 480C90 440 180 430 270 460c90 30 160 100 250 140 40 18 80 26 120 30v138H0z"/>
+      <path fill="url(#mcNear)" d="M0 560C80 530 170 540 250 580c80 40 140 110 220 188H0z"/>
+      <path fill="#4A4893" d="M0 680c70-20 140-10 210 20 40 18 70 40 90 68H0z"/>
+    </g>
+    <path fill="#8D88C6" d="M688 548c8-22 22-26 30-4l6 18h-42z"/>
+    <path fill="#9C97CE" d="M640 566c5-12 13-14 18-2l4 10h-26z"/></svg></div>
+  <div class="bd bd-ubuntu" data-era="ubuntu"><svg class="art" viewBox="0 0 1024 768"
+    preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g transform="translate(792 232)">
+      <circle r="148" fill="none" stroke="#E95420" stroke-opacity=".15" stroke-width="26"/>
+      <g fill="#E95420" fill-opacity=".17">
+        <circle cy="-148" r="41"/><circle cx="-128" cy="74" r="41"/><circle cx="128" cy="74" r="41"/>
+      </g></g></svg></div>
+  <div class="bd bd-aero"   data-era="aero"><svg class="art" viewBox="0 0 1024 768"
+    preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>
+    <radialGradient id="aeA">
+      <stop offset="0" stop-color="#C6EDFF" stop-opacity=".78"/>
+      <stop offset=".42" stop-color="#6FB6F4" stop-opacity=".34"/>
+      <stop offset=".76" stop-color="#3272C4" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#2A66BC" stop-opacity="0"/></radialGradient></defs>
+    <g fill="url(#aeA)">
+      <ellipse cx="380" cy="430" rx="540" ry="96" transform="rotate(-11 380 430)"/>
+      <ellipse cx="772" cy="356" rx="340" ry="64" transform="rotate(-19 772 356)"/>
+      <ellipse cx="520" cy="566" rx="450" ry="50" transform="rotate(-6 520 566)" opacity=".6"/>
+      <ellipse cx="190" cy="250" rx="260" ry="52" transform="rotate(-14 190 250)" opacity=".42"/></g></svg></div>
+  <div class="bd bd-xp"     data-era="xp"><svg class="art" viewBox="0 0 1024 768"
+    preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>
+    <linearGradient id="xpSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0F4AB4"/><stop offset=".30" stop-color="#3A87DD"/>
+      <stop offset=".54" stop-color="#7FBFEC"/><stop offset=".68" stop-color="#CCE7F7"/>
+      <stop offset=".76" stop-color="#E8F4FB"/></linearGradient>
+    <linearGradient id="xpGrass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#A8D45E"/><stop offset=".26" stop-color="#79B33F"/>
+      <stop offset="1" stop-color="#3A7323"/></linearGradient>
+    <radialGradient id="xpCloud">
+      <stop offset="0" stop-color="#FFF" stop-opacity=".97"/>
+      <stop offset=".46" stop-color="#FFF" stop-opacity=".72"/>
+      <stop offset=".78" stop-color="#FFF" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#FFF" stop-opacity="0"/></radialGradient></defs>
+    <rect width="1024" height="768" fill="url(#xpSky)"/>
+    <g fill="url(#xpCloud)">
+      <ellipse cx="676" cy="152" rx="215" ry="62"/>
+      <ellipse cx="608" cy="120" rx="112" ry="48"/>
+      <ellipse cx="768" cy="124" rx="92" ry="40"/>
+      <ellipse cx="232" cy="208" rx="168" ry="46" opacity=".82"/>
+      <ellipse cx="304" cy="182" rx="84" ry="34" opacity=".7"/>
+      <ellipse cx="904" cy="256" rx="136" ry="36" opacity=".64"/>
+      <ellipse cx="430" cy="82" rx="98" ry="30" opacity=".48"/>
+      <ellipse cx="96" cy="130" rx="104" ry="30" opacity=".4"/></g>
+    <path fill="url(#xpGrass)" d="M0 488C118 437 246 404 376 424c148 23 286 94 446 116 80 11 150 9 202-2v230H0z"/>
+    <path fill="#A0D257" opacity=".52" d="M0 488C118 437 246 404 376 424c94 14 180 50 264 84L0 596z"/>
+    <path fill="#2C6420" opacity=".38" d="M584 638c132-40 294-40 440-18v148H486z"/>
+    <path fill="#4E8C2E" opacity=".28" d="M0 692c180-36 360-26 520 10v66H0z"/></svg></div>
+  <div class="bd bd-w98"    data-era="w98"></div>
+  <div class="bd bd-w95"    data-era="w95"></div>
+  <div class="bd bd-dos"    data-era="dos"></div>
+  <div class="bd bd-mono"   data-era="mono"></div>
+</div>
+
+<div id="shells" aria-hidden="true">
+  <div class="sh sh-glass" data-era="glass">
+    <div class="bar2 lg"><i class="sel" data-art="g24:house"></i><i data-art="g24:search"></i><i data-art="g24:compass"></i><i data-art="g24:bubble"></i><i data-art="g24:person"></i></div>
+  </div>
+  <div class="sh sh-macos" data-era="macos">
+    <div class="dock"><i class="run d-finder" data-art="g24:folder"></i><i class="d-web" data-art="g24:compass"></i><i class="run d-mail" data-art="g24:mail"></i><i class="d-notes" data-art="g24:notes"></i><i class="run d-term" data-art="g24:terminal"></i><i class="d-gear" data-art="g24:gear"></i><span class="div"></span><i class="d-trash" data-art="g24:trash"></i></div>
+  </div>
+  <div class="sh sh-ubuntu" data-era="ubuntu">
+    <div class="dash"><i></i></div>
+    <div class="tile on t-files" data-art="g24:folder"></div><div class="tile t-web" data-art="g24:globe"></div>
+    <div class="tile on t-term" data-art="g24:terminal"></div><div class="tile t-bag" data-art="g24:bag"></div>
+  </div>
+  <div class="sh sh-aero" data-era="aero">
+    <div class="orb"><div class="flag"><i></i><i></i><i></i><i></i></div></div>
+    <div class="pin on" data-art="i32:user7"></div><div class="pin" data-art="i32:globe"></div><div class="pin" data-art="g24:play"></div>
+    <div class="clock">14:32<br>09/06/2009</div><div class="peek"></div>
+  </div>
+  <div class="sh sh-xp" data-era="xp">
+    <div class="start"><div class="flag"><i></i><i></i><i></i><i></i></div>start</div>
+    <div class="band"><div class="xtask" data-task><i data-art="i16:xpFolder"></i><span>My Documents</span></div></div>
+    <div class="tray"><i data-art="i16:speaker"></i><i data-art="i16:shield"></i><span>19:04</span></div>
+  </div>
+  <div class="sh sh-w98" data-era="w98">
+    <div class="start"><div class="flag"><i></i><i></i><i></i><i></i></div>Start</div>
+    <div class="vsep"></div>
+    <div class="ql"><i data-art="i16:desktop"></i><i data-art="i16:globe"></i><i data-art="i16:envelope"></i></div>
+    <div class="vsep"></div>
+    <div class="task on" data-task><i data-art="i16:folder"></i><span>My Documents</span></div>
+    <div class="tray"><i data-art="i16:speaker9x"></i><span>22:41</span></div>
+  </div>
+  <div class="sh sh-w95" data-era="w95">
+    <div class="start"><div class="flag"><i></i><i></i><i></i><i></i></div>Start</div>
+    <div class="vsep"></div>
+    <div class="task on" data-task><i data-art="i16:wordpad"></i><span>Document - WordPad</span></div>
+    <div class="task"><i data-art="i16:notepad"></i><span>Untitled - Notepad</span></div>
+    <div class="tray"><i data-art="i16:speaker9x"></i><span>20:15</span></div>
+  </div>
+  <div class="sh sh-dos" data-era="dos">
+    <b><s>F1</s> Help</b><b><s>F2</s> Save</b><b><s>F3</s> Open</b><b><s>Alt+F9</s> Compile</b><b><s>F9</s> Make</b><b><s>F10</s> Menu</b>
+  </div>
+  <div class="sh sh-mono" data-era="mono">
+    <b>A:\EVGENY&gt;</b><b>360K in 2 files</b><b>NUM CAPS</b>
+  </div>
+</div>
+
+<div id="icons" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="mark" href="#/">evgeny<s>.fyi</s></a>
+  <div class="stamp">
+    <div class="yr" id="yrOut">2026</div>
+    <div class="os"><b id="osOut">Liquid Glass</b><i id="eraOut">present day</i></div>
+  </div>
+  <button class="restore" id="restore" type="button">Restore windows</button>
+  <span class="extras" aria-hidden="true"><i data-art="mb:search"></i><i data-art="mb:battery"></i><i data-art="mb:wifi"></i><i data-art="mb:cc"></i></span>
+  <nav class="nav">
+    <a href="#/" id="nav-timeline">Timeline</a>
+    <a href="#/projects" id="nav-projects">Projects</a>
+    <a href="#/links" id="nav-links">Links</a>
+  </nav>
+</header>
+
+<aside class="ruler" id="ruler" aria-label="Jump to a year"></aside>
+<div class="proto">Prototype · placeholder content</div>
+
+<main>
+  <div class="stage">
+    <div class="rail">
+      <svg id="graph" aria-hidden="true"></svg>
+      <div class="entries" id="entries"></div>
+    </div>
+  </div>
+</main>
+
+<section class="route" id="route-projects">
+  <div class="wrap">
+    <h2>/projects</h2>
+    <p class="h">Everything shipped on the side</p>
+    <p class="sub">The same records as the timeline, newest first. Each one keeps a deep link, so
+      <code>/projects/slug</code> resolves to a standalone page with its own write-up and screenshots.</p>
+    <div class="grid" id="pgrid"></div>
+  </div>
+</section>
+
+<section class="route" id="route-links">
+  <div class="wrap">
+    <h2>/links</h2>
+    <p class="h">Where else to find me</p>
+    <p class="sub">One canonical list, referenced from the footer of every page and from the newest
+      entry on the timeline.</p>
+    <div class="lnks" id="lgrid"></div>
+    <p class="credits">Wallpapers. Windows XP: <i>Bliss</i>, photograph by Charles O'Rear.
+      Ubuntu: <i>warty-final-ubuntu</i> by Kenneth Wimer and Otto Greenslade, from
+      <a href="https://launchpad.net/ubuntu-wallpapers">ubuntu-wallpapers</a>, resized, licensed
+      <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>.
+      macOS and Liquid Glass: Apple's Sonoma and Tahoe wallpapers. Every other era is drawn.</p>
+  </div>
+</section>
+
+<style>
+.win.hero h1{margin:0 0 11px;font-size:clamp(28px,4.6vw,44px);font-weight:600;letter-spacing:-.032em;
+  color:#FFF;text-wrap:balance;line-height:1.06}
+.win.hero .lede{margin:0;font-size:15px;line-height:1.62;color:rgba(236,238,250,.86);max-width:52ch}
+.win.hero .hint{margin-top:17px;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:rgba(236,238,250,.54)}
+.win.coda .body{padding:14px 16px 18px}
+.win.coda .line{margin:0 0 2px;font-size:16px;color:#FFC046}
+.win.coda .line s{text-decoration:none;color:#8E6C24}
+</style>
+
+<script>
+/* ==========================================================================
+   DATA
+   Nine eras, forty-two entries, four branches. The whole site is this plus
+   nine stylesheets. Everything in [brackets] is a placeholder to fill in.
+   ========================================================================== */
+const ERAS = [
+  {id:'mono',   os:'Monochrome CRT', name:'amber text mode',     from:1986, to:1990, sw:'#1A1408', ink:'#FFB000'},
+  {id:'dos',    os:'MS-DOS',         name:'Turbo Pascal 7',      from:1991, to:1994, sw:'#0000AA', ink:'#FFFF55'},
+  {id:'w95',    os:'Windows 95',     name:'Chicago',             from:1995, to:1998, sw:'#008080', ink:'#FFFFFF'},
+  {id:'w98',    os:'Windows 98',     name:'Memphis',             from:1999, to:2000, sw:'#006B6B', ink:'#FFFFFF'},
+  {id:'xp',     os:'Windows XP',     name:'Luna · Bliss',        from:2001, to:2006, sw:'#2A6FD8', ink:'#FFFFFF'},
+  {id:'aero',   os:'Windows 7',      name:'Aero Glass',          from:2007, to:2011, sw:'#0E2B4C', ink:'#9FD4FF'},
+  {id:'ubuntu', os:'Ubuntu',         name:'Unity · Ambiance',    from:2012, to:2015, sw:'#2C001E', ink:'#E95420'},
+  {id:'macos',  os:'macOS',          name:'Yosemite → Sequoia',  from:2016, to:2024, sw:'#E4DCF0', ink:'#1D1D1F'},
+  {id:'glass',  os:'Liquid Glass',   name:'iOS 26 · macOS Tahoe', from:2025, to:2026, sw:'#14122E', ink:'#8FE3FF'}
+];
+const LANES = [{id:'life',x:14},{id:'education',x:42},{id:'work',x:70},{id:'side',x:98}];
+
+const ENTRIES = [
+ {lane:'life',kind:'init',y:1986,m:5,title:'git init',org:'[city, country]',
+  blurb:'The first commit. Everything after this is a diff against it.',tags:['1986']},
+ {lane:'life',kind:'first screen',y:1988,m:2,title:'First screen',org:'[machine] at [place]',
+  blurb:'A monochrome monitor in a room I was not supposed to be in. I remember the smell of warm dust better than anything that was on it.',tags:['crt']},
+ {lane:'education',kind:'school',y:1991,m:8,end:1997,title:'Primary school',org:'[school name]',
+  blurb:'Six years on the education branch. The only computer in the building lived in a locked room and booted straight to a prompt.',tags:['maths']},
+ {lane:'life',kind:'hardware',y:1992,m:10,title:'First computer at home',org:'[machine, spec]',
+  blurb:'Second-hand, beige, and mine. I learned what a configuration file was by breaking one and spending a weekend putting it back.',tags:['ms-dos','autoexec.bat']},
+ {lane:'side',kind:'first program',y:1993,m:1,title:'First program',org:'[BASIC dialect]',
+  blurb:'It printed my name. Then it printed my name a thousand times. The second version felt like power.',tags:['basic','goto']},
+ {lane:'side',kind:'tinkering',y:1994,m:5,title:'[DOS game], modified',org:'A hex editor and hope',
+  blurb:'Changed numbers in a save file until something interesting happened. This is still broadly how I debug.',tags:['hex','reverse engineering']},
+ {lane:'life',kind:'upgrade',y:1995,m:8,title:'First Windows',org:'[machine]',
+  blurb:'A Start button, a taskbar, and the sudden ability to run two things at once. It felt like the future for about a year.',tags:['windows 95']},
+ {lane:'education',kind:'competition',y:1996,m:2,title:'[Regional maths olympiad]',org:'[result]',
+  blurb:'Discovered that some problems are better than others, and that I preferred the ones with no obvious first step.',tags:['olympiad']},
+ {lane:'education',kind:'school',y:1997,m:8,end:2004,title:'Secondary school',org:'[school name] · [specialisation]',
+  blurb:'Seven years of maths and physics on paper, plus an unofficial parallel curriculum in the computer lab after hours.',tags:['physics','pascal']},
+ {lane:'side',kind:'first website',y:1998,m:3,title:'[First website]',org:'Hand-written HTML',
+  blurb:'Tables for layout, an animated divider, and a hit counter I refreshed myself. Every part of it was wrong and I loved it.',tags:['html','geocities']},
+ {lane:'side',kind:'project',y:1999,m:9,title:'[IRC bot]',org:'[language]',
+  blurb:'A bot that answered questions in a channel of about eleven people. My first taste of code that runs while you sleep.',tags:['irc','sockets']},
+ {lane:'life',kind:'connection',y:2000,m:0,title:'Dial-up at home',org:'[provider]',
+  blurb:'Fifty-six kilobits, shared with the telephone. I learned to plan a download the way you plan a journey.',tags:['modem']},
+ {lane:'side',kind:'project',y:2001,m:6,title:'[Desktop utility]',org:'[Delphi / Visual Basic]',
+  blurb:'A small Windows tool for a problem exactly one person had. That person was me, and it worked.',tags:['delphi','win32']},
+ {lane:'education',kind:'competition',y:2002,m:10,title:'[Programming contest]',org:'[result]',
+  blurb:'Three hours, five problems, one working solution. Losing on time taught me more than the solutions did.',tags:['algorithms','acm']},
+ {lane:'education',kind:'university',y:2004,m:8,end:2009,title:'University',org:'[university] · [degree]',
+  blurb:'Five years of computer science: compilers, distributed systems, and a dormitory network held together with borrowed switches.',tags:['comp sci','c++','networks'],
+  long:['The first two years were mathematics with a compiler attached. Discrete structures, linear algebra, and a C++ course taught by someone who clearly resented the standard library.',
+        'The third year was the useful one. An operating systems module where we wrote a scheduler, a networks module where we wrote a TCP stack badly, and a database module that has quietly informed every schema I have designed since.',
+        'The dormitory network was the real curriculum. Forty machines, two borrowed switches, one uplink, and a rotating cast of people who would unplug something at three in the morning. I learned more about failure modes there than in any lecture.']},
+ {lane:'side',kind:'project',y:2005,m:1,title:'[University project]',org:'Coursework that escaped',
+  blurb:'Built for a grade, then left running for two years because people had started depending on it.',tags:['php','mysql']},
+ {lane:'work',kind:'freelance',y:2005,m:8,end:2007,title:'Freelance work',org:'[clients]',
+  blurb:'Small sites for small businesses, paid in cash and lessons. Learned to write down what had been agreed.',tags:['html','css','invoices']},
+ {lane:'side',kind:'open source',y:2006,m:4,title:'[First patch upstream]',org:'[project]',
+  blurb:'A three-line fix and a week of nerves waiting for review. The maintainer was kind about the formatting.',tags:['patch','cvs']},
+ {lane:'work',kind:'internship',y:2007,m:5,end:2008,title:'[First company]',org:'Intern, then junior developer',
+  blurb:'Learned the difference between code that works and code that ships, mostly by shipping the wrong one first.',tags:['java','svn','jira']},
+ {lane:'education',kind:'thesis',y:2008,m:9,title:'[Thesis]',org:'[topic] · [advisor]',
+  blurb:'Ninety pages on [topic], of which perhaps fifteen are still true. The literature review was the real education.',tags:['thesis','latex']},
+ {lane:'work',kind:'position',y:2008,m:10,end:2012,title:'[Company]',org:'Software developer',
+  blurb:'Four years on a product with real customers and real deadlines. The team went from five people to thirty around me.',tags:['c#','.net','sql server'],
+  long:['I joined to write features and left having spent most of the last year on the parts nobody demos: the deployment pipeline, the migration story, the slow untangling of a data model that had been right for five customers and wrong for five hundred.',
+        'The growth from five to thirty is the part I think about. Every process we added solved a real problem and cost something we did not measure. Code review caught bugs and slowed the obvious changes to a crawl.',
+        'What I would do differently: write the runbook before the feature, not after the first incident.']},
+ {lane:'side',kind:'project',y:2009,m:7,title:'[Side project]',org:'Evenings and weekends',
+  blurb:'Solved one problem for one group of people. Stayed online for eight years on a server I had forgotten about.',tags:['javascript','jquery']},
+ {lane:'life',kind:'relocation',y:2010,m:2,title:'Moved to [city]',org:'[country]',
+  blurb:'New timezone, new keyboard layout, the same terminal configuration carried across in a dotfiles repository.',tags:['relocation']},
+ {lane:'side',kind:'project',y:2011,m:4,title:'[Mobile app]',org:'[platform]',
+  blurb:'My first app with a real install button. Watching the download graph move was more addictive than building it.',tags:['android','java']},
+ {lane:'education',kind:'course',y:2012,m:0,title:'[Postgraduate course]',org:'[institution]',
+  blurb:'Part-time study alongside full-time work. Mostly a lesson in what does not fit into a week.',tags:['distributed systems']},
+ {lane:'work',kind:'position',y:2012,m:8,end:2015,title:'[Company]',org:'Senior developer',
+  blurb:'Moved from writing features to deciding which features were worth writing. The second job is harder and far less visible.',tags:['python','postgres','linux']},
+ {lane:'side',kind:'open source',y:2013,m:5,title:'[Open source library]',org:'Maintainer',
+  blurb:'A small library with an unreasonable number of downloads. I still merge pull requests from strangers on Sunday evenings.',tags:['npm','open source'],
+  long:['It does one thing, has no dependencies, and has not needed a breaking change since the second release. That combination is most of why it gets used.',
+        'Maintaining it taught me to say no in writing. The issue tracker is a record of features that would each have been reasonable and would together have made it into something nobody wanted.',
+        'The API has survived because it was too small to get wrong. Every time I have been tempted to widen it I have written the wider version, used it for a week, and thrown it away.']},
+ {lane:'side',kind:'project',y:2014,m:10,title:'[Project]',org:'Weekend build',
+  blurb:'Started as a way to learn [technology]. Ended up used by people I have never met and never heard from.',tags:['node','redis']},
+ {lane:'life',kind:'relocation',y:2015,m:6,title:'Moved to [city]',org:'[country]',
+  blurb:'The second move was easier. I packed the same three boxes and a mechanical keyboard.',tags:['relocation']},
+ {lane:'work',kind:'position',y:2015,m:10,end:2019,title:'[Company]',org:'[Staff engineer]',
+  blurb:'Distributed systems, on-call rotations, and the slow realisation that most outages are configuration rather than code.',tags:['aws','kubernetes','go']},
+ {lane:'side',kind:'project',y:2016,m:3,title:'[Project]',org:'Side build',
+  blurb:'The first thing I made where the interface mattered as much as the internals. It changed how I read other people work.',tags:['react','design']},
+ {lane:'side',kind:'writing',y:2017,m:8,title:'[Blog]',org:'[n] posts and counting',
+  blurb:'Started writing things down to stop explaining them twice. The post I dashed off in an hour is the one people still read.',tags:['writing']},
+ {lane:'side',kind:'project',y:2018,m:5,title:'[Project]',org:'[stack]',
+  blurb:'Built in public, shipped half-finished, improved by the people who complained. The best process I have found.',tags:['typescript','sqlite']},
+ {lane:'life',kind:'milestone',y:2019,m:4,title:'[Personal milestone]',org:'[detail]',
+  blurb:'Not a technical entry, but the one that changed the shape of a week more than any job did.',tags:['life']},
+ {lane:'work',kind:'position',y:2019,m:9,end:2023,title:'[Company]',org:'[Engineering lead]',
+  blurb:'Four years building the thing and the team that builds the thing. Remote from the first day, by design rather than accident.',tags:['platform','hiring','typescript']},
+ {lane:'side',kind:'project',y:2020,m:3,title:'[Lockdown project]',org:'Two months of evenings',
+  blurb:'Everyone built something that spring. Mine tracked [thing] and taught me more about charts than I wanted to know.',tags:['d3','data']},
+ {lane:'side',kind:'project',y:2021,m:7,title:'[Project]',org:'[platform]',
+  blurb:'A native app, written badly at first, then rewritten once I understood what the platform actually wanted.',tags:['swift','ios']},
+ {lane:'life',kind:'milestone',y:2022,m:5,title:'[Personal milestone]',org:'[detail]',
+  blurb:'The kind of entry a CV leaves out and a biography should not.',tags:['life']},
+ {lane:'side',kind:'project',y:2023,m:2,title:'[Project]',org:'[stack]',
+  blurb:'Smaller than the last one, finished in three weekends, still running with no maintenance. I am learning.',tags:['rust','cli']},
+ {lane:'work',kind:'position',y:2024,m:4,end:2026,title:'[Current company]',org:'[Current role]',
+  blurb:'Where I am now. The interesting parts are the ones I cannot write down yet.',tags:['current']},
+ {lane:'side',kind:'this site',y:2025,m:10,title:'evgeny.fyi',org:'This page',
+  blurb:'A biography that wears the interface of every year it describes. Forty years of design history compiled to one static site.',tags:['astro','github pages'],
+  long:['Nine interface eras, each with its own wallpaper, window furniture and desktop shell, cross-faded against scroll position. The caption buttons work: close hides an entry, minimise folds it to its title bar, maximise lifts it out of the timeline.',
+        'The hard part was not the chrome. It was keeping three things in agreement at every scroll position: the year in the header, the wallpaper behind the page, and the era of the window you are looking at. Layout compresses empty years and pushes colliding entries down, so the map between pixels and years is a table built at layout time rather than a formula.',
+        'There is a Playwright suite behind it. One screenshot per era, plus invariants that assert the three things still agree and that walking down the page never moves forward in time.']},
+ {lane:'life',kind:'HEAD',y:2026,m:7,title:'HEAD',org:'You are here',
+  blurb:'Still committing. The links page has every way to reach me.',tags:['2026']}
+];
+
+const LINKS = [
+  {g:'gh',name:'GitHub',h:'github.com/[handle]'},
+  {g:'in',name:'LinkedIn',h:'linkedin.com/in/[handle]'},
+  {g:'@',name:'Email',h:'[you]@evgeny.fyi'},
+  {g:'x',name:'X',h:'x.com/[handle]'},
+  {g:'bs',name:'Bluesky',h:'[handle].bsky.social'},
+  {g:'cv',name:'Résumé',h:'evgeny.fyi/cv.pdf'}
+];
+
+/* ==========================================================================
+   WINDOW CHROME — one builder per era, each with that era's real furniture:
+   menu bars, toolbars, address bars, task panes, status bars.
+   ========================================================================== */
+const Y0 = 1986, Y1 = 2026, SPAN = Y1 - Y0 + 1;
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const cap = e => e.end
+  ? esc(e.title) + ' — ' + e.y + '–' + (e.end >= Y1 ? 'present' : e.end)
+  : esc(e.title) + ' — ' + e.y;
+const bodyOf = e =>
+  '<p class="kind">' + esc(e.kind) + '</p>' +
+  '<h3>' + esc(e.title) + '</h3>' +
+  '<p class="org">' + esc(e.org) + '</p>' +
+  '<p class="blurb">' + esc(e.blurb) + '</p>' +
+  (e.long || []).map(t => '<p class="blurb">' + esc(t) + '</p>').join('') +
+  '<div class="tags">' + e.tags.map(t => '<b>' + esc(t) + '</b>').join('') + '</div>';
+
+/* ==========================================================================
+   ART
+   Every icon on the page is drawn here as inline SVG: 16px toolbar and
+   taskbar icons, 32px desktop icons, 24px single-colour glyphs for launchers
+   and docks, 16px sidebar symbols. The page ships no image files, and none of
+   these reproduces a trademarked logo.
+   ========================================================================== */
+const svgOf = (box, body) => '<svg viewBox="0 0 ' + box + ' ' + box + '" aria-hidden="true">' + body + '</svg>';
+const drawn = (box, set) => Object.fromEntries(Object.entries(set).map(([k, v]) => [k, svgOf(box, v)]));
+
+const I16 = drawn(16, {
+  page:'<path d="M3.5 1.5h6l3 3v10h-9z" fill="#FFF" stroke="#000"/><path d="M9.5 1.5v3h3" fill="none" stroke="#000"/>',
+  wordpad:'<path d="M2.5 1.5h7l3 3v10h-10z" fill="#FFF" stroke="#000"/><path d="M4.5 6.5h6M4.5 8.5h6M4.5 10.5h4" stroke="#000080"/><path d="M9.5 13.5l4-6 1.5 1-4 6-2 .5z" fill="#FFD800" stroke="#000" stroke-width=".8"/>',
+  notepad:'<path d="M2.5 2.5h10v12h-10z" fill="#FFF" stroke="#000"/><path d="M3 3h9v2H3z" fill="#4A8ADA"/><path d="M4.5 7.5h6M4.5 9.5h6M4.5 11.5h6" stroke="#808080"/>',
+  folder:'<path d="M1.5 3.5h5l1 2h7v8h-13z" fill="#FFE070" stroke="#806000"/><path d="M2 6.5h12" stroke="#FFF6C0"/>',
+  folderOpen:'<path d="M1.5 3.5h4l1 1h6v3" fill="#FFE68A" stroke="#806000"/><path d="M1.5 13.5l2-6h11l-2 6z" fill="#F8CD3C" stroke="#806000"/>',
+  floppy:'<path d="M1.5 1.5h12l1 1v12h-13z" fill="#404080" stroke="#000"/><path d="M4 2h7v5H4z" fill="#FFF"/><path d="M4 10h8v4H4z" fill="#C0C0C0"/><path d="M9 11h2v2H9z" fill="#404080"/>',
+  printer:'<path d="M4.5 1.5h7v5h-7z" fill="#FFF" stroke="#000"/><path d="M1.5 6.5h13v6h-13z" fill="#C0C0C0" stroke="#000"/><path d="M4.5 10.5h7v4h-7z" fill="#FFF" stroke="#000"/><path d="M12 8h1v1h-1z" fill="#00A000"/>',
+  magnifier:'<circle cx="6.5" cy="6.5" r="4.5" fill="#BFE3FF" stroke="#000"/><path d="M9.8 9.8l4.5 4.5" stroke="#000" stroke-width="2.2"/>',
+  scissors:'<circle cx="4.5" cy="12" r="2.3" fill="none" stroke="#000"/><circle cx="11.5" cy="12" r="2.3" fill="none" stroke="#000"/><path d="M5.6 10L11 1.5M10.4 10L5 1.5" stroke="#000" stroke-width="1.1"/>',
+  copy:'<path d="M1.5 1.5h6l2 2v7h-8z" fill="#FFF" stroke="#000"/><path d="M6.5 5.5h6l2 2v7h-8z" fill="#FFF" stroke="#000"/>',
+  paste:'<path d="M2.5 2.5h9v12h-9z" fill="#C08040" stroke="#000"/><path d="M5 1h4v3H5z" fill="#C0C0C0" stroke="#000" stroke-width=".8"/><path d="M6.5 6.5h7v8h-7z" fill="#FFF" stroke="#000"/>',
+  undo:'<path d="M4 6.5h6a3.5 3.5 0 010 7H6" fill="none" stroke="#000" stroke-width="1.6"/><path d="M1 6.5l4-4v8z" fill="#000"/>',
+  del:'<path d="M3 3l10 10M13 3L3 13" stroke="#C00000" stroke-width="2.6"/>',
+  props:'<path d="M2.5 1.5h9v13h-9z" fill="#FFF" stroke="#000"/><path d="M4.5 4.5h5M4.5 7.5h5M4.5 10.5h3" stroke="#000080"/><path d="M9 12l2.5 2.5L15 9" fill="none" stroke="#008000" stroke-width="1.6"/>',
+  arrowLeft:'<path d="M8 1.5L1.5 8 8 14.5v-4h6.5v-5H8z" fill="#2E9A2E" stroke="#105010"/>',
+  arrowRight:'<path d="M8 1.5L14.5 8 8 14.5v-4H1.5v-5H8z" fill="#2E9A2E" stroke="#105010"/>',
+  folderUp:'<path d="M1.5 3.5h5l1 2h7v8h-13z" fill="#F8CD3C" stroke="#806000"/><path d="M8 6.5l-3 3h2v3h2v-3h2z" fill="#000"/>',
+  views:'<path d="M1.5 1.5h5v5h-5zM9.5 1.5h5v5h-5zM1.5 9.5h5v5h-5zM9.5 9.5h5v5h-5z" fill="#FFF" stroke="#2A5CAA"/>',
+  computer:'<path d="M2.5 1.5h11v8h-11z" fill="#C0C0C0" stroke="#000"/><path d="M4 3h8v5H4z" fill="#008080"/><path d="M1.5 11.5h13v3h-13z" fill="#C0C0C0" stroke="#000"/>',
+  globe:'<circle cx="8" cy="8" r="6.5" fill="#3A8EE6" stroke="#0A3A7A"/><path d="M4 4.5c2 1 2 3 1 4.5s1 3 3 3M10 2.5c-1 2 1 3 2.5 3" fill="none" stroke="#5DBB3A" stroke-width="2"/>',
+  envelope:'<path d="M1.5 3.5h13v9h-13z" fill="#FFF7D8" stroke="#000"/><path d="M1.5 3.5L8 9l6.5-5.5" fill="none" stroke="#000"/>',
+  desktop:'<path d="M1.5 2.5h13v9h-13z" fill="#008080" stroke="#000"/><path d="M3 4h4v3H3z" fill="#FFF"/><path d="M5 12h6v2H5z" fill="#808080"/>',
+  speaker9x:'<path d="M2 6h3l4-3.5v11L5 10H2z" fill="#FFE000" stroke="#000" stroke-width=".8"/><path d="M11 5c1.5 1.5 1.5 4.5 0 6M12.5 3.5c2.5 2.5 2.5 6.5 0 9" fill="none" stroke="#000"/>',
+  xpFolder:'<path d="M1.5 3.5h5l1.5 1.5h6.5v8.5h-13z" fill="#F4C451" stroke="#B8862A"/><path d="M1.5 6.5h13v7h-13z" fill="#FBDD7A" stroke="#B8862A"/>',
+  xpComputer:'<rect x="2.5" y="1.5" width="11" height="9" rx="1" fill="#E8E8E0" stroke="#6A6A60"/><rect x="4" y="3" width="8" height="6" fill="#3A7BD5"/><path d="M5 11.5h6l1 3H4z" fill="#C8C8C0" stroke="#6A6A60"/>',
+  speaker:'<path d="M2 6h3l4-3.5v11L5 10H2z" fill="#FFF"/><path d="M11 5c1.5 1.5 1.5 4.5 0 6" fill="none" stroke="#FFF" stroke-width="1.4"/>',
+  shield:'<path d="M8 1.5l5.5 2v4c0 3.5-2.5 6-5.5 7-3-1-5.5-3.5-5.5-7v-4z" fill="#3C9C3C" stroke="#FFF"/><path d="M5.2 8l2 2 3.6-3.8" fill="none" stroke="#FFF" stroke-width="1.5"/>'
+});
+const I20 = drawn(20, {
+  xpBack:'<circle cx="10" cy="10" r="8.5" fill="#3AA63A" stroke="#1E6B1E"/><ellipse cx="10" cy="6.5" rx="6" ry="3.5" fill="#FFF" opacity=".28"/><path d="M4.5 10l5-5v3h6v4h-6v3z" fill="#FFF"/>',
+  xpFwd:'<circle cx="10" cy="10" r="8.5" fill="#A7BFA7" stroke="#7A937A"/><path d="M15.5 10l-5-5v3h-6v4h6v3z" fill="#FFF"/>',
+  xpGo:'<rect x="1.5" y="1.5" width="17" height="17" rx="3" fill="#3AA63A" stroke="#1E6B1E"/><path d="M5 10h8M10 6l4 4-4 4" fill="none" stroke="#FFF" stroke-width="2.2"/>'
+});
+const I32 = drawn(32, {
+  computer95:'<path d="M5.5 2.5h21v17h-21z" fill="#C0C0C0" stroke="#000"/><path d="M8.5 5.5h15v11h-15z" fill="#008080" stroke="#404040"/><path d="M10 7h6v4h-6z" fill="#00B0B0"/><path d="M12 20h8v3h-8z" fill="#808080"/><path d="M3.5 23.5h25v6h-25z" fill="#C0C0C0" stroke="#000"/><path d="M20 26h6v1h-6z" fill="#404040"/><path d="M6 26h2v1H6z" fill="#00A000"/>',
+  network95:'<path d="M1.5 2.5h12v10h-12z" fill="#C0C0C0" stroke="#000"/><path d="M3.5 4.5h8v6h-8z" fill="#008080"/><path d="M18.5 2.5h12v10h-12z" fill="#C0C0C0" stroke="#000"/><path d="M20.5 4.5h8v6h-8z" fill="#008080"/><path d="M7.5 13v7.5h17V13M16 20.5V25" fill="none" stroke="#000"/><path d="M9.5 25.5h13v5h-13z" fill="#C0C0C0" stroke="#000"/><path d="M11.5 27.5h9" stroke="#008080"/>',
+  bin95:'<path d="M7.5 9.5h17l-2 20h-13z" fill="#E4E4E4" stroke="#000"/><path d="M11.5 11l1 17M16 11v17M20.5 11l-1 17M9 15h14M9.5 20h13M10 25h12" stroke="#909090"/><ellipse cx="16" cy="9.5" rx="9" ry="2.5" fill="#FFF" stroke="#000"/>',
+  briefcase:'<path d="M3.5 10.5h25v17h-25z" fill="#A0601E" stroke="#402000"/><path d="M12.5 10.5v-3h7v3" fill="none" stroke="#402000" stroke-width="1.6"/><path d="M4 16h24v2H4z" fill="#7A4410"/><path d="M14 14.5h4v5h-4z" fill="#E8C048" stroke="#402000"/>',
+  docs98:'<path d="M2.5 7.5h10l2 2h15v19h-27z" fill="#E8B830" stroke="#806000"/><path d="M7.5 3.5h15v18h-15z" fill="#FFF" stroke="#000"/><path d="M10 7.5h10M10 10.5h10M10 13.5h7" stroke="#000080"/><path d="M2.5 13.5h27v15h-27z" fill="#FFE070" stroke="#806000"/>',
+  globe:'<circle cx="16" cy="16" r="12.5" fill="#3A8EE6" stroke="#0A3A7A"/><path d="M8 9c4 2 4 5 2 8s2 6 6 6M20 5c-2 4 2 6 5 6M22.5 18c2 1 3 4 1 7" fill="none" stroke="#5DBB3A" stroke-width="3"/><ellipse cx="12" cy="10" rx="5" ry="3" fill="#FFF" opacity=".35"/>',
+  docsXP:'<path d="M2.5 8.5h10l2 2h15v17h-27z" fill="#F4C451" stroke="#B8862A"/><path d="M8.5 4.5h14l3 3v13h-17z" fill="#FFF" stroke="#8A8A80"/><path d="M11 9.5h11M11 12.5h11M11 15.5h8" stroke="#5A8AD8"/><path d="M2.5 13.5h27v14h-27z" fill="#FBDD7A" stroke="#B8862A"/>',
+  computerXP:'<rect x="4.5" y="3.5" width="23" height="17" rx="2" fill="#EDEDE6" stroke="#6A6A60"/><rect x="7" y="6" width="18" height="12" rx="1" fill="#2F6FCE"/><path d="M7 6h18L7 18z" fill="#7FB4F4" opacity=".55"/><path d="M12.5 21h7l2 4.5h-11z" fill="#CFCFC6" stroke="#6A6A60"/><rect x="8" y="25.5" width="16" height="3" rx="1.5" fill="#DADAD2" stroke="#6A6A60"/>',
+  binXP:'<path d="M8.5 9.5h15l-1.8 19h-11.4z" fill="#D5E2EF" stroke="#4A6A8A"/><path d="M12.5 12l.8 14M16 12v14M19.5 12l-.8 14" stroke="#8AA8C6"/><rect x="6.5" y="6.5" width="19" height="3" rx="1.5" fill="#EAF2FA" stroke="#4A6A8A"/><path d="M13 5.5h6v1h-6z" fill="#4A6A8A"/>',
+  user7:'<path d="M3.5 8.5h9l2 2h14v17h-25z" fill="#D8A43A" stroke="#8A6014"/><path d="M3.5 12.5h25v15h-25z" fill="#F3CF72" stroke="#8A6014"/><circle cx="16" cy="18" r="3" fill="#FFF" opacity=".75"/><path d="M11 25c.8-3 2.8-4 5-4s4.2 1 5 4" fill="#FFF" opacity=".75"/>',
+  computer7:'<rect x="3.5" y="4.5" width="25" height="17" rx="1.5" fill="#2A2F36" stroke="#101418"/><rect x="5.5" y="6.5" width="21" height="13" fill="#3A95E0"/><path d="M5.5 6.5h21l-21 13z" fill="#8FD0FF" opacity=".5"/><path d="M13 22h6l1.5 4h-9z" fill="#5A6068"/><rect x="9" y="26" width="14" height="2" rx="1" fill="#3A4048"/>',
+  bin7:'<path d="M8.5 8.5h15l-2 20h-11z" fill="#E6F0F8" fill-opacity=".8" stroke="#7D9BB8"/><path d="M12 11l1 15M16 11v15M20 11l-1 15" stroke="#B4C8DA"/><rect x="7" y="6" width="18" height="3" rx="1.5" fill="#F4F8FC" stroke="#7D9BB8"/>',
+  hd:'<rect x="3.5" y="9.5" width="25" height="14" rx="2.5" fill="#E4E4E8" stroke="#8A8A90"/><path d="M4 18.5h24" stroke="#B8B8BE"/><rect x="6" y="20" width="10" height="1.5" rx=".75" fill="#9A9AA0"/><circle cx="24.5" cy="21" r="1.2" fill="#4CC85A"/>'
+});
+const G24 = drawn(24, {
+  folder:'<path d="M3 6.5h6.2l2 2H21v10.5H3z" fill="currentColor"/>',
+  globe:'<circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.8 12h16.4M12 3.8c3.2 3.4 3.2 13 0 16.4M12 3.8c-3.2 3.4-3.2 13 0 16.4" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+  terminal:'<path d="M5 7.5l4.5 4.5L5 16.5M11.5 17h7.5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>',
+  bag:'<path d="M5 9h14l-1.2 11H6.2z" fill="currentColor"/><path d="M9 9V7.2a3 3 0 016 0V9" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+  compass:'<circle cx="12" cy="12" r="8.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15.6 8.4l-2.2 5-5 2.2 2.2-5z" fill="currentColor"/>',
+  mail:'<rect x="3" y="6" width="18" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.6 7.2L12 13.2l8.4-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+  notes:'<path d="M6 12h12M6 15.5h12M6 19h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  gear:'<circle cx="12" cy="12" r="3.1" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-dasharray="2.7 2.8"/>',
+  trash:'<path d="M6.5 7.5h11l-1 12.5h-9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4.5 7.5h15M9.5 7.5V5.2h5v2.3" fill="none" stroke="currentColor" stroke-width="1.6"/>',
+  house:'<path d="M4 11.2l8-7 8 7V20h-5.2v-5.8H9.2V20H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+  search:'<circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
+  bubble:'<path d="M4 5.5h16v10.5H10.5L6.5 20v-4H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+  person:'<circle cx="12" cy="8.5" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 20c.9-4 3.8-6 7-6s6.1 2 7 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+  play:'<path d="M8 5l11 7-11 7z" fill="currentColor"/>'
+});
+const SYM = Object.fromEntries(Object.entries(drawn(16, {
+  clock:'<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 4.4V8l2.6 1.6" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
+  apps:'<g fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2.3" y="2.3" width="4.7" height="4.7" rx="1.2"/><rect x="9" y="2.3" width="4.7" height="4.7" rx="1.2"/><rect x="2.3" y="9" width="4.7" height="4.7" rx="1.2"/><rect x="9" y="9" width="4.7" height="4.7" rx="1.2"/></g>',
+  doc:'<path d="M4 1.8h5l3 3v9.4H4z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M9 1.8v3h3" fill="none" stroke="currentColor" stroke-width="1.3"/>',
+  folder:'<path d="M1.8 3.8h4.4l1.4 1.6h6.6v7.8H1.8z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>'
+})).map(([k, v]) => [k, '<span class="sym">' + v + '</span>']));
+const TAG_COLOUR = {work:'#0A7CFF', side:'#AF52DE', education:'#FF9500', life:'#34C759'};
+/* SF-style toolbar symbols and menu bar status items, single colour */
+const TB = drawn(16, {
+  back:'<path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  fwd:'<path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  grid:'<g fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="2" width="5" height="5" rx="1.2"/><rect x="9" y="2" width="5" height="5" rx="1.2"/><rect x="2" y="9" width="5" height="5" rx="1.2"/><rect x="9" y="9" width="5" height="5" rx="1.2"/></g>',
+  share:'<path d="M8 1.8v8.4M5.2 4.4L8 1.8l2.8 2.6" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 6.4H4.2v7.8h7.6V6.4h-1.3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>',
+  tag:'<path d="M2 2.4h5.3l6.7 6.7-4.9 4.9L2.4 7.3z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="5.1" cy="5.5" r="1.05" fill="currentColor"/>',
+  more:'<circle cx="8" cy="8" r="6.3" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="5" cy="8" r=".95" fill="currentColor"/><circle cx="8" cy="8" r=".95" fill="currentColor"/><circle cx="11" cy="8" r=".95" fill="currentColor"/>',
+  search:'<circle cx="6.8" cy="6.8" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.2 10.2l3.8 3.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  chev:'<path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+});
+const MB = drawn(16, {
+  search:'<circle cx="6.8" cy="6.8" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.2 10.2l3.8 3.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  battery:'<rect x="1" y="4.6" width="12.4" height="6.8" rx="2" fill="none" stroke="currentColor" stroke-width="1.1"/><rect x="2.4" y="6" width="8.2" height="4" rx="1" fill="currentColor"/><path d="M14.6 6.9v2.2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+  wifi:'<path d="M1.8 6.3a9 9 0 0112.4 0M4.1 8.7a5.7 5.7 0 017.8 0M6.3 11a2.5 2.5 0 013.4 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="13.1" r="1" fill="currentColor"/>',
+  cc:'<rect x="1.5" y="2.8" width="13" height="4.4" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="4.3" cy="5" r="1.3" fill="currentColor"/><rect x="1.5" y="8.8" width="13" height="4.4" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="11.7" cy="11" r="1.3" fill="currentColor"/>'
+});
+const ART = {i16:I16, i20:I20, i32:I32, g24:G24, mb:MB};
+const artOf = key => { const [set, name] = key.split(':'); return (ART[set] || {})[name] || ''; };
+function paintArt(root){
+  (root || document).querySelectorAll('[data-art]').forEach(n => { n.innerHTML = artOf(n.dataset.art); });
+}
+
+/* small builders shared by the Windows eras */
+const tb  = k => '<span class="w9tb">' + I16[k] + '</span>';
+const big = (k, label) => '<b class="w9big">' + I16[k] + '<span>' + label + '</span></b>';
+const xb  = (art, label, drop, dis) => '<b class="xb' + (dis ? ' dis' : '') + '">' + art +
+  (label ? '<span>' + label + '</span>' : '') + (drop ? '<em>▾</em>' : '') + '</b>';
+/* DOS had 8.3 filenames and nothing else */
+const dosName = (e, ext) => (e.title.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8) || 'NONAME00') + '.' + ext;
+const RULER = '<i></i>' + [1, 2, 3, 4, 5, 6, 7].map(n => '<b style="left:' + (24 + n * 72) + 'px">' + n + '</b>').join('');
+
+const CHROME = {
+  mono: e => `
+    <div class="tvwin">
+      <b class="tvclose b-cls">[■]</b>
+      <div class="tvtitle"><span>${dosName(e, 'TXT')}</span></div>
+      <span class="tvr"><b class="b-min">[↓]</b><b class="b-max">[↑]</b></span>
+      <div class="tvinner"><div class="body">${bodyOf(e)}
+        <div class="prompt">C:\\EVGENY\\${e.y}&gt; <span class="cur"></span></div></div></div>
+      <span class="tvpos">${e.y}</span>
+    </div>`,
+
+  dos: (e, n) => `
+    <div class="tvwin">
+      <b class="tvclose b-cls">[■]</b>
+      <div class="tvtitle"><span>C:\\${e.y}\\${dosName(e, e.lane === 'side' ? 'PAS' : 'TXT')}</span></div>
+      <span class="tvr"><span class="tvnum">${n}</span><b class="tvzoom b-max">[↑]</b></span>
+      <div class="tvinner">
+        <div class="body">${bodyOf(e)}</div>
+        <div class="tvscroll"><s>▲</s><i></i><s>▼</s></div>
+      </div>
+      <span class="tvpos">${(e.m || 0) + 1}:1</span>
+    </div>`,
+
+  w95: e => `
+    <div class="bar"><span class="ico">${I16.wordpad}</span><span class="t">${esc(e.title)} - WordPad</span>
+      <span class="wbtns"><b class="b-min"></b><b class="b-max"></b><b class="b-cls"></b></span></div>
+    <div class="menu"><b><u>F</u>ile</b><b><u>E</u>dit</b><b><u>V</u>iew</b><b><u>I</u>nsert</b><b>F<u>o</u>rmat</b><b><u>H</u>elp</b></div>
+    <div class="tool">${tb('page')}${tb('folderOpen')}${tb('floppy')}<span class="sep"></span>${tb('printer')}${tb('magnifier')}<span class="sep"></span>${tb('scissors')}${tb('copy')}${tb('paste')}${tb('undo')}</div>
+    <div class="fmt"><span class="cb w"><span>Times New Roman</span><i></i></span><span class="cb n"><span>10</span><i></i></span><span class="cb s"><span>Western</span><i></i></span><span class="sep"></span><b class="w9fb">B</b><b class="w9fb i">I</b><b class="w9fb u">U</b></div>
+    <div class="wruler">${RULER}</div>
+    <div class="field"><div class="body doc">${bodyOf(e)}</div></div>
+    <div class="status"><s>For Help, press F1</s><s>NUM</s></div>`,
+
+  w98: e => `
+    <div class="bar"><span class="ico">${I16.folder}</span><span class="t">${esc(e.title)}</span>
+      <span class="wbtns"><b class="b-min"></b><b class="b-max"></b><b class="b-cls"></b></span></div>
+    <div class="menu"><b><u>F</u>ile</b><b><u>E</u>dit</b><b><u>V</u>iew</b><b><u>G</u>o</b><b>F<u>a</u>vorites</b><b><u>H</u>elp</b></div>
+    <div class="tool">${big('arrowLeft', 'Back')}${big('arrowRight', 'Forward')}${big('folderUp', 'Up')}<span class="sep"></span>${big('scissors', 'Cut')}${big('copy', 'Copy')}${big('paste', 'Paste')}<span class="sep"></span>${big('undo', 'Undo')}${big('del', 'Delete')}${big('props', 'Properties')}</div>
+    <div class="addr"><s>A<u>d</u>dress</s><div class="combo"><i class="aico">${I16.folder}</i><span>C:\\Evgeny\\${e.y}\\${esc(e.title)}</span><i class="dd"></i></div></div>
+    <div class="field"><div class="web">
+      <div class="webside">${I32.docs98}<b class="wname">${esc(e.title)}</b><i class="wrule"></i>
+        <p class="wtext">${esc(e.kind)}<br>${e.tags.length} object(s)</p>
+        <p class="wtext dim">Select an item to view its description.</p></div>
+      <div class="body">${bodyOf(e)}</div>
+    </div></div>
+    <div class="status"><s>${e.tags.length} object(s)</s><s class="mc">${I16.computer}My Computer</s></div>`,
+
+  xp: e => `
+    <div class="bar"><span class="ico">${I16.xpFolder}</span><span class="t">${esc(e.title)}</span>
+      <span class="wbtns"><b class="b-min"></b><b class="b-max"></b><b class="b-cls"></b></span></div>
+    <div class="menu"><b>File</b><b>Edit</b><b>View</b><b>Favorites</b><b>Tools</b><b>Help</b></div>
+    <div class="tool">${xb(I20.xpBack, 'Back', true)}${xb(I20.xpFwd, '', true, true)}${xb(I16.folderUp, '')}<span class="sep"></span>${xb(I16.magnifier, 'Search')}${xb(I16.xpFolder, 'Folders')}<span class="sep"></span>${xb(I16.views, '', true)}</div>
+    <div class="addr"><s>Address</s>
+      <div class="combo"><i class="aico">${I16.xpFolder}</i><span>C:\\Documents and Settings\\evgeny\\My Documents\\${e.y}</span><i class="dd">▼</i></div>
+      <b class="go">${I20.xpGo}Go</b></div>
+    <div class="pane">
+      <div class="side">
+        <div class="xg"><i>File and Folder Tasks<s></s></i>
+          <div><u>Rename this folder</u><u>Publish this folder to the Web</u><u>Share this folder</u></div></div>
+        <div class="xg"><i>Details<s></s></i>
+          <div><b>${esc(e.title)}</b><p>${esc(e.kind)}<br>Date Modified: ${e.y}</p></div></div>
+      </div>
+      <div class="body">${bodyOf(e)}</div>
+    </div>
+    <div class="status"><s>${e.tags.length + 3} objects</s><s class="mc">${I16.xpComputer}My Computer</s></div>`,
+
+  aero: e => `
+    <div class="bar"><span class="t">${cap(e)}</span>
+      <span class="wbtns"><b class="b-min"></b><b class="b-max"></b><b class="b-cls">✕</b></span></div>
+    <div class="crumbs"><b>◀</b><b>▶</b>
+      <div class="crumb">Computer <i>▸</i> Life (C:) <i>▸</i> ${e.y}</div>
+      <div class="search">Search ${e.y}</div></div>
+    <div class="tool"><b>Organize ▾</b><b>Include in library ▾</b><b>Share with ▾</b><b>New folder</b></div>
+    <div class="pane">
+      <div class="side"><i>Libraries</i><u>Documents</u><u>Pictures</u><i>Computer</i><u>Life (C:)</u></div>
+      <div class="body">${bodyOf(e)}</div>
+    </div>
+    <div class="details"><i></i><span><b>${esc(e.title)}</b><br>${esc(e.kind)} · ${e.tags.length} tags</span></div>
+    <div class="status"><s>${e.tags.length} items</s></div>`,
+
+  ubuntu: e => `
+    <div class="bar"><span class="wbtns"><b class="b-cls">×</b><b class="b-min">−</b><b class="b-max">□</b></span>
+      <span class="t">${cap(e)}</span></div>
+    <div class="tool"><b>◀</b><b>▶</b><div class="path"><i>evgeny</i><i>${e.y}</i></div><b>⌕</b></div>
+    <div class="pane">
+      <div class="side"><i>Places</i><u>Home</u><u>Desktop</u><u>Documents</u><i>Devices</i><u>File System</u></div>
+      <div class="body">${bodyOf(e)}</div>
+    </div>
+    <div class="status"><s>${e.tags.length} items</s><s>Free space: 12.4 GB</s></div>`,
+
+  macos: e => `
+    <div class="mac">
+      <div class="side">
+        <div class="lights"><b class="tl-r"></b><b class="tl-y"></b><b class="tl-g"></b></div>
+        <i>Favourites</i>
+        <u>${SYM.clock}Recents</u><u>${SYM.apps}Applications</u><u>${SYM.doc}Documents</u>
+        <u class="sel">${SYM.folder}${e.y}</u>
+        <i>Tags</i><u><em class="dot" style="--c:${TAG_COLOUR[e.lane] || '#8E8E93'}"></em>${esc(e.lane)}</u>
+      </div>
+      <div class="mcol">
+        <div class="bar">
+          <span class="nav2"><b>${TB.back}</b><b class="off">${TB.fwd}</b></span>
+          <span class="ttl"><span class="t">${e.y}</span><small>${esc(e.kind)}${e.end ? ' · ' + e.y + '–' + (e.end >= Y1 ? 'present' : e.end) : ''}</small></span>
+          <span class="tgroup"><b class="tbtn dd">${TB.grid}<em>${TB.chev}</em></b><b class="tbtn">${TB.share}</b><b class="tbtn">${TB.tag}</b><b class="tbtn dd">${TB.more}<em>${TB.chev}</em></b><b class="tbtn">${TB.search}</b></span>
+        </div>
+        <div class="body">${bodyOf(e)}</div>
+      </div>
+    </div>`,
+
+  glass: e => `
+    <div class="bar"><span class="t">${esc(e.kind)}</span>
+      <span class="wbtns"><b class="b-cls"></b><b class="b-min"></b><b class="b-max"></b></span></div>
+    <div class="body">${bodyOf(e)}</div>
+    <div class="pill"><b>Open</b><b>Share</b><b>${e.y}</b></div>`
+};
+
+/* ==========================================================================
+   LAYOUT — reverse chronology. 2026 sits at the top of the document and the
+   year counts down as you scroll. Position is time-proportional, but long
+   empty stretches are compressed and collisions push entries down, so the
+   anchor table below is the only trustworthy map between pixels and years.
+   ========================================================================== */
+let YEAR_H = 122, TOP = 210, BASE = 0, ANCH = [];
+
+const entriesEl = document.getElementById('entries');
+const graph = document.getElementById('graph');
+const eraById = Object.fromEntries(ERAS.map(e => [e.id, e]));
+const STACK = [...ERAS].reverse();                 // newest first, matches DOM
+const eraOf = y => ERAS.find(e => y < e.to + 1) || ERAS[ERAS.length - 1];
+const laneX = id => (LANES.find(l => l.id === id) || LANES[0]).x * (window.innerWidth < 900 ? .46 : 1);
+const posY = yr => TOP + ((Y1 + 1) - yr) * YEAR_H;
+/* the year you meet an entry when scrolling down is its most recent date */
+const encounter = e => e.end ? Math.min(Y1 + .45, e.end + .45) : e.y + (e.m || 0) / 12;
+
+function yearAtPx(px){
+  if (px <= ANCH[0][0]) return ANCH[0][1];
+  for (let i = 1; i < ANCH.length; i++){
+    if (px <= ANCH[i][0]){
+      const a = ANCH[i-1], b = ANCH[i];
+      return a[1] + (b[1] - a[1]) * ((px - a[0]) / Math.max(1, b[0] - a[0]));
+    }
+  }
+  return ANCH[ANCH.length - 1][1];
+}
+function pxAtYear(yr){                             // ANCH years descend
+  if (yr >= ANCH[0][1]) return ANCH[0][0];
+  for (let i = 1; i < ANCH.length; i++){
+    if (yr >= ANCH[i][1]){
+      const a = ANCH[i-1], b = ANCH[i];
+      return a[0] + (b[0] - a[0]) * ((yr - a[1]) / Math.min(-.001, b[1] - a[1]));
+    }
+  }
+  return ANCH[ANCH.length - 1][0];
+}
+
+function buildTimeline(){
+  entriesEl.innerHTML = '';
+  const seen = {};                                  // per-era window count
+  const items = [{t:'hero', k:Y1 + .99}]
+    .concat(ENTRIES.map((e, i) => ({t:'entry', e, i, k:encounter(e)})))
+    .concat(ERAS.slice(0, -1).map(era => ({t:'era', era, k:era.to + .98})))
+    .concat([{t:'coda', k:Y0 - .005}])
+    .sort((a, b) => b.k - a.k);
+
+  items.forEach(it => {
+    let el;
+    if (it.t === 'era'){
+      el = document.createElement('div');
+      el.className = 'eramark';
+      el.innerHTML = '<s>' + it.era.from + '–' + it.era.to + '</s><span>' + it.era.os + '</span><i></i>';
+    } else if (it.t === 'hero'){
+      el = document.createElement('article');
+      el.className = 'win hero';
+      el.dataset.chrome = 'glass';
+      el.innerHTML = '<div class="frame lg"><div class="bar"><span class="t">evgeny.fyi</span>' +
+        '<span class="wbtns"><b class="b-cls"></b><b class="b-min"></b><b class="b-max"></b></span>' +
+        '</div><div class="body">' +
+        '<h1>Evgeny Vinnik</h1>' +
+        '<p class="lede">Forty years of computing, read newest first. The page ages backwards as you ' +
+        'scroll: Liquid Glass gives way to macOS, to Ubuntu, to Aero, to XP, to Windows 98 and 95, ' +
+        'to a DOS prompt. Every entry arrives wearing the interface of its year.</p>' +
+        '<p class="hint">↓ scroll back to 1986</p></div>' +
+        '<div class="pill"><b>Timeline</b><b>Projects</b><b>Links</b></div></div>';
+    } else if (it.t === 'coda'){
+      el = document.createElement('article');
+      el.className = 'win coda';
+      el.dataset.chrome = 'mono';
+      el.innerHTML = '<div class="frame"><div class="tvwin">' +
+        '<b class="tvclose b-cls">[■]</b>' +
+        '<div class="tvtitle"><span>A:\\AUTOEXEC.BAT</span></div>' +
+        '<span class="tvr"><b class="b-min">[↓]</b><b class="b-max">[↑]</b></span>' +
+        '<div class="tvinner"><div class="body">' +
+        '<p class="line"><s>C:\\&gt;</s> echo Beyond this point there is no interface to imitate.</p>' +
+        '<p class="line"><s>C:\\&gt;</s> <span class="cur"></span></p></div></div>' +
+        '<span class="tvpos">1986</span></div></div>';
+    } else {
+      // chrome comes from the year you meet the entry, so the window, the
+      // wallpaper behind it and the header always belong to the same era
+      const e = it.e, era = eraOf(it.k);
+      seen[era.id] = (seen[era.id] || 0) + 1;       // Turbo Vision numbered its windows
+      el = document.createElement('article');
+      el.className = 'win';
+      el.dataset.chrome = era.id;
+      el.dataset.i = it.i;
+      if (e.long) el.dataset.long = '1';
+      el.innerHTML = '<div class="frame' + (era.id === 'glass' ? ' lg' : '') + '">' +
+        CHROME[era.id](e, seen[era.id]) + '</div>';
+    }
+    el.dataset.k = it.k;
+    if (el.classList.contains('win')){
+      wireControls(el);
+      const c = el.querySelector('.bar .t, .tvtitle span');
+      el.dataset.caption = c ? c.textContent.trim() : '';
+    }
+    entriesEl.appendChild(el);
+  });
+}
+
+function place(){
+  const items = [...entriesEl.children];
+  BASE = entriesEl.getBoundingClientRect().top + window.scrollY;
+  const MAXGAP = window.innerWidth < 900 ? 200 : 300;
+  let cursor = 0, shift = 0;
+  const topOf = {};
+  ANCH = [[0, Y1 + 1]];
+  WINS = [];
+  items.forEach((el, i) => {
+    if (el.dataset.state === 'max') return;          // lifted out of the flow
+    const k = +el.dataset.k;
+    let t = posY(k) - shift;
+    if (t < cursor){
+      t = cursor;                                  // overlap: push down
+    } else if (i > 0 && t > cursor + MAXGAP){
+      shift += t - (cursor + MAXGAP);              // dead years: compress
+      t = cursor + MAXGAP;
+    }
+    el.style.top = t + 'px';
+    ANCH.push([BASE + t, k]);
+    if (el.dataset.i !== undefined) topOf[+el.dataset.i] = t;
+    const h = el.offsetHeight;
+    if (h && el.classList.contains('win')) WINS.push([el, BASE + t, BASE + t + h]);
+    cursor = t + h + (h === 0 ? 0 : el.classList.contains('eramark') ? 16 : 30);
+  });
+  const total = cursor + 40;
+  ANCH.push([BASE + total, Y0 - .01]);
+  entriesEl.style.height = total + 'px';
+  graph.setAttribute('height', total);
+  graph.setAttribute('viewBox', '0 0 118 ' + total);
+  drawGraph(topOf, total);
+}
+
+/* The commit graph, drawn the way `git log --graph` reads: newest at the top,
+   branches diverging downward, converging again at the point they started. */
+function drawGraph(topOf, total){
+  const mx = laneX('life');
+  const bend = (x1, y1, x2, y2) => {                // vertical then quarter turn
+    const r = Math.min(20, Math.abs(y2 - y1) / 2);
+    return 'M' + x1 + ' ' + y1 + ' V' + (y2 - r) +
+           ' Q' + x1 + ' ' + y2 + ' ' + (x1 + Math.sign(x2 - x1) * r) + ' ' + y2 + ' H' + x2;
+  };
+  let s = '<path class="seg lead" d="M' + mx + ' 0 V' + (topOf[ENTRIES.length - 1] + 22) + '"/>';
+  s += '<path class="seg spine" d="M' + mx + ' ' + (topOf[ENTRIES.length - 1] + 22) + ' V' + (total - 44) + '"/>';
+
+  ENTRIES.forEach((e, i) => {
+    const y = topOf[i] + 22;
+    if (e.lane === 'life'){
+      s += '<circle class="node" cx="' + mx + '" cy="' + y + '" r="6" fill="none"/>' +
+           '<circle class="node" cx="' + mx + '" cy="' + y + '" r="2.4" fill="currentColor" stroke="none"/>';
+      return;
+    }
+    const x = laneX(e.lane);
+    const yBot = Math.max(y + 42, pxAtYear(e.y + (e.m || 0) / 12) - BASE);
+    s += '<path class="seg br" d="' + bend(mx, y - 30, x, y) + '"/>';              // diverge
+    s += '<path class="seg br" d="M' + x + ' ' + y + ' V' + yBot + '"/>';          // run
+    s += '<path class="seg br" d="M' + x + ' ' + yBot + ' H' + (mx + 20) +
+         ' Q' + mx + ' ' + yBot + ' ' + mx + ' ' + (yBot + 20) + '"/>';            // converge
+    s += '<circle class="node" cx="' + x + '" cy="' + y + '" r="5.5" fill="' +
+         (e.end ? 'none' : 'currentColor') + '"/>';
+  });
+  graph.innerHTML = s;
+}
+
+/* ==========================================================================
+   WINDOW CONTROLS
+   The caption buttons operate. Closing and minimising change heights, so
+   both re-run the layout through relayout(), which holds the reader's year.
+   ========================================================================== */
+const ACTS = {
+  'b-cls':'close', 'b-min':'min', 'b-max':'max',
+  'tl-r':'close',  'tl-y':'min',  'tl-g':'max'   // macOS names its own
+};
+const LABEL = {close:'Close', min:'Minimise', max:'Maximise'};
+/* .lights is macOS, .tvclose/.tvzoom are Turbo Vision's boxes in the border */
+const CTRL_SEL = '.wbtns b, .lights b, .tvclose, .tvr b';
+const STATE_OF = {close:'closed', min:'min', max:'max'};
+
+/* <b> elements keep every era's pixel geometry intact, so they are given a
+   button role and keyboard handling rather than being swapped for <button>. */
+function wireControls(el){
+  el.querySelectorAll(CTRL_SEL).forEach(btn => {
+    const act = Object.keys(ACTS).find(c => btn.classList.contains(c));
+    if (!act) return;
+    btn.dataset.act = ACTS[act];
+    btn.setAttribute('role', 'button');
+    btn.setAttribute('tabindex', '0');
+    const name = el.querySelector('h3')?.textContent || 'window';
+    btn.setAttribute('aria-label', LABEL[ACTS[act]] + ' ' + name);
+  });
+}
+
+function setState(el, action){
+  const state = action ? (STATE_OF[action] || action) : null;
+  if (state === 'max'){
+    document.querySelectorAll('.win[data-state="max"]').forEach(w => { delete w.dataset.state; });
+  }
+  if (state) el.dataset.state = state; else delete el.dataset.state;
+  document.body.toggleAttribute('data-maxed',
+    !!document.querySelector('.win[data-state="max"]'));
+  el.querySelectorAll(CTRL_SEL).forEach(b => {
+    if (!b.dataset.act) return;
+    const on = (b.dataset.act === 'min' && state === 'min') || (b.dataset.act === 'max' && state === 'max');
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  const hidden = document.querySelectorAll('.win[data-state="closed"],.win[data-state="min"]').length;
+  const r = document.getElementById('restore');
+  if (hidden) { r.dataset.n = hidden; r.textContent = 'Restore ' + hidden + (hidden === 1 ? ' window' : ' windows'); }
+  else delete r.dataset.n;
+  if (state !== 'max') relayout(); else onScroll();
+}
+
+entriesEl.addEventListener('click', ev => {
+  const btn = ev.target.closest('[data-act]');
+  const win = ev.target.closest('.win');
+  if (!win) return;
+  if (!btn){
+    // clicking the caption of a folded window unfolds it, as it should
+    if (win.dataset.state === 'min' && ev.target.closest('.bar')) setState(win, null);
+    return;
+  }
+  ev.preventDefault();
+  const act = btn.dataset.act, now = win.dataset.state;
+  if (act === 'close') setState(win, 'closed');
+  else if (act === 'min') setState(win, now === 'min' ? null : 'min');
+  else setState(win, now === 'max' ? null : 'max');
+});
+entriesEl.addEventListener('keydown', ev => {
+  if (ev.key !== 'Enter' && ev.key !== ' ') return;
+  const btn = ev.target.closest('[data-act]');
+  if (!btn) return;
+  ev.preventDefault();
+  btn.click();
+});
+document.addEventListener('keydown', ev => {
+  if (ev.key !== 'Escape') return;
+  const maxed = document.querySelector('.win[data-state="max"]');
+  if (maxed) setState(maxed, null);
+});
+document.getElementById('restore').addEventListener('click', () => {
+  document.querySelectorAll('.win[data-state]').forEach(w => { delete w.dataset.state; });
+  delete document.getElementById('restore').dataset.n;
+  relayout();
+});
+
+/* ==========================================================================
+   FOCUS
+   A desktop has exactly one focused window. Here it is the maximised window
+   if there is one, otherwise the window at the reading line. Every era draws
+   the others inactive, and the taskbars name the focused one.
+   ========================================================================== */
+let WINS = [], activeWin = null;
+function pickActive(focus){
+  const maxed = document.querySelector('.win[data-state="max"]');
+  if (maxed) return maxed;
+  let best = null, bestD = Infinity;
+  for (const [el, top, bottom] of WINS){
+    const d = focus < top ? top - focus : focus > bottom ? focus - bottom : 0;
+    if (d < bestD){ best = el; bestD = d; }
+  }
+  return best;
+}
+function setActive(el){
+  if (el === activeWin) return;
+  if (activeWin) activeWin.removeAttribute('data-active');
+  activeWin = el;
+  if (!el) return;
+  el.setAttribute('data-active', '');
+  document.querySelectorAll('#shells [data-task] span').forEach(t => { t.textContent = el.dataset.caption; });
+}
+
+/* ==========================================================================
+   DESKTOP ICONS
+   ========================================================================== */
+const DESKTOP = {
+  w95:   {items:[['computer95', 'My Computer'], ['network95', 'Network Neighborhood'], ['bin95', 'Recycle Bin'], ['briefcase', 'My Briefcase']]},
+  w98:   {items:[['computer95', 'My Computer'], ['docs98', 'My Documents'], ['globe', 'The Internet'], ['network95', 'Network Neighborhood'], ['bin95', 'Recycle Bin']]},
+  xp:    {items:[['docsXP', 'My Documents'], ['computerXP', 'My Computer'], ['binXP', 'Recycle Bin']]},
+  aero:  {items:[['user7', 'evgeny'], ['computer7', 'Computer'], ['bin7', 'Recycle Bin']]},
+  macos: {right:true, items:[['hd', 'Macintosh HD']]}
+};
+let deskIcons = [];
+function buildDesktopIcons(){
+  const host = document.getElementById('icons');
+  host.innerHTML = Object.entries(DESKTOP).map(([id, d]) =>
+    '<div class="ic ic-' + id + (d.right ? ' right' : '') + '" data-era="' + id + '">' +
+    d.items.map(([art, label], n) =>
+      '<div class="di' + (n === 0 && (id === 'w95' || id === 'w98') ? ' sel' : '') + '">' +
+      I32[art] + '<span>' + label + '</span></div>').join('') + '</div>'
+  ).join('');
+  deskIcons = [...host.querySelectorAll('.ic')];
+}
+
+/* ==========================================================================
+   SCROLL → ERA
+   ========================================================================== */
+const yrOut = document.getElementById('yrOut');
+const osOut = document.getElementById('osOut');
+const eraOut = document.getElementById('eraOut');
+const beds = [...document.querySelectorAll('#desktops .bd')];
+const shells = [...document.querySelectorAll('#shells .sh')];
+let lastEra = '';
+
+function onScroll(){
+  if (document.body.dataset.route !== 'timeline') return;
+  const focus = window.scrollY + window.innerHeight * .42;
+  const year = Math.max(Y0, Math.min(Y1 + .99, yearAtPx(focus)));
+
+  // wallpapers: newest is the base, each older era is revealed over it
+  let covered = -1;
+  beds.forEach((bd, i) => {
+    const e = STACK[i], F = 1.3;
+    const op = i === 0 ? 1
+      : Math.max(0, Math.min(1, ((e.to + 1 - (e.delay || 0)) - year) / F));
+    bd.style.opacity = op;
+    if (op >= 1) covered = i;
+  });
+  beds.forEach((bd, i) => { bd.style.display = i < covered ? 'none' : ''; });
+  // desktop furniture: visible only while its own era is on screen
+  shells.concat(deskIcons).forEach(el => {
+    const e = eraById[el.dataset.era], G = .35;
+    const v = Math.min(year - (e.from - G), (e.to + 1 + G) - year) / G;
+    el.style.opacity = Math.max(0, Math.min(1, v));
+  });
+
+  setActive(pickActive(focus));
+
+  const era = eraOf(year);
+  if (era.id !== lastEra){
+    lastEra = era.id;
+    document.documentElement.dataset.era = era.id;
+    osOut.textContent = era.os;
+    eraOut.textContent = era.name;
+  }
+  const shown = Math.max(Y0, Math.min(Y1, Math.floor(year)));
+  yrOut.textContent = shown;
+
+  const thumb = document.getElementById('thumb');
+  if (thumb){
+    const rh = document.getElementById('ruler').clientHeight;
+    const p = ((Y1 + 1) - year) / SPAN;
+    thumb.style.top = Math.max(0, Math.min(rh - 24, p * rh - 12)) + 'px';
+    thumb.firstElementChild.textContent = shown;
+  }
+}
+
+/* ==========================================================================
+   SCRUBBER, ROUTES, BOOT
+   ========================================================================== */
+function buildRuler(){
+  const r = document.getElementById('ruler');
+  r.innerHTML = STACK.map(e =>
+    '<button class="band" style="flex:' + (e.to - e.from + 1) + ' 0 0" data-to="' + e.to + '" ' +
+    'title="' + e.os + ' · ' + e.from + '–' + e.to + '">' +
+    '<i style="background:' + e.sw + '"></i>' +
+    '<em style="color:' + e.ink + '">' + e.to + '</em></button>'
+  ).join('') + '<div class="thumb" id="thumb"><b>2026</b></div>';
+  r.querySelectorAll('.band').forEach(b => b.addEventListener('click', () => {
+    window.scrollTo({top:Math.max(0, pxAtYear(+b.dataset.to + .9) - 150), behavior:'smooth'});
+  }));
+}
+
+function buildRoutes(){
+  const projects = ENTRIES.filter(e => e.lane === 'side').slice().reverse();
+  document.getElementById('pgrid').innerHTML = projects.map(p =>
+    '<article class="pcard lg"><span class="yr">' + p.y + ' · ' + esc(p.kind) + '</span>' +
+    '<h3>' + esc(p.title) + '</h3><p>' + esc(p.blurb) + '</p>' +
+    '<div class="foot">' + p.tags.map(t => '<b>' + esc(t) + '</b>').join('') + '</div></article>'
+  ).join('');
+  document.getElementById('lgrid').innerHTML = LINKS.map(l =>
+    '<a class="lnk lg" href="#/links"><span class="g">' + esc(l.g) + '</span>' +
+    '<span><b>' + esc(l.name) + '</b><small>' + esc(l.h) + '</small></span></a>'
+  ).join('');
+}
+
+/* The shipped site serves /projects and /links as real static files. In this
+   single-file prototype they are hash routes, driven directly on click so the
+   nav still works in sandboxes that refuse hash navigation. */
+function route(explicit){
+  const h = explicit || (location.hash || '#/').replace('#/', '') || 'timeline';
+  const name = ['projects','links'].includes(h) ? h : 'timeline';
+  document.body.dataset.route = name;
+  document.querySelectorAll('.route').forEach(r => r.classList.toggle('on', r.id === 'route-' + name));
+  ['timeline','projects','links'].forEach(n => {
+    const a = document.getElementById('nav-' + n);
+    if (name === n) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+  if (name === 'timeline'){ lastEra = ''; onScroll(); return; }
+  document.documentElement.dataset.era = 'glass';
+  lastEra = 'glass';
+  osOut.textContent = 'Liquid Glass';
+  eraOut.textContent = '/' + name;
+  yrOut.textContent = '2026';
+  beds.forEach((b, i) => b.style.opacity = i === 0 ? 1 : 0);
+  shells.forEach(el => el.style.opacity = el.dataset.era === 'glass' ? 1 : 0);
+  deskIcons.forEach(el => el.style.opacity = 0);
+}
+
+/* ==========================================================================
+   WALLPAPERS
+   The drawings above are recreations. Drop a real file into
+   prototype/wallpapers/ under the matching name and it takes over that era.
+   Nothing is bundled: see prototype/wallpapers/README.md for why.
+   ========================================================================== */
+const WALLPAPERS = {
+  mono:   'wallpapers/mono.jpg',
+  dos:    'wallpapers/dos.png',
+  w95:    'wallpapers/win95.png',
+  w98:    'wallpapers/win98.png',
+  xp:     'wallpapers/bliss.jpg',
+  aero:   'wallpapers/win7.jpg',
+  ubuntu: 'wallpapers/ubuntu.jpg',
+  macos:  'wallpapers/macos.jpg',
+  glass:  'wallpapers/glass.jpg'
+};
+/* resolves once every probe has either landed or missed, so the screenshot
+   suite never captures an era halfway between its drawing and its photo */
+function loadWallpapers(){
+  return Promise.all(Object.entries(WALLPAPERS).map(([id, src]) => new Promise(done => {
+    const probe = new Image();
+    probe.onload = () => {
+      const bd = document.querySelector('#desktops .bd[data-era="' + id + '"]');
+      if (bd){
+        bd.style.backgroundImage = 'url("' + src + '")';
+        bd.dataset.photo = '1';
+        const root = document.documentElement;
+        root.dataset.photos = ((root.dataset.photos || '') + ' ' + id).trim();
+      }
+      done();
+    };
+    probe.onerror = done;                   // a miss just leaves the drawing
+    probe.src = src;
+  })));
+}
+
+function metrics(){
+  YEAR_H = window.innerWidth < 900 ? 96 : 122;
+  TOP = window.innerWidth < 900 ? 170 : 210;
+}
+function init(){
+  metrics();
+  buildTimeline();
+  buildRuler();
+  buildRoutes();
+  paintArt();
+  buildDesktopIcons();
+  loadWallpapers().then(() => { BOOT.wallpapersSettled = true; });
+  requestAnimationFrame(() => { place(); route(); });
+}
+/* place() changes every offset, so a re-layout after fonts load or on resize
+   would slide the page under the reader. Hold the year instead of the pixel. */
+function relayout(){
+  const held = ANCH.length ? yearAtPx(window.scrollY + window.innerHeight * .42) : null;
+  metrics();
+  place();
+  if (held !== null && document.body.dataset.route === 'timeline'){
+    window.scrollTo({top:Math.max(0, pxAtYear(held) - window.innerHeight * .42), behavior:'auto'});
+  }
+  onScroll();
+}
+let rt;
+window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(relayout, 180); });
+window.addEventListener('scroll', () => requestAnimationFrame(onScroll), {passive:true});
+window.addEventListener('hashchange', () => route());
+['timeline','projects','links'].forEach(n => {
+  document.getElementById('nav-' + n).addEventListener('click', ev => {
+    ev.preventDefault();
+    try { history.replaceState(null, '', n === 'timeline' ? '#/' : '#/' + n); } catch (_) {}
+    window.scrollTo(0, 0);
+    route(n);
+  });
+});
+document.querySelector('.mark').addEventListener('click', ev => {
+  ev.preventDefault(); window.scrollTo(0, 0); route('timeline');
+});
+if (document.fonts) document.fonts.ready.then(() => { relayout(); BOOT.laidOut = true; });
+else setTimeout(() => { BOOT.laidOut = true; }, 100);
+
+/* Test hook. The screenshot suite has to land on an exact year, and where a
+   year sits is only knowable after place() has run, so it waits on laidOut. */
+const BOOT = window.BOOT = {
+  laidOut: false,
+  wallpapersSettled: false,
+  eras: ERAS.map(e => ({id:e.id, os:e.os, from:e.from, to:e.to, sw:e.sw})),
+  gotoYear(yr){
+    window.scrollTo(0, Math.max(0, pxAtYear(yr) - window.innerHeight * .42));
+    onScroll();
+    return {year:yr, era:document.documentElement.dataset.era, shown:yrOut.textContent};
+  },
+  goto(name){ window.scrollTo(0, 0); route(name); },
+  /* act on the window nearest a year: 'close' | 'min' | 'max' | null */
+  act(year, what){
+    const px = pxAtYear(year);
+    const win = [...document.querySelectorAll('.win[data-i]')]
+      .map(w => ({w, d:Math.abs(w.getBoundingClientRect().top + window.scrollY - px)}))
+      .sort((a, b) => a.d - b.d)[0];
+    if (!win) return null;
+    setState(win.w, what);
+    return {i:+win.w.dataset.i, state:win.w.dataset.state || null,
+            chrome:win.w.dataset.chrome, h:win.w.offsetHeight};
+  },
+  restoreAll(){ document.getElementById('restore').click(); },
+  hidden(){ return document.querySelectorAll('.win[data-state="closed"],.win[data-state="min"]').length; }
+};
+init();
+</script>
