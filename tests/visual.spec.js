@@ -1,9 +1,18 @@
 const { test, expect } = require('@playwright/test');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const { spawnSync } = require('node:child_process');
+
+const ROOT = path.join(__dirname, '..');
+const BUILD = path.join(ROOT, 'scripts', 'build.mjs');
+const ENTRY_FILES = fs.readdirSync(path.join(ROOT, 'content', 'entries'))
+  .filter((f) => f.endsWith('.md') && f !== 'README.md' && !f.startsWith('_'));
 
 /* ---------------------------------------------------------------------------
    Visual suite for evgeny.fyi.
 
-   The page's whole premise is that nine interfaces stay recognisable and
+   The page's whole premise is that ten interfaces stay recognisable and
    stay in agreement with each other, which is exactly the kind of thing that
    silently rots. Two layers of coverage:
 
@@ -37,7 +46,8 @@ const ERAS = [
   { id: 'xp',     from: 2001, to: 2006 },
   { id: 'aero',   from: 2007, to: 2011 },
   { id: 'ubuntu', from: 2012, to: 2015 },
-  { id: 'macos',  from: 2016, to: 2024 },
+  { id: 'w10',    from: 2016, to: 2020 },
+  { id: 'macos',  from: 2021, to: 2024 },
   { id: 'glass',  from: 2025, to: 2026 },
 ];
 
@@ -291,7 +301,7 @@ test.describe('invariants', () => {
 
   test('desktop icons appear only in their own era', async ({ page }) => {
     await open(page);
-    const withIcons = ['w95', 'w98', 'xp', 'aero', 'macos'];
+    const withIcons = ['w95', 'w98', 'xp', 'aero', 'w10', 'macos'];
     for (const era of ERAS) {
       const lit = await page.evaluate((y) => {
         window.BOOT.gotoYear(y);
@@ -315,6 +325,46 @@ test.describe('invariants', () => {
     expect(filters.body).not.toBeNull();
     expect(filters.rim).not.toBeNull();
     expect(filters.rim).toBeGreaterThan(filters.body);
+  });
+});
+
+/* Entries are Markdown files compiled at build time. These guard the contract
+   an author relies on: every file shows up, and a broken file stops the build
+   with a message that says what to fix instead of publishing a broken page. */
+test.describe('content', () => {
+  test('every Markdown entry becomes exactly one window', async ({ page }) => {
+    await open(page);
+    const rendered = await page.evaluate(() => ({
+      slugs: JSON.parse(document.getElementById('entries-data').textContent).map((e) => e.slug),
+      windows: document.querySelectorAll('.win[data-i]').length,
+    }));
+    expect(rendered.slugs.slice().sort()).toEqual(ENTRY_FILES.map((f) => f.replace(/\.md$/, '')).sort());
+    expect(rendered.windows).toBe(ENTRY_FILES.length);
+  });
+
+  test('the committed entries pass the build check', () => {
+    const run = spawnSync(process.execPath, [BUILD, '--check'], { encoding: 'utf8' });
+    expect(run.status, run.stdout + run.stderr).toBe(0);
+  });
+
+  test('a malformed entry stops the build and says what to fix', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'entries-'));
+    fs.writeFileSync(path.join(dir, '2018-06-broken.md'), [
+      '---', 'title: [Project]', 'lane: sides', 'kind: project', 'start: 2018-13',
+      'tags: react', 'colour: blue', '---', '',
+    ].join('\n'));
+    const run = spawnSync(process.execPath, [BUILD, '--check', '--content', dir], { encoding: 'utf8' });
+    const out = run.stdout + run.stderr;
+    expect(run.status).toBe(1);
+    expect(out).toContain('2018-06-broken.md');
+    for (const hint of [
+      '"title" must be text. Text that starts with a square bracket needs quotes: title: "[Project]"',
+      '"lane" must be one of life, education, work, side (got "sides")',
+      '"start" month must be between 01 and 12',
+      '"tags" must be a list',
+      '"colour" is not a field',
+      'at least one paragraph of text',
+    ]) expect(out).toContain(hint);
   });
 });
 

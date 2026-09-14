@@ -5,7 +5,7 @@
 /* ==========================================================================
    BOOT SEQUENCE — prototype for evgeny.fyi
    Reverse chronology: 2026 at the top, 1986 at the bottom.
-   Scrolling down walks backwards through nine interface eras.
+   Scrolling down walks backwards through ten interface eras.
    ========================================================================== */
 
 :root{
@@ -25,6 +25,7 @@
   --thumb:#8FE3FF; --wire:#8FE3FF; --tb:54px;
 }
 html[data-era="macos"] { --fg:#1D1D1F; --dim:#6E6E76; --accent:#0A7CFF; --hair:rgba(0,0,0,.13);        --panel:rgba(250,250,252,.72); --thumb:#0A7CFF; --wire:#0060DF; --tb:28px; }
+html[data-era="w10"]   { --fg:#FFFFFF; --dim:#A6A6A6; --accent:#0078D7; --hair:rgba(255,255,255,.16);  --panel:rgba(24,24,24,.86);   --thumb:#0078D7; --wire:#76B9ED; }
 html[data-era="ubuntu"]{ --fg:#F6EFEA; --dim:#B2879B; --accent:#E95420; --hair:rgba(233,84,32,.32);    --panel:rgba(34,0,22,.80);     --thumb:#E95420; --wire:#E95420; }
 html[data-era="aero"]  { --fg:#E8F2FD; --dim:#8FAFCE; --accent:#7EC8FF; --hair:rgba(180,220,255,.26);  --panel:rgba(12,28,48,.62);    --thumb:#7EC8FF; --wire:#7EC8FF; }
 html[data-era="xp"]    { --fg:#FFFFFF; --dim:#D3E2F7; --accent:#FFD24A; --hair:rgba(255,255,255,.34);  --panel:rgba(14,56,128,.72);   --thumb:#FFD24A; --wire:#FFD24A; }
@@ -43,7 +44,7 @@ body{
 a{color:inherit}
 
 /* ========================= wallpapers =========================
-   Nine fixed layers. The newest era is the base; each older era is
+   Ten fixed layers. The newest era is the base; each older era is
    revealed over it as the year counts down. Only opacity animates. */
 #desktops{position:fixed;inset:0;z-index:0;pointer-events:none}
 #desktops .bd{position:absolute;inset:0;will-change:opacity}
@@ -64,6 +65,7 @@ a{color:inherit}
 .bd-glass::after{content:"";position:absolute;inset:0;opacity:.5;
   background:repeating-linear-gradient(118deg,transparent 0 38px,rgba(255,255,255,.05) 38px 40px)}
 .bd-macos{background:#E7DFF0}
+.bd-w10{background:#021434}
 .bd-ubuntu{background:
   radial-gradient(56% 42% at 6% 94%,rgba(233,84,32,.36),transparent 62%),
   radial-gradient(48% 38% at 94% 6%,rgba(119,41,83,.58),transparent 64%),
@@ -155,6 +157,20 @@ html[data-era="macos"] .stamp .yr::after{content:"14:32";margin-left:8px;font-we
 html[data-era="macos"] .stamp .os b{font:400 13px var(--sf)}
 html[data-era="macos"] .stamp .os i{display:none}
 html[data-era="ubuntu"] .topbar{background:linear-gradient(180deg,#3B2C36,#241A21);border-bottom:1px solid #120C10}
+/* Windows 10: a dark acrylic strip in Segoe UI, the current page marked by a
+   2px accent underline the way a UWP pivot marks its selected tab */
+html[data-era="w10"] .topbar{background:rgba(26,26,26,.82);border-bottom:none;
+  backdrop-filter:blur(30px) saturate(1.25);-webkit-backdrop-filter:blur(30px) saturate(1.25);
+  box-shadow:0 1px 0 rgba(255,255,255,.07)}
+html[data-era="w10"] .mark{font:600 13px var(--segoe);color:#FFF}
+html[data-era="w10"] .mark s{color:#76B9ED}
+html[data-era="w10"] .stamp .yr{font:400 24px var(--segoe)}
+html[data-era="w10"] .stamp .os b{font:600 12px var(--segoe)}
+html[data-era="w10"] .stamp .os i{font:12px var(--segoe);letter-spacing:0;text-transform:none;color:#A6A6A6}
+html[data-era="w10"] .nav a{font:400 13px var(--segoe);letter-spacing:0;text-transform:none;color:#C8C8C8;
+  border:none;border-radius:0;padding:9px 12px 7px;border-bottom:2px solid transparent}
+html[data-era="w10"] .nav a:hover{color:#FFF;background:rgba(255,255,255,.08)}
+html[data-era="w10"] .nav a[aria-current="page"]{color:#FFF;background:transparent;border-bottom-color:#0078D7}
 html[data-era="aero"] .topbar{background:rgba(206,230,255,.16);border-bottom:1px solid rgba(255,255,255,.34);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.40)}
 html[data-era="xp"] .topbar{background:linear-gradient(180deg,#4E93F7 0,#2064DC 10%,#0C4CC4 52%,#2E79E8 92%,#4E93F7 100%);
@@ -313,6 +329,9 @@ html[data-era="aero"] .restore{border:1px solid #707070;border-radius:3px;color:
   letter-spacing:0;text-transform:none;padding:4px 12px;background:linear-gradient(180deg,#F2F2F2 0,#EBEBEB 50%,#DDD 51%,#CFCFCF)}
 html[data-era="ubuntu"] .restore{border:1px solid #1E1A1D;border-radius:4px;color:#F2EDE9;font:12px var(--ubuntu);
   letter-spacing:0;text-transform:none;padding:4px 12px;background:linear-gradient(180deg,#5A5450,#3C3835)}
+html[data-era="w10"] .restore{border:2px solid transparent;border-radius:0;color:#FFF;font:13px var(--segoe);
+  letter-spacing:0;text-transform:none;padding:4px 14px;background:#333}
+html[data-era="w10"] .restore:hover{border-color:#858585}
 html[data-era="macos"] .restore{border:.5px solid rgba(0,0,0,.18);border-radius:6px;color:#1D1D1F;font:500 13px var(--sf);
   letter-spacing:0;text-transform:none;padding:3px 11px;background:#FFF;box-shadow:0 .5px 1px rgba(0,0,0,.14)}
 html[data-era="glass"] .restore{border:1px solid rgba(255,255,255,.2);border-radius:999px;color:#FFF;font:500 12px var(--sf);
@@ -724,7 +743,94 @@ html[data-era="mono"] .restore{border:1px solid #FFB000;border-radius:0;color:#F
 .win[data-chrome="ubuntu"] .status{background:#F1EEEC;border-top:1px solid #DAD5D1;padding:3px 8px;color:#6E6862}
 .win[data-chrome="ubuntu"] .status s:first-child{flex:1}
 
-/* ---- 2016–2024 · macOS ------------------------------------------------------
+/* ---- 2016–2020 · Windows 10, File Explorer --------------------------------
+   Flat, white and square. A 31px caption carries the folder icon, the Quick
+   Access toolbar and the folder name; the caption buttons are 46px wide with
+   hairline glyphs and only the close button turns red under the pointer. The
+   ribbon sits collapsed with a solid blue File tab, and only the focused
+   window gets the thin accent border. */
+.win[data-chrome="w10"]{font-family:var(--segoe);font-size:12px}
+.win[data-chrome="w10"] .frame{background:#FFF;color:#1F1F1F;border:1px solid #1883D7;
+  box-shadow:0 10px 34px rgba(0,0,0,.44),0 2px 8px rgba(0,0,0,.22)}
+.win[data-chrome="w10"]:not([data-active]) .frame{border-color:#AAAAAA;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.win[data-chrome="w10"] .bar{height:31px;padding:0 0 0 8px;gap:0;background:#FFF;color:#000}
+.win[data-chrome="w10"] .ico,.win[data-chrome="w10"] .qat i{display:flex;flex:0 0 auto}
+.win[data-chrome="w10"] .ico svg,.win[data-chrome="w10"] .qat svg{width:16px;height:16px;display:block}
+.win[data-chrome="w10"] .qat{display:flex;align-items:center;gap:6px;margin-left:8px}
+.win[data-chrome="w10"] .qat em{font-style:normal;font-size:9px;color:#5F5F5F}
+.win[data-chrome="w10"] .bar .vsep{width:1px;height:16px;margin:0 9px 0 8px;background:#D9D9D9}
+.win[data-chrome="w10"] .bar .t{font-size:12px;color:#000}
+.win[data-chrome="w10"]:not([data-active]) .bar .t{color:#999}
+.win[data-chrome="w10"] .wbtns{gap:0;align-self:stretch}
+.win[data-chrome="w10"] .wbtns b{position:relative;width:46px;height:31px;color:#000}
+.win[data-chrome="w10"]:not([data-active]) .wbtns b{color:#999}
+.win[data-chrome="w10"] .wbtns b:hover{background:#E5E5E5}
+.win[data-chrome="w10"] .wbtns .b-cls:hover{background:#E81123;color:#FFF}
+.win[data-chrome="w10"] .b-min::before{content:"";position:absolute;left:18px;top:15px;width:10px;height:1px;background:currentColor}
+.win[data-chrome="w10"] .b-max::before{content:"";position:absolute;left:18px;top:10px;width:10px;height:10px;
+  box-sizing:border-box;border:1px solid currentColor}
+.win[data-chrome="w10"] .b-cls::before,.win[data-chrome="w10"] .b-cls::after{content:"";position:absolute;
+  left:16px;top:15px;width:14px;height:1px;background:currentColor;transform:rotate(45deg)}
+.win[data-chrome="w10"] .b-cls::after{transform:rotate(-45deg)}
+/* the collapsed ribbon */
+.win[data-chrome="w10"] .ribbon{display:flex;align-items:stretch;height:24px;background:#FFF;
+  border-bottom:1px solid #DADBDC;color:#444}
+.win[data-chrome="w10"] .ribbon b{display:grid;place-items:center;padding:0 13px;font-weight:400}
+.win[data-chrome="w10"] .ribbon .file{background:#1979CA;color:#FFF;padding:0 15px}
+.win[data-chrome="w10"] .ribbon .rh{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 8px;color:#5F5F5F}
+.win[data-chrome="w10"] .ribbon .rh em{font-style:normal}
+.win[data-chrome="w10"] .ribbon .rh i{display:grid;place-items:center;width:15px;height:15px;border-radius:50%;
+  background:#1979CA;color:#FFF;font:700 10px/1 var(--segoe);font-style:normal}
+/* navigation buttons, breadcrumb address and search */
+.win[data-chrome="w10"] .addr{height:34px;padding:0 8px 0 6px;gap:6px;background:#FFF;color:#000}
+.win[data-chrome="w10"] .navb{display:flex;align-items:center;gap:5px;flex:0 0 auto;color:#333}
+.win[data-chrome="w10"] .navb i{display:flex}
+.win[data-chrome="w10"] .navb svg{width:16px;height:16px;display:block}
+.win[data-chrome="w10"] .navb i.off{color:#BFBFBF}
+.win[data-chrome="w10"] .navb em{font-style:normal;font-size:9px;color:#5F5F5F;margin:0 1px}
+.win[data-chrome="w10"] .addr .combo{height:24px;border:1px solid #D9D9D9;padding:0 6px 0 5px;gap:6px}
+.win[data-chrome="w10"] .addr .combo > span{flex:0 0 auto}
+.win[data-chrome="w10"] .addr .combo .crumb{flex:1;min-width:0;color:#1F1F1F}
+.win[data-chrome="w10"] .addr .combo .crumb i{font-style:normal;color:#6D6D6D;margin:0 6px}
+.win[data-chrome="w10"] .addr .combo .dd{color:#5F5F5F;font-size:9px}
+.win[data-chrome="w10"] .addr .combo .rf{display:flex;color:#5F5F5F;padding-left:6px;border-left:1px solid #EDEDED}
+.win[data-chrome="w10"] .addr .combo .rf svg{width:14px;height:14px;display:block}
+.win[data-chrome="w10"] .addr .search{flex:0 0 160px;height:24px;display:flex;align-items:center;
+  justify-content:space-between;border:1px solid #D9D9D9;padding:0 7px;color:#6D6D6D}
+.win[data-chrome="w10"] .addr .search span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.win[data-chrome="w10"] .addr .search i{display:flex;flex:0 0 auto;color:#5F5F5F}
+.win[data-chrome="w10"] .addr .search svg{width:14px;height:14px;display:block}
+/* navigation pane */
+.win[data-chrome="w10"] .side{flex:0 0 168px;padding:6px 0 10px;background:#FFF;border-right:1px solid #F0F0F0;
+  color:#1F1F1F;font-size:12px;line-height:1}
+.win[data-chrome="w10"] .side u{display:flex;align-items:center;gap:7px;height:22px;padding:0 10px 0 24px;
+  text-decoration:none;opacity:1;color:#1F1F1F;white-space:nowrap}
+.win[data-chrome="w10"] .side u.top{padding-left:10px;margin-top:8px}
+.win[data-chrome="w10"] .side u.top:first-child{margin-top:0}
+.win[data-chrome="w10"] .side u.sel{background:#CCE8FF}
+.win[data-chrome="w10"] .side u i{display:flex;flex:0 0 auto}
+.win[data-chrome="w10"] .side svg{width:16px;height:16px;display:block}
+/* content, with the tags written out the way the details pane lists them */
+.win[data-chrome="w10"] .body{color:#1F1F1F;padding:14px 20px 18px}
+.win[data-chrome="w10"] .body .kind{display:none}
+.win[data-chrome="w10"] h3{font:400 20px/1.25 var(--segoe);letter-spacing:-.01em;color:#000;margin-bottom:4px}
+.win[data-chrome="w10"] .org{color:#6D6D6D;opacity:1}
+.win[data-chrome="w10"] .blurb{font-size:12.5px;line-height:1.55}
+.win[data-chrome="w10"] .tags{display:block;margin-top:12px;color:#6D6D6D;font-size:12px}
+.win[data-chrome="w10"] .tags::before{content:"Tags: "}
+.win[data-chrome="w10"] .tags b{display:inline;border:none;padding:0;font:400 12px var(--segoe);
+  letter-spacing:0;text-transform:none;opacity:1;color:#0066B4}
+.win[data-chrome="w10"] .tags b + b::before{content:"; ";color:#6D6D6D}
+.win[data-chrome="w10"] .status{height:22px;padding:0 8px 0 10px;background:#FFF;color:#1F1F1F;
+  border-top:1px solid #F0F0F0}
+.win[data-chrome="w10"] .status s{font-size:12px;padding:0}
+.win[data-chrome="w10"] .status s:first-child{flex:1}
+.win[data-chrome="w10"] .status .views{display:flex;gap:2px}
+.win[data-chrome="w10"] .status .views i{display:grid;place-items:center;width:18px;height:18px;color:#5F5F5F}
+.win[data-chrome="w10"] .status .views i.on{box-shadow:inset 0 0 0 1px #99D1FF;background:#CCE8FF}
+.win[data-chrome="w10"] .status .views svg{width:14px;height:14px;display:block}
+
+/* ---- 2021–2024 · macOS ------------------------------------------------------
    Big Sur's window is two materials. The sidebar is vibrancy: translucent,
    blurred and tinted by whatever sits behind the window, running full height
    with the traffic lights floating on it. The content pane is opaque. The
@@ -1028,6 +1134,34 @@ html[data-photos~="glass"][data-era="glass"] .stamp .os i{color:rgba(230,236,255
 .sh-ubuntu .tile.on::after{content:"";position:absolute;right:-7px;top:50%;margin-top:-4px;
   border:4px solid transparent;border-right-color:rgba(255,255,255,.75)}
 
+/* w10: the dark taskbar. Start, the search box, Task View, pinned apps with
+   the focused one lit and every running one underlined, then the tray */
+.sh-w10{height:40px;display:flex;align-items:stretch;color:#FFF;
+  background:rgba(16,16,16,.88);backdrop-filter:blur(26px) saturate(1.2);-webkit-backdrop-filter:blur(26px) saturate(1.2)}
+.sh-w10 > i,.sh-w10 .app{position:relative;display:grid;place-items:center;width:48px;flex:0 0 auto}
+.sh-w10 svg{width:16px;height:16px;display:block}
+.sh-w10 .app svg{width:24px;height:24px}
+.sh-w10 .search{display:flex;align-items:center;gap:10px;width:320px;padding:0 12px;
+  background:#F3F3F3;color:#1F1F1F;font:13px var(--segoe)}
+.sh-w10 .search i{display:flex;color:#1F1F1F}
+.sh-w10 .app.on{background:rgba(255,255,255,.14)}
+.sh-w10 .app.on::after,.sh-w10 .app.run::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:#76B9ED}
+.sh-w10 .app.run::after{left:8px;right:8px}
+.sh-w10 .a-web{color:#3BA0F0}
+.sh-w10 .tray{margin-left:auto;display:flex;align-items:stretch;font:12px/1.3 var(--segoe)}
+.sh-w10 .tray > *{display:grid;place-items:center;padding:0 8px}
+.sh-w10 .tray .clock{text-align:center;padding:0 10px}
+/* on a phone-width screen, fall back to Windows 10's own compact settings:
+   search shown as an icon, the tray down to the clock and notifications */
+@media (max-width:900px){
+  .sh-w10 .search{width:48px;padding:0;justify-content:center;background:none}
+  .sh-w10 .search i{color:#FFF}
+  .sh-w10 .search span,.sh-w10 .tray > :not(.clock):not(:last-child){display:none}
+  .win[data-chrome="w10"] .addr .search{flex-basis:96px}
+  .win[data-chrome="w10"] .addr .combo .dd,.win[data-chrome="w10"] .addr .combo .rf,
+  .win[data-chrome="w10"] .navb em{display:none}
+}
+
 /* macos: the dock */
 .sh-macos{display:flex;justify-content:center;padding:0 0 9px;background:none}
 .sh-macos .dock{display:flex;align-items:flex-end;gap:9px;padding:7px 9px;border-radius:19px;
@@ -1073,11 +1207,17 @@ html[data-photos~="glass"][data-era="glass"] .stamp .os i{color:rgba(230,236,255
 .ic-w95 .di.sel span,.ic-w98 .di.sel span{background:#000080;outline:1px dotted #FFFF80;outline-offset:-1px}
 .ic-xp .di span{font:11px var(--tahoma);color:#FFF;text-shadow:1px 1px 1px #000,0 0 2px rgba(0,0,0,.6)}
 .ic-aero .di span{font:12px var(--segoe);color:#FFF;text-shadow:0 0 6px rgba(0,0,0,.9),0 1px 2px #000}
+.ic-w10 .di span{font:12px var(--segoe);color:#FFF;text-shadow:0 1px 2px rgba(0,0,0,.9),0 0 1px #000}
 .ic-macos .di span{font:600 12px var(--sf);color:#1D1D1F;text-shadow:0 0 6px rgba(255,255,255,.9)}
 /* on a photograph macOS draws desktop labels white with a shadow */
 html[data-photos~="macos"] .ic-macos .di span{color:#FFF;text-shadow:0 1px 3px rgba(0,0,0,.65),0 0 1px rgba(0,0,0,.8)}
 @media (max-width:1239px){ #icons{display:none} }
 @media (max-width:900px){ html[data-era="macos"] .extras{display:none} }
+
+/* an entry's optional link, shown on its project card */
+.pcard .plink{align-self:flex-start;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;
+  color:var(--accent);text-decoration:none}
+.pcard .plink:hover{text-decoration:underline;text-underline-offset:3px}
 
 /* ========================= /projects and /links ========================= */
 .route{display:none;position:relative;z-index:10;padding:96px 0 150px}
@@ -1162,6 +1302,28 @@ body[data-route="projects"] main,body[data-route="links"] main{display:none}
     </g>
     <path fill="#8D88C6" d="M688 548c8-22 22-26 30-4l6 18h-42z"/>
     <path fill="#9C97CE" d="M640 566c5-12 13-14 18-2l4 10h-26z"/></svg></div>
+  <div class="bd bd-w10"    data-era="w10"><svg class="art" viewBox="0 0 1024 768"
+    preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>
+    <linearGradient id="wtBg" x1="0" y1="0" x2=".35" y2="1">
+      <stop offset="0" stop-color="#000814"/><stop offset=".5" stop-color="#03204F"/><stop offset="1" stop-color="#010C24"/></linearGradient>
+    <radialGradient id="wtGlow" cx=".34" cy=".44" r=".55">
+      <stop offset="0" stop-color="#7FD0FF" stop-opacity=".62"/><stop offset=".35" stop-color="#2479D8" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#062A66" stop-opacity="0"/></radialGradient>
+    <linearGradient id="wtPane" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E4F6FF"/><stop offset=".5" stop-color="#7ACBFF"/><stop offset="1" stop-color="#1F7AE0"/></linearGradient>
+    <linearGradient id="wtBeam" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#BFE8FF" stop-opacity=".34"/><stop offset="1" stop-color="#BFE8FF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="wtSpill" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4FB3FF" stop-opacity=".5"/><stop offset="1" stop-color="#4FB3FF" stop-opacity="0"/></linearGradient></defs>
+    <rect width="1024" height="768" fill="url(#wtBg)"/>
+    <rect width="1024" height="768" fill="url(#wtGlow)"/>
+    <g fill="url(#wtBeam)">
+      <path d="M318 214L1024 40v150z"/>
+      <path d="M318 214L1024 250v140z" opacity=".7"/>
+      <path d="M330 470L1024 420v170z" opacity=".8"/>
+      <path d="M330 470L1024 640v128H940z" opacity=".5"/></g>
+    <path d="M300 200l60 18v264l-60 22z" fill="url(#wtPane)" opacity=".92"/>
+    <path d="M360 482L1024 600v168H520z" fill="url(#wtSpill)" opacity=".55"/></svg></div>
   <div class="bd bd-ubuntu" data-era="ubuntu"><svg class="art" viewBox="0 0 1024 768"
     preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <g transform="translate(792 232)">
@@ -1221,6 +1383,15 @@ body[data-route="projects"] main,body[data-route="links"] main{display:none}
   </div>
   <div class="sh sh-macos" data-era="macos">
     <div class="dock"><i class="run d-finder" data-art="g24:folder"></i><i class="d-web" data-art="g24:compass"></i><i class="run d-mail" data-art="g24:mail"></i><i class="d-notes" data-art="g24:notes"></i><i class="run d-term" data-art="g24:terminal"></i><i class="d-gear" data-art="g24:gear"></i><span class="div"></span><i class="d-trash" data-art="g24:trash"></i></div>
+  </div>
+  <div class="sh sh-w10" data-era="w10">
+    <i data-art="i16:w10_start"></i>
+    <div class="search"><i data-art="i16:w10_search"></i><span>Type here to search</span></div>
+    <i data-art="i16:w10_taskview"></i>
+    <div class="app on" data-art="i16:w10_folder"></div><div class="app a-web" data-art="g24:globe"></div>
+    <div class="app run" data-art="g24:mail"></div>
+    <div class="tray"><i data-art="i16:w10_chevron"></i><i data-art="i16:w10_wifi"></i><i data-art="i16:w10_volume"></i>
+      <span>ENG</span><span class="clock">14:32<br>11/06/2018</span><i data-art="i16:w10_notify"></i></div>
   </div>
   <div class="sh sh-ubuntu" data-era="ubuntu">
     <div class="dash"><i></i></div>
@@ -1325,6 +1496,7 @@ body[data-route="projects"] main,body[data-route="links"] main{display:none}
 .win.coda .line s{text-decoration:none;color:#8E6C24}
 </style>
 
+<script type="application/json" id="entries-data">[]</script>
 <script>
 /* ==========================================================================
    DATA
@@ -1339,109 +1511,16 @@ const ERAS = [
   {id:'xp',     os:'Windows XP',     name:'Luna · Bliss',        from:2001, to:2006, sw:'#2A6FD8', ink:'#FFFFFF'},
   {id:'aero',   os:'Windows 7',      name:'Aero Glass',          from:2007, to:2011, sw:'#0E2B4C', ink:'#9FD4FF'},
   {id:'ubuntu', os:'Ubuntu',         name:'Unity · Ambiance',    from:2012, to:2015, sw:'#2C001E', ink:'#E95420'},
-  {id:'macos',  os:'macOS',          name:'Yosemite → Sequoia',  from:2016, to:2024, sw:'#E4DCF0', ink:'#1D1D1F'},
+  {id:'w10',    os:'Windows 10',     name:'Redstone',            from:2016, to:2020, sw:'#0B3F7A', ink:'#FFFFFF'},
+  {id:'macos',  os:'macOS',          name:'Big Sur → Sequoia',   from:2021, to:2024, sw:'#E4DCF0', ink:'#1D1D1F'},
   {id:'glass',  os:'Liquid Glass',   name:'iOS 26 · macOS Tahoe', from:2025, to:2026, sw:'#14122E', ink:'#8FE3FF'}
 ];
 const LANES = [{id:'life',x:14},{id:'education',x:42},{id:'work',x:70},{id:'side',x:98}];
 
-const ENTRIES = [
- {lane:'life',kind:'init',y:1986,m:5,title:'git init',org:'[city, country]',
-  blurb:'The first commit. Everything after this is a diff against it.',tags:['1986']},
- {lane:'life',kind:'first screen',y:1988,m:2,title:'First screen',org:'[machine] at [place]',
-  blurb:'A monochrome monitor in a room I was not supposed to be in. I remember the smell of warm dust better than anything that was on it.',tags:['crt']},
- {lane:'education',kind:'school',y:1991,m:8,end:1997,title:'Primary school',org:'[school name]',
-  blurb:'Six years on the education branch. The only computer in the building lived in a locked room and booted straight to a prompt.',tags:['maths']},
- {lane:'life',kind:'hardware',y:1992,m:10,title:'First computer at home',org:'[machine, spec]',
-  blurb:'Second-hand, beige, and mine. I learned what a configuration file was by breaking one and spending a weekend putting it back.',tags:['ms-dos','autoexec.bat']},
- {lane:'side',kind:'first program',y:1993,m:1,title:'First program',org:'[BASIC dialect]',
-  blurb:'It printed my name. Then it printed my name a thousand times. The second version felt like power.',tags:['basic','goto']},
- {lane:'side',kind:'tinkering',y:1994,m:5,title:'[DOS game], modified',org:'A hex editor and hope',
-  blurb:'Changed numbers in a save file until something interesting happened. This is still broadly how I debug.',tags:['hex','reverse engineering']},
- {lane:'life',kind:'upgrade',y:1995,m:8,title:'First Windows',org:'[machine]',
-  blurb:'A Start button, a taskbar, and the sudden ability to run two things at once. It felt like the future for about a year.',tags:['windows 95']},
- {lane:'education',kind:'competition',y:1996,m:2,title:'[Regional maths olympiad]',org:'[result]',
-  blurb:'Discovered that some problems are better than others, and that I preferred the ones with no obvious first step.',tags:['olympiad']},
- {lane:'education',kind:'school',y:1997,m:8,end:2004,title:'Secondary school',org:'[school name] · [specialisation]',
-  blurb:'Seven years of maths and physics on paper, plus an unofficial parallel curriculum in the computer lab after hours.',tags:['physics','pascal']},
- {lane:'side',kind:'first website',y:1998,m:3,title:'[First website]',org:'Hand-written HTML',
-  blurb:'Tables for layout, an animated divider, and a hit counter I refreshed myself. Every part of it was wrong and I loved it.',tags:['html','geocities']},
- {lane:'side',kind:'project',y:1999,m:9,title:'[IRC bot]',org:'[language]',
-  blurb:'A bot that answered questions in a channel of about eleven people. My first taste of code that runs while you sleep.',tags:['irc','sockets']},
- {lane:'life',kind:'connection',y:2000,m:0,title:'Dial-up at home',org:'[provider]',
-  blurb:'Fifty-six kilobits, shared with the telephone. I learned to plan a download the way you plan a journey.',tags:['modem']},
- {lane:'side',kind:'project',y:2001,m:6,title:'[Desktop utility]',org:'[Delphi / Visual Basic]',
-  blurb:'A small Windows tool for a problem exactly one person had. That person was me, and it worked.',tags:['delphi','win32']},
- {lane:'education',kind:'competition',y:2002,m:10,title:'[Programming contest]',org:'[result]',
-  blurb:'Three hours, five problems, one working solution. Losing on time taught me more than the solutions did.',tags:['algorithms','acm']},
- {lane:'education',kind:'university',y:2004,m:8,end:2009,title:'University',org:'[university] · [degree]',
-  blurb:'Five years of computer science: compilers, distributed systems, and a dormitory network held together with borrowed switches.',tags:['comp sci','c++','networks'],
-  long:['The first two years were mathematics with a compiler attached. Discrete structures, linear algebra, and a C++ course taught by someone who clearly resented the standard library.',
-        'The third year was the useful one. An operating systems module where we wrote a scheduler, a networks module where we wrote a TCP stack badly, and a database module that has quietly informed every schema I have designed since.',
-        'The dormitory network was the real curriculum. Forty machines, two borrowed switches, one uplink, and a rotating cast of people who would unplug something at three in the morning. I learned more about failure modes there than in any lecture.']},
- {lane:'side',kind:'project',y:2005,m:1,title:'[University project]',org:'Coursework that escaped',
-  blurb:'Built for a grade, then left running for two years because people had started depending on it.',tags:['php','mysql']},
- {lane:'work',kind:'freelance',y:2005,m:8,end:2007,title:'Freelance work',org:'[clients]',
-  blurb:'Small sites for small businesses, paid in cash and lessons. Learned to write down what had been agreed.',tags:['html','css','invoices']},
- {lane:'side',kind:'open source',y:2006,m:4,title:'[First patch upstream]',org:'[project]',
-  blurb:'A three-line fix and a week of nerves waiting for review. The maintainer was kind about the formatting.',tags:['patch','cvs']},
- {lane:'work',kind:'internship',y:2007,m:5,end:2008,title:'[First company]',org:'Intern, then junior developer',
-  blurb:'Learned the difference between code that works and code that ships, mostly by shipping the wrong one first.',tags:['java','svn','jira']},
- {lane:'education',kind:'thesis',y:2008,m:9,title:'[Thesis]',org:'[topic] · [advisor]',
-  blurb:'Ninety pages on [topic], of which perhaps fifteen are still true. The literature review was the real education.',tags:['thesis','latex']},
- {lane:'work',kind:'position',y:2008,m:10,end:2012,title:'[Company]',org:'Software developer',
-  blurb:'Four years on a product with real customers and real deadlines. The team went from five people to thirty around me.',tags:['c#','.net','sql server'],
-  long:['I joined to write features and left having spent most of the last year on the parts nobody demos: the deployment pipeline, the migration story, the slow untangling of a data model that had been right for five customers and wrong for five hundred.',
-        'The growth from five to thirty is the part I think about. Every process we added solved a real problem and cost something we did not measure. Code review caught bugs and slowed the obvious changes to a crawl.',
-        'What I would do differently: write the runbook before the feature, not after the first incident.']},
- {lane:'side',kind:'project',y:2009,m:7,title:'[Side project]',org:'Evenings and weekends',
-  blurb:'Solved one problem for one group of people. Stayed online for eight years on a server I had forgotten about.',tags:['javascript','jquery']},
- {lane:'life',kind:'relocation',y:2010,m:2,title:'Moved to [city]',org:'[country]',
-  blurb:'New timezone, new keyboard layout, the same terminal configuration carried across in a dotfiles repository.',tags:['relocation']},
- {lane:'side',kind:'project',y:2011,m:4,title:'[Mobile app]',org:'[platform]',
-  blurb:'My first app with a real install button. Watching the download graph move was more addictive than building it.',tags:['android','java']},
- {lane:'education',kind:'course',y:2012,m:0,title:'[Postgraduate course]',org:'[institution]',
-  blurb:'Part-time study alongside full-time work. Mostly a lesson in what does not fit into a week.',tags:['distributed systems']},
- {lane:'work',kind:'position',y:2012,m:8,end:2015,title:'[Company]',org:'Senior developer',
-  blurb:'Moved from writing features to deciding which features were worth writing. The second job is harder and far less visible.',tags:['python','postgres','linux']},
- {lane:'side',kind:'open source',y:2013,m:5,title:'[Open source library]',org:'Maintainer',
-  blurb:'A small library with an unreasonable number of downloads. I still merge pull requests from strangers on Sunday evenings.',tags:['npm','open source'],
-  long:['It does one thing, has no dependencies, and has not needed a breaking change since the second release. That combination is most of why it gets used.',
-        'Maintaining it taught me to say no in writing. The issue tracker is a record of features that would each have been reasonable and would together have made it into something nobody wanted.',
-        'The API has survived because it was too small to get wrong. Every time I have been tempted to widen it I have written the wider version, used it for a week, and thrown it away.']},
- {lane:'side',kind:'project',y:2014,m:10,title:'[Project]',org:'Weekend build',
-  blurb:'Started as a way to learn [technology]. Ended up used by people I have never met and never heard from.',tags:['node','redis']},
- {lane:'life',kind:'relocation',y:2015,m:6,title:'Moved to [city]',org:'[country]',
-  blurb:'The second move was easier. I packed the same three boxes and a mechanical keyboard.',tags:['relocation']},
- {lane:'work',kind:'position',y:2015,m:10,end:2019,title:'[Company]',org:'[Staff engineer]',
-  blurb:'Distributed systems, on-call rotations, and the slow realisation that most outages are configuration rather than code.',tags:['aws','kubernetes','go']},
- {lane:'side',kind:'project',y:2016,m:3,title:'[Project]',org:'Side build',
-  blurb:'The first thing I made where the interface mattered as much as the internals. It changed how I read other people work.',tags:['react','design']},
- {lane:'side',kind:'writing',y:2017,m:8,title:'[Blog]',org:'[n] posts and counting',
-  blurb:'Started writing things down to stop explaining them twice. The post I dashed off in an hour is the one people still read.',tags:['writing']},
- {lane:'side',kind:'project',y:2018,m:5,title:'[Project]',org:'[stack]',
-  blurb:'Built in public, shipped half-finished, improved by the people who complained. The best process I have found.',tags:['typescript','sqlite']},
- {lane:'life',kind:'milestone',y:2019,m:4,title:'[Personal milestone]',org:'[detail]',
-  blurb:'Not a technical entry, but the one that changed the shape of a week more than any job did.',tags:['life']},
- {lane:'work',kind:'position',y:2019,m:9,end:2023,title:'[Company]',org:'[Engineering lead]',
-  blurb:'Four years building the thing and the team that builds the thing. Remote from the first day, by design rather than accident.',tags:['platform','hiring','typescript']},
- {lane:'side',kind:'project',y:2020,m:3,title:'[Lockdown project]',org:'Two months of evenings',
-  blurb:'Everyone built something that spring. Mine tracked [thing] and taught me more about charts than I wanted to know.',tags:['d3','data']},
- {lane:'side',kind:'project',y:2021,m:7,title:'[Project]',org:'[platform]',
-  blurb:'A native app, written badly at first, then rewritten once I understood what the platform actually wanted.',tags:['swift','ios']},
- {lane:'life',kind:'milestone',y:2022,m:5,title:'[Personal milestone]',org:'[detail]',
-  blurb:'The kind of entry a CV leaves out and a biography should not.',tags:['life']},
- {lane:'side',kind:'project',y:2023,m:2,title:'[Project]',org:'[stack]',
-  blurb:'Smaller than the last one, finished in three weekends, still running with no maintenance. I am learning.',tags:['rust','cli']},
- {lane:'work',kind:'position',y:2024,m:4,end:2026,title:'[Current company]',org:'[Current role]',
-  blurb:'Where I am now. The interesting parts are the ones I cannot write down yet.',tags:['current']},
- {lane:'side',kind:'this site',y:2025,m:10,title:'evgeny.fyi',org:'This page',
-  blurb:'A biography that wears the interface of every year it describes. Forty years of design history compiled to one static site.',tags:['astro','github pages'],
-  long:['Nine interface eras, each with its own wallpaper, window furniture and desktop shell, cross-faded against scroll position. The caption buttons work: close hides an entry, minimise folds it to its title bar, maximise lifts it out of the timeline.',
-        'The hard part was not the chrome. It was keeping three things in agreement at every scroll position: the year in the header, the wallpaper behind the page, and the era of the window you are looking at. Layout compresses empty years and pushes colliding entries down, so the map between pixels and years is a table built at layout time rather than a formula.',
-        'There is a Playwright suite behind it. One screenshot per era, plus invariants that assert the three things still agree and that walking down the page never moves forward in time.']},
- {lane:'life',kind:'HEAD',y:2026,m:7,title:'HEAD',org:'You are here',
-  blurb:'Still committing. The links page has every way to reach me.',tags:['2026']}
-];
+/* Entries are not written here. Each one is a Markdown file in
+   content/entries/, and `npm run build` checks them and compiles them into the
+   #entries-data block above this script. CONTENT.md describes the format. */
+const ENTRIES = JSON.parse(document.getElementById('entries-data').textContent);
 
 const LINKS = [
   {g:'gh',name:'GitHub',h:'github.com/[handle]'},
@@ -1583,6 +1662,36 @@ const xb  = (art, label, drop, dis) => '<b class="xb' + (dis ? ' dis' : '') + '"
 const dosName = (e, ext) => (e.title.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8) || 'NONAME00') + '.' + ext;
 const RULER = '<i></i>' + [1, 2, 3, 4, 5, 6, 7].map(n => '<b style="left:' + (24 + n * 72) + 'px">' + n + '</b>').join('');
 
+/* Windows 10 draws everything flat: Segoe MDL2 hairline glyphs in the chrome,
+   single-colour icons in the navigation pane, white glyphs on the taskbar */
+const W10 = drawn(16, {
+  folder:'<path d="M1.5 3.5h5l1.5 1.5h6.5v8.5h-13z" fill="#F8D775"/><path d="M1.5 6h13v7.5h-13z" fill="#FFE8A3"/><path d="M1.5 6h13" stroke="#E0B849"/>',
+  props:'<rect x="3.5" y="2.5" width="9" height="11" fill="#FFF" stroke="#6D6D6D"/><path d="M5.5 6h5M5.5 8.5h5M5.5 11h3" stroke="#1979CA"/>',
+  newFolder:'<path d="M1.5 4.5h4.5l1.5 1.5h5v6.5h-11z" fill="#F8D775"/><path d="M12.5 9v5.5M9.8 11.8h5.4" stroke="#1E9E3E" stroke-width="1.6"/>',
+  back:'<path d="M13.5 8H3M7.5 3.5L3 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.2"/>',
+  fwd:'<path d="M2.5 8H13M8.5 3.5L13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.2"/>',
+  up:'<path d="M8 13.5V3M3.5 7.5L8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.2"/>',
+  refresh:'<path d="M13 8a5 5 0 11-1.5-3.6" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M12 1.5v3.2H8.8" fill="none" stroke="currentColor" stroke-width="1.1"/>',
+  search:'<circle cx="9.5" cy="6.5" r="4.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M6.3 9.7L2 14" stroke="currentColor" stroke-width="1.3"/>',
+  star:'<path d="M8 1.6l1.9 4 4.4.5-3.3 3 .9 4.3L8 11.2l-3.9 2.2.9-4.3-3.3-3 4.4-.5z" fill="#1E8AE0"/>',
+  desktop:'<rect x="1.5" y="2.5" width="13" height="9" fill="#2B88D8"/><path d="M5.5 14h5M8 11.5V14" stroke="#555"/>',
+  downloads:'<path d="M8 2v8.5M4.5 7L8 10.5 11.5 7" fill="none" stroke="#1E8AE0" stroke-width="1.6"/><path d="M2.5 13.5h11" stroke="#1E8AE0" stroke-width="1.6"/>',
+  docs:'<path d="M3.5 1.5h6l3 3v10h-9z" fill="#FFF" stroke="#7A7A7A"/><path d="M5.5 7h5M5.5 9h5M5.5 11h3.5" stroke="#1E8AE0"/>',
+  pictures:'<rect x="1.5" y="3.5" width="13" height="9" fill="#EAF4FC" stroke="#1E8AE0"/><path d="M2 12l4-4 3 3 2-2 3.5 3z" fill="#1E8AE0"/><circle cx="11" cy="6" r="1.2" fill="#1E8AE0"/>',
+  pc:'<rect x="1.5" y="2.5" width="13" height="8.5" fill="#2B88D8" stroke="#1B5E9E"/><path d="M5 13.5h6M8 11v2.5" stroke="#555" stroke-width="1.2"/>',
+  details:'<path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor"/>',
+  tiles:'<rect x="2" y="2" width="5" height="5" fill="none" stroke="currentColor"/><rect x="9" y="2" width="5" height="5" fill="none" stroke="currentColor"/><rect x="2" y="9" width="5" height="5" fill="none" stroke="currentColor"/><rect x="9" y="9" width="5" height="5" fill="none" stroke="currentColor"/>',
+  start:'<path d="M2 2h5.5v5.5H2zM8.5 2H14v5.5H8.5zM2 8.5h5.5V14H2zM8.5 8.5H14V14H8.5z" fill="#FFF"/>',
+  taskview:'<rect x="2" y="4" width="5" height="8" fill="none" stroke="#FFF"/><rect x="9" y="4" width="5" height="8" fill="none" stroke="#FFF"/><path d="M1 2h14M1 14h14" stroke="#FFF" stroke-width=".8"/>',
+  chevron:'<path d="M4 10l4-4 4 4" fill="none" stroke="#FFF" stroke-width="1.1"/>',
+  wifi:'<path d="M1.5 6a9 9 0 0113 0M3.8 8.4a6 6 0 018.4 0M6.1 10.8a3 3 0 013.8 0" fill="none" stroke="#FFF" stroke-width="1.1"/><circle cx="8" cy="13" r="1" fill="#FFF"/>',
+  volume:'<path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="none" stroke="#FFF"/><path d="M10.5 5.5a3.5 3.5 0 010 5M12.5 3.5a6.3 6.3 0 010 9" fill="none" stroke="#FFF"/>',
+  notify:'<path d="M2.5 2.5h11V11H8l-3 2.5V11H2.5z" fill="none" stroke="#FFF"/>'
+});
+// the shells paint through the i16 set, so the Windows 10 glyphs join it
+Object.assign(I16, Object.fromEntries(Object.entries(W10).map(([k, v]) => ['w10_' + k, v])));
+I32.bin10 = svgOf(32, '<path d="M8.5 9h15l-1.6 20H10.1z" fill="#DDE9F5" fill-opacity=".85" stroke="#7F9BB8"/><path d="M12.5 12l.7 14M16 12v14M19.5 12l-.7 14" stroke="#9FB6CC"/><path d="M7 7h18v2.5H7z" fill="#EEF4FA" stroke="#7F9BB8"/>');
+
 const CHROME = {
   mono: e => `
     <div class="tvwin">
@@ -1673,6 +1782,29 @@ const CHROME = {
     </div>
     <div class="status"><s>${e.tags.length} items</s><s>Free space: 12.4 GB</s></div>`,
 
+  w10: e => `
+    <div class="bar"><span class="ico">${W10.folder}</span>
+      <span class="qat"><i>${W10.props}</i><i>${W10.newFolder}</i><em>▾</em></span><span class="vsep"></span>
+      <span class="t">${e.y}</span>
+      <span class="wbtns"><b class="b-min"></b><b class="b-max"></b><b class="b-cls"></b></span></div>
+    <div class="ribbon"><b class="file">File</b><b>Home</b><b>Share</b><b>View</b><span class="rh"><em>⌄</em><i>?</i></span></div>
+    <div class="addr">
+      <span class="navb"><i>${W10.back}</i><i class="off">${W10.fwd}</i><em>⌄</em><i>${W10.up}</i></span>
+      <div class="combo"><span class="aico">${W10.folder}</span><span class="crumb"><i>›</i>This PC<i>›</i>Documents<i>›</i>${e.y}</span><span class="dd">⌄</span><span class="rf">${W10.refresh}</span></div>
+      <div class="search"><span>Search ${e.y}</span><i>${W10.search}</i></div>
+    </div>
+    <div class="pane">
+      <div class="side">
+        <u class="top"><i>${W10.star}</i>Quick access</u>
+        <u><i>${W10.desktop}</i>Desktop</u><u><i>${W10.downloads}</i>Downloads</u>
+        <u><i>${W10.docs}</i>Documents</u><u><i>${W10.pictures}</i>Pictures</u>
+        <u class="sel"><i>${W10.folder}</i>${e.y}</u>
+        <u class="top"><i>${W10.pc}</i>This PC</u>
+      </div>
+      <div class="body">${bodyOf(e)}</div>
+    </div>
+    <div class="status"><s>${e.tags.length + 2} items · ${esc(e.kind)}</s><s class="views"><i>${W10.details}</i><i class="on">${W10.tiles}</i></s></div>`,
+
   macos: e => `
     <div class="mac">
       <div class="side">
@@ -1762,7 +1894,7 @@ function buildTimeline(){
         '</div><div class="body">' +
         '<h1>Evgeny Vinnik</h1>' +
         '<p class="lede">Forty years of computing, read newest first. The page ages backwards as you ' +
-        'scroll: Liquid Glass gives way to macOS, to Ubuntu, to Aero, to XP, to Windows 98 and 95, ' +
+        'scroll: Liquid Glass gives way to macOS, to Windows 10, to Ubuntu, to Aero, to XP, to Windows 98 and 95, ' +
         'to a DOS prompt. Every entry arrives wearing the interface of its year.</p>' +
         '<p class="hint">↓ scroll back to 1986</p></div>' +
         '<div class="pill"><b>Timeline</b><b>Projects</b><b>Links</b></div></div>';
@@ -1980,6 +2112,7 @@ const DESKTOP = {
   w98:   {items:[['computer95', 'My Computer'], ['docs98', 'My Documents'], ['globe', 'The Internet'], ['network95', 'Network Neighborhood'], ['bin95', 'Recycle Bin']]},
   xp:    {items:[['docsXP', 'My Documents'], ['computerXP', 'My Computer'], ['binXP', 'Recycle Bin']]},
   aero:  {items:[['user7', 'evgeny'], ['computer7', 'Computer'], ['bin7', 'Recycle Bin']]},
+  w10:   {items:[['bin10', 'Recycle Bin']]},
   macos: {right:true, items:[['hd', 'Macintosh HD']]}
 };
 let deskIcons = [];
@@ -2068,7 +2201,9 @@ function buildRoutes(){
   document.getElementById('pgrid').innerHTML = projects.map(p =>
     '<article class="pcard lg"><span class="yr">' + p.y + ' · ' + esc(p.kind) + '</span>' +
     '<h3>' + esc(p.title) + '</h3><p>' + esc(p.blurb) + '</p>' +
-    '<div class="foot">' + p.tags.map(t => '<b>' + esc(t) + '</b>').join('') + '</div></article>'
+    '<div class="foot">' + p.tags.map(t => '<b>' + esc(t) + '</b>').join('') + '</div>' +
+    (p.link ? '<a class="plink" href="' + esc(p.link).replace(/"/g, '&quot;') + '" target="_blank" rel="noopener">' +
+      esc(new URL(p.link).host) + ' ↗</a>' : '') + '</article>'
   ).join('');
   document.getElementById('lgrid').innerHTML = LINKS.map(l =>
     '<a class="lnk lg" href="#/links"><span class="g">' + esc(l.g) + '</span>' +
@@ -2113,6 +2248,7 @@ const WALLPAPERS = {
   xp:     'wallpapers/bliss.jpg',
   aero:   'wallpapers/win7.jpg',
   ubuntu: 'wallpapers/ubuntu.jpg',
+  w10:    'wallpapers/win10.jpg',
   macos:  'wallpapers/macos.jpg',
   glass:  'wallpapers/glass.jpg'
 };

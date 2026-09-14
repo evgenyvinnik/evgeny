@@ -6,7 +6,7 @@ code change, no build step.
 
 ```
 mono.jpg  dos.png  win95.png  win98.png  bliss.jpg
-win7.jpg  ubuntu.jpg  macos.jpg  glass.jpg
+win7.jpg  ubuntu.jpg  win10.jpg  macos.jpg  glass.jpg
 ```
 
 ## What is here
@@ -31,7 +31,8 @@ win7.jpg  ubuntu.jpg  macos.jpg  glass.jpg
 Windows 95 and 98 had no default wallpaper, only a flat teal `#008080`
 desktop, and MS-DOS and the monochrome years had none at all. The page draws
 those exactly, so there is nothing to replace. Windows 7 keeps its drawn
-aurora.
+aurora, and Windows 10 a drawn shaft of light on navy that evokes its hero
+wallpaper without the logo. Save the real one as `win10.jpg` to use it.
 
 ## Adding another
 

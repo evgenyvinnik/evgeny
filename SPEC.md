@@ -41,7 +41,7 @@ enforce this.
 
 ## 2. Era map
 
-Nine eras, because the recognisable differences are finer than the
+Ten eras, because the recognisable differences are finer than the
 seven-step version suggested. Windows 95's flat navy caption and
 Windows 98's gradient are a real, legible distinction, and the amber
 monochrome years are nothing like the Turbo Vision blue that followed.
@@ -55,7 +55,8 @@ monochrome years are nothing like the Turbo Vision blue that followed.
 | 2001–2006 | Windows XP | Bliss photograph, SVG drawing as fallback | Luna caption, task pane on its blue ground, drawn caption glyphs | Trebuchet MS |
 | 2007–2011 | Windows 7 | dark blue with light streaks | glass frame, opaque content, breadcrumb bar | Segoe UI stack |
 | 2012–2015 | Ubuntu | 14.04 default, `warty-final-ubuntu` | Ambiance caption, buttons on the left, path chips | Ubuntu |
-| 2016–2024 | macOS | Sonoma | full-height sidebar, traffic lights over it, unified toolbar | Inter as SF stand-in |
+| 2016–2020 | Windows 10 | drawn light shaft on navy; `win10.jpg` takes over if supplied | File Explorer: 46px hairline caption buttons, collapsed ribbon with a blue File tab, breadcrumb bar, Quick access pane, dark taskbar | Segoe UI stack |
+| 2021–2024 | macOS | Sonoma | full-height sidebar, traffic lights over it, unified toolbar | Inter as SF stand-in |
 | 2025–2026 | Liquid Glass | Tahoe Day still | lens rim, concentric radii, capsule controls | Inter |
 
 Era boundaries are content decisions, not release dates. They mark when
@@ -226,39 +227,50 @@ refuse hash navigation.
 
 ## 5. Data model
 
-One source of truth. The timeline, the projects index, the project
-pages and the CV are all views over it.
+One source of truth: `content/entries/`, one Markdown file per entry. The
+timeline, the projects page and any later page are all views over it.
+[CONTENT.md](CONTENT.md) is the author's guide; this section is the
+contract behind it.
 
-```ts
-type Entry = {
-  slug: string;
-  lane: 'life' | 'education' | 'work' | 'side';
-  kind: string;              // shown as the entry's eyebrow
-  start: string;             // ISO 'YYYY-MM'
-  end?: string;              // omit for a point event; 'present' for open
-  title: string;
-  org?: string;              // institution, company, or role
-  blurb: string;             // 2-3 sentences, shown in the timeline
-  body?: string;             // Markdown, only for entries with their own page
-  tags: string[];
-  links?: { label: string; href: string }[];
-  media?: { src: string; alt: string; caption?: string }[];
-  featured?: boolean;        // surfaces on /projects above the fold
-};
+```markdown
+---
+title: Weather app          # required, text
+lane: side                  # required: life | education | work | side
+kind: project               # required, a short label
+start: 2026-03              # required, YYYY or YYYY-MM, 1986 to 2026
+end: present                # optional, YYYY, YYYY-MM or present
+org: Personal               # optional, the line under the title
+tags: [swift, weatherkit]   # required, at least one
+link: https://example.com   # optional, shown on the project card
+---
+
+First paragraph: the summary on the timeline.
+
+Later paragraphs: the long text, scrolled or maximised.
 ```
+
+`scripts/build.mjs` reads every file, validates it, sorts the entries by
+start date and writes them as JSON into the `#entries-data` block of
+`prototype/index.html`. The page reads that block at load. Nothing is
+fetched at runtime, so the page stays a single file.
+
+Validation is strict on purpose, because the build is the only reviewer an
+entry added from GitHub's web editor gets. An unknown field, a date outside
+the timeline, tags that aren't a list, or a bracketed title YAML reads as a
+list all stop the build. The error names the file and the fix, and every
+problem is reported at once. A failed build never deploys, so the live site
+keeps its last good version.
 
 Lanes are fixed tracks in the graph at increasing x offsets. Lane
 identity is carried by horizontal position, not by colour, because no
-colour survives all nine wallpapers legibly.
+colour survives all ten wallpapers legibly.
 
 ### What I need from you to replace the placeholders
 
 The prototype carries forty-two entries, which is roughly the right
-density. For each one I need: start month and year, end month and year,
-the real name of the school, company or project, your role, two or three
-sentences, and a few tags. For projects, also a URL, a repo link and one
-screenshot. Everything in square brackets is a hole waiting for one of
-these.
+density. Each one is a file with square-bracket placeholders to replace:
+the real name of the school, company or project, your role, the dates,
+two or three sentences, and a few tags. For projects, also a `link`.
 
 ---
 
@@ -319,7 +331,8 @@ GitHub Pages, built and deployed by `.github/workflows/pages.yml`.
 
 **Now.** Every pull request and every push to `main` runs the DOM invariants
 and window-control tests on Linux. A push to `main` that passes then runs
-`npm run build`, which wraps the prototype in a full HTML skeleton and copies
+`npm run build`, which validates the Markdown entries, compiles them into the
+page, wraps it in a full HTML skeleton and copies
 the wallpapers into `dist/`, and publishes that folder. The site lives at
 `https://evgenyvinnik.github.io/evgeny/`. All paths in the page are relative,
 so it works under that subpath unchanged.
@@ -373,7 +386,7 @@ and nothing translates on scroll.
 
 ## 10. Tests
 
-Playwright, two projects, sixty-eight tests. `npm run test:visual` runs
+Playwright, two projects, seventy-six tests. `npm run test:visual` runs
 them; `npm run test:visual:update` accepts new baselines after a
 deliberate change.
 
@@ -386,7 +399,7 @@ actually renders, not a quirks-mode approximation.
 ### Two layers
 
 **Screenshots**, one per era plus the routes, the two window states, the
-page at rest and the bottom of the descent. Thirteen per project,
+page at rest and the bottom of the descent. Sixteen per project,
 reviewed by eye when they change. Baselines live in
 `tests/__screenshots__/<project>/`.
 
@@ -415,6 +428,9 @@ keep, because they fail with a readable message instead of a diff image:
   the reading line, and it belongs to that era.
 - The Windows 95, 98 and XP taskbars name the focused window.
 - Desktop icons light up in their own era and nowhere else.
+- Every Markdown file in `content/entries/` renders exactly one window.
+- The committed entries pass `npm run check`, and a deliberately broken
+  entry stops the build with the messages an author needs to fix it.
 
 ### Things the suite taught us
 
