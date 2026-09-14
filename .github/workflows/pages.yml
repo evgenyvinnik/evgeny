@@ -55,6 +55,9 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 22
+          cache: npm
+      # the build parses the Markdown entries with the yaml package
+      - run: npm ci
       - run: npm run build
       - uses: actions/upload-pages-artifact@v5
         with:

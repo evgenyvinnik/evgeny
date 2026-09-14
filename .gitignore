@@ -147,3 +147,4 @@ node_modules/
 .testbuild/
 test-results/
 playwright-report/
+.artifact/

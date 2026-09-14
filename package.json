@@ -4,14 +4,16 @@
   "version": "0.0.0",
   "description": "evgeny.fyi \u2014 a biography told as a timeline that ages its own interface",
   "scripts": {
-    "build": "node tests/wrap.mjs dist",
-    "wrap": "node tests/wrap.mjs",
+    "build": "node scripts/build.mjs dist",
+    "check": "node scripts/build.mjs --check",
+    "dev": "node scripts/build.mjs .testbuild && echo 'Previewing at http://127.0.0.1:4173' && python3 -m http.server 4173 --directory .testbuild --bind 127.0.0.1",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",
     "test:ci": "playwright test --grep-invert screenshots",
     "test:report": "playwright show-report"
   },
   "devDependencies": {
-    "@playwright/test": "^1.56.0"
+    "@playwright/test": "^1.56.0",
+    "yaml": "^2.9.1"
   }
 }
