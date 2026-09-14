@@ -74,7 +74,7 @@ a{color:inherit}
   linear-gradient(160deg,#061426 0%,#0C2A4C 46%,#06182E 100%)}
 
 .bd-xp{background:#3B88DD}
-.bd-w98{background:#3A6EA5}          /* Win98 default desktop blue */
+.bd-w98{background:#008080}          /* Win98 kept 95's teal; the blue came with 2000 */
 .bd-w95{background:#008080}          /* Win95 default teal */
 .bd-w95::after,.bd-w98::after{content:"";position:absolute;inset:0;opacity:.5;
   background-image:linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px),
@@ -853,6 +853,22 @@ html[data-era="mono"] .restore{border:1px solid #FFB000;border-radius:0;color:#F
   mask-composite:exclude;
 }
 .lg > *{position:relative;z-index:1}
+/* Over a photograph the lens needs the dimming layer Apple adds for legibility:
+   the body smears more of what is behind it and darkens, so white text survives
+   a bright sky or pale granite. The rim still blurs harder than the body. */
+html[data-photos~="glass"] .lg{
+  background:linear-gradient(176deg,rgba(255,255,255,.12) 0%,rgba(8,16,34,.42) 42%,rgba(8,16,34,.34) 100%);
+  backdrop-filter:blur(12px) saturate(160%) brightness(.92);
+  -webkit-backdrop-filter:blur(12px) saturate(160%) brightness(.92)}
+html[data-photos~="glass"] .lg::before{
+  backdrop-filter:blur(18px) saturate(240%) brightness(1.04);
+  -webkit-backdrop-filter:blur(18px) saturate(240%) brightness(1.04)}
+html[data-photos~="glass"][data-era="glass"] .topbar{
+  background:linear-gradient(176deg,rgba(255,255,255,.12),rgba(8,16,34,.44) 48%,rgba(8,16,34,.36));
+  backdrop-filter:blur(12px) saturate(160%) brightness(.92);-webkit-backdrop-filter:blur(12px) saturate(160%) brightness(.92)}
+html[data-photos~="glass"][data-era="glass"] .nav a{color:rgba(240,243,255,.84)}
+html[data-photos~="glass"][data-era="glass"] .nav a[aria-current="page"]{color:#FFF}
+html[data-photos~="glass"][data-era="glass"] .stamp .os i{color:rgba(230,236,255,.74)}
 
 .win[data-chrome="glass"]{font-family:var(--sf);font-size:13px}
 .win[data-chrome="glass"] .frame{--r:28px;--rim:13px;overflow:visible}
@@ -1058,6 +1074,8 @@ html[data-era="mono"] .restore{border:1px solid #FFB000;border-radius:0;color:#F
 .ic-xp .di span{font:11px var(--tahoma);color:#FFF;text-shadow:1px 1px 1px #000,0 0 2px rgba(0,0,0,.6)}
 .ic-aero .di span{font:12px var(--segoe);color:#FFF;text-shadow:0 0 6px rgba(0,0,0,.9),0 1px 2px #000}
 .ic-macos .di span{font:600 12px var(--sf);color:#1D1D1F;text-shadow:0 0 6px rgba(255,255,255,.9)}
+/* on a photograph macOS draws desktop labels white with a shadow */
+html[data-photos~="macos"] .ic-macos .di span{color:#FFF;text-shadow:0 1px 3px rgba(0,0,0,.65),0 0 1px rgba(0,0,0,.8)}
 @media (max-width:1239px){ #icons{display:none} }
 @media (max-width:900px){ html[data-era="macos"] .extras{display:none} }
 
@@ -1090,6 +1108,8 @@ body[data-route="projects"] main,body[data-route="links"] main{display:none}
 .lnk .g{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--accent);width:26px}
 .lnk b{display:block;font-size:14px;font-weight:500;color:#FFF}
 .lnk small{display:block;font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.02em}
+.credits{margin:30px 0 0;max-width:72ch;font:11px/1.65 var(--mono);color:var(--dim)}
+.credits a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 
 /* ========================= responsive ========================= */
 @media (max-width:1120px){ .sh-ubuntu{display:none} }
@@ -1286,6 +1306,11 @@ body[data-route="projects"] main,body[data-route="links"] main{display:none}
     <p class="sub">One canonical list, referenced from the footer of every page and from the newest
       entry on the timeline.</p>
     <div class="lnks" id="lgrid"></div>
+    <p class="credits">Wallpapers. Windows XP: <i>Bliss</i>, photograph by Charles O'Rear.
+      Ubuntu: <i>warty-final-ubuntu</i> by Kenneth Wimer and Otto Greenslade, from
+      <a href="https://launchpad.net/ubuntu-wallpapers">ubuntu-wallpapers</a>, resized, licensed
+      <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>.
+      macOS and Liquid Glass: Apple's Sonoma and Tahoe wallpapers. Every other era is drawn.</p>
   </div>
 </section>
 
@@ -1310,7 +1335,7 @@ const ERAS = [
   {id:'mono',   os:'Monochrome CRT', name:'amber text mode',     from:1986, to:1990, sw:'#1A1408', ink:'#FFB000'},
   {id:'dos',    os:'MS-DOS',         name:'Turbo Pascal 7',      from:1991, to:1994, sw:'#0000AA', ink:'#FFFF55'},
   {id:'w95',    os:'Windows 95',     name:'Chicago',             from:1995, to:1998, sw:'#008080', ink:'#FFFFFF'},
-  {id:'w98',    os:'Windows 98',     name:'Memphis',             from:1999, to:2000, sw:'#3A6EA5', ink:'#FFFFFF'},
+  {id:'w98',    os:'Windows 98',     name:'Memphis',             from:1999, to:2000, sw:'#006B6B', ink:'#FFFFFF'},
   {id:'xp',     os:'Windows XP',     name:'Luna · Bliss',        from:2001, to:2006, sw:'#2A6FD8', ink:'#FFFFFF'},
   {id:'aero',   os:'Windows 7',      name:'Aero Glass',          from:2007, to:2011, sw:'#0E2B4C', ink:'#9FD4FF'},
   {id:'ubuntu', os:'Ubuntu',         name:'Unity · Ambiance',    from:2012, to:2015, sw:'#2C001E', ink:'#E95420'},
@@ -2101,6 +2126,8 @@ function loadWallpapers(){
       if (bd){
         bd.style.backgroundImage = 'url("' + src + '")';
         bd.dataset.photo = '1';
+        const root = document.documentElement;
+        root.dataset.photos = ((root.dataset.photos || '') + ' ' + id).trim();
       }
       done();
     };

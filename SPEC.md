@@ -51,12 +51,12 @@ monochrome years are nothing like the Turbo Vision blue that followed.
 | 1986–1990 | Monochrome CRT | black, amber scanlines | double-line box, notched 8.3 filename in inverse video, block cursor | VT323 |
 | 1991–1994 | MS-DOS | `#0000AA` with shade dither | Turbo Pascal 7: one menu bar and status line, close box, window number, zoom box, cursor position | VT323 |
 | 1995–1998 | Windows 95 | teal `#008080` | WordPad: toolbar, format bar, ruler, Times document, "For Help, press F1" | Tahoma stack |
-| 1999–2000 | Windows 98 | `#3A6EA5` | Explorer web view, coolbar with greyscale icons, address bar | Tahoma stack |
-| 2001–2006 | Windows XP | Bliss, drawn as SVG | Luna caption, task pane on its blue ground, drawn caption glyphs | Trebuchet MS |
+| 1999–2000 | Windows 98 | teal `#008080`, as in 95 | Explorer web view, coolbar with greyscale icons, address bar | Tahoma stack |
+| 2001–2006 | Windows XP | Bliss photograph, SVG drawing as fallback | Luna caption, task pane on its blue ground, drawn caption glyphs | Trebuchet MS |
 | 2007–2011 | Windows 7 | dark blue with light streaks | glass frame, opaque content, breadcrumb bar | Segoe UI stack |
-| 2012–2015 | Ubuntu | aubergine `#2C001E` | Ambiance caption, buttons on the left, path chips | Ubuntu |
-| 2016–2024 | macOS | pastel blobs | full-height sidebar, traffic lights over it, unified toolbar | Inter as SF stand-in |
-| 2025–2026 | Liquid Glass | saturated mesh on near-black | lens rim, concentric radii, capsule controls | Inter |
+| 2012–2015 | Ubuntu | 14.04 default, `warty-final-ubuntu` | Ambiance caption, buttons on the left, path chips | Ubuntu |
+| 2016–2024 | macOS | Sonoma | full-height sidebar, traffic lights over it, unified toolbar | Inter as SF stand-in |
+| 2025–2026 | Liquid Glass | Tahoe Day still | lens rim, concentric radii, capsule controls | Inter |
 
 Era boundaries are content decisions, not release dates. They mark when
 *Evgeny* moved to that interface, so they should shift once real
@@ -135,11 +135,10 @@ inline SVG, and hidden below 1240px where the gutter disappears.
 
 ### Wallpapers
 
-All nine are drawn, not photographed. Bliss is an SVG recreation: a sky
-gradient, a bank of radial-gradient cumulus and three ridge paths. The
-Windows 7 aurora is four rotated ellipses with a radial falloff. Windows
-95, 98 and MS-DOS shipped flat colours, so those are exactly right
-already.
+Every era has a drawn wallpaper, and four also have the real one layered
+over it. Windows 95 and 98 had no default wallpaper, only a flat teal
+desktop, and MS-DOS had none, so those drawings already are the originals.
+Windows 7 keeps its drawn aurora of four rotated ellipses.
 
 The first version used `feGaussianBlur` for the clouds and the aurora.
 It looked correct and cost up to 25 seconds per screenshot, because the
@@ -147,14 +146,16 @@ filter re-rasterised a full-bleed fixed layer. Radial-gradient falloff
 looks the same and costs nothing. That one change took the visual suite
 from eleven minutes to three.
 
-One real file is included. `bliss.jpg` is downscaled to 2560px from an
-8K scan on Internet Archive and used by the owner's choice on a personal
-site; the rights belong to Microsoft, which bought them outright in 2000.
-Every other era uses its drawing. Drop a file into `prototype/wallpapers/`
-under the name the page probes for and it takes over that era, with no
-code change and no build step. The test harness copies that folder next
-to the page and waits for every probe to land or miss before it captures,
-so baselines never catch an era halfway between drawing and photo.
+Four real files are included. Bliss for XP is downscaled from an 8K scan
+on Internet Archive. Ubuntu's is the 14.04 default from Ubuntu's own
+package archive, checksum-verified and licensed CC BY-SA 3.0, with the
+required credit on the Links page. macOS uses Sonoma and Liquid Glass a
+still from Tahoe Day, both taken from the owner's Mac. All are 2560px
+JPEGs of 200 KB to 1.1 MB. Sources and rights are in
+`prototype/wallpapers/README.md`. The test harness copies that folder
+next to the page and waits for every probe to land or miss before it
+captures, so baselines never catch an era halfway between drawing and
+photo.
 
 ### Font licensing
 
