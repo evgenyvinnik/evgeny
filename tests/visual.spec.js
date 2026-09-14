@@ -301,7 +301,7 @@ test.describe('invariants', () => {
 
   test('desktop icons appear only in their own era', async ({ page }) => {
     await open(page);
-    const withIcons = ['w95', 'w98', 'xp', 'aero', 'w10', 'macos'];
+    const withIcons = ['w95', 'w98', 'xp', 'aero', 'w10', 'macos', 'glass'];
     for (const era of ERAS) {
       const lit = await page.evaluate((y) => {
         window.BOOT.gotoYear(y);
@@ -315,9 +315,9 @@ test.describe('invariants', () => {
 
   test('Liquid Glass keeps its interior clearer than its rim', async ({ page }) => {
     await open(page);
-    // the lens model, asserted: the edge zone must blur more than the body
+    // the lens model, asserted on Tahoe's glass sidebar: the edge zone must blur more than the body
     const filters = await page.evaluate(() => {
-      const el = document.querySelector('.win[data-chrome="glass"] .frame');
+      const el = document.querySelector('.win[data-chrome="glass"] .side');
       const read = (pseudo) => getComputedStyle(el, pseudo).backdropFilter;
       const px = (s) => { const m = /blur\(([\d.]+)px\)/.exec(s || ''); return m ? +m[1] : null; };
       return { body: px(read(null)), rim: px(read('::before')) };

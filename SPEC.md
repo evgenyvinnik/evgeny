@@ -54,10 +54,10 @@ monochrome years are nothing like the Turbo Vision blue that followed.
 | 1999–2000 | Windows 98 | teal `#008080`, as in 95 | Explorer web view, coolbar with greyscale icons, address bar | Tahoma stack |
 | 2001–2006 | Windows XP | Bliss photograph, SVG drawing as fallback | Luna caption, task pane on its blue ground, drawn caption glyphs | Trebuchet MS |
 | 2007–2011 | Windows 7 | dark blue with light streaks | glass frame, opaque content, breadcrumb bar | Segoe UI stack |
-| 2012–2015 | Ubuntu | 14.04 default, `warty-final-ubuntu` | Ambiance caption, buttons on the left, path chips | Ubuntu |
+| 2012–2015 | Ubuntu | 14.04 default, `warty-final-ubuntu` | Ambiance 14.04 values: 28px caption, buttons and title on the left, dark Nautilus toolbar of linked buttons, Humanity sidebar, no status bar, Unity panel | Ubuntu |
 | 2016–2020 | Windows 10 | drawn light shaft on navy; `win10.jpg` takes over if supplied | File Explorer: 46px hairline caption buttons, collapsed ribbon with a blue File tab, breadcrumb bar, Quick access pane, dark taskbar | Segoe UI stack |
-| 2021–2024 | macOS | Sonoma | full-height sidebar, traffic lights over it, unified toolbar | Inter as SF stand-in |
-| 2025–2026 | Liquid Glass | Tahoe Day still | lens rim, concentric radii, capsule controls | Inter |
+| 2021–2024 | macOS | Sonoma | full-height sidebar, traffic lights over it, unified toolbar, frosted Dock | Inter as SF stand-in |
+| 2025–2026 | Liquid Glass | Tahoe Day still | transparent menu bar, white window with a floating glass sidebar carrying the lights, toolbar capsules, clear glass Dock, desktop widgets | Inter |
 
 Era boundaries are content decisions, not release dates. They mark when
 *Evgeny* moved to that interface, so they should shift once real
@@ -65,27 +65,31 @@ biography replaces the placeholders. The one boundary that is a fact
 rather than a choice is the last: Liquid Glass shipped in 2025, so the
 macOS era runs to 2024 and glass owns only the top of the page.
 
-### Liquid Glass is a lens, not frosted glass
+### Liquid Glass is the navigation layer, not the window
 
-This is the distinction the first pass got wrong, and it is the whole
-material. Frosted glass blurs its entire surface. Liquid Glass keeps its
-interior nearly clear and does the optical work at the rim, where the
-backdrop is smeared and over-saturated, then caught by a specular
-highlight that runs corner to corner rather than top to bottom.
+Two passes got this wrong in different ways. The first built frosted
+glass, which blurs its whole surface. The second built a proper lens but
+made every window out of it. macOS Tahoe does neither: the window stays a
+white page, and the glass is reserved for what floats over content. The
+sidebar is a separate pane of light glass inset 8px inside the window,
+its corners concentric with the window's 26px ones, with the traffic
+lights at its top left. Toolbar buttons sit in capsules with no toolbar
+strip behind them. The menu bar has no material at all, and the Dock is
+nearly clear. Reference: Apple's Newsroom screenshots of Tahoe.
 
-Three layers build it, and the relationship between the first two is the
-point: blur 3px on the body, blur 10px on the edge zone. Glassmorphism
-has that backwards.
+The light material still keeps the lens relationship between body and
+rim, and a test asserts it on the sidebar:
 
 | Layer | Job |
 |---|---|
-| Body | `blur(3px) saturate(185%) brightness(1.07)`, a faint vertical luminance shift, inset bevel shadows for thickness |
-| Edge zone | A 13px ring at `blur(10px) saturate(265%)`, masked with the padding-box trick so the inner edge stays rounded |
-| Specular | A 1.6px ring, warm where the light lands and cool on the far edge |
+| Body | 80 to 70% white, `blur(20px) saturate(150%)` |
+| Edge zone | An 8px ring at `blur(30px)`, masked with the padding-box trick so the inner edge stays rounded |
+| Specular | A 1px white hairline, brightest where the light lands |
 
-Radii stay concentric and controls are true capsules. A test asserts the
-rim blurs more than the body, because that inversion is the one thing
-that cannot regress silently.
+The white around the sidebar is the sidebar's own spread shadow rather
+than a window background, so nothing opaque sits under the glass and it
+samples the desktop. Where a window scrolls under the menu bar, the bar
+applies Tahoe's scroll edge effect: a blur that fades out below it.
 
 ### Desktop furniture
 
@@ -98,11 +102,13 @@ status line, with the site's top bar as its menu bar. Windows 95 and 98 get the 
 tray clock, with Quick Launch added in 98. XP gets the blue taskbar and
 the green Start button. Windows 7 gets the glass taskbar and the Start
 orb. Ubuntu gets the Unity launcher, on the left where it belongs.
-macOS gets the dock. Liquid Glass gets a floating control pill.
+macOS gets the frosted Dock. Tahoe gets its nearly clear glass Dock with
+the same drawn app icons, and calendar and weather widgets on the desktop.
 
 The site's own top bar persists in every era but takes on that era's
 treatment: beveled grey in the Windows 9x years, the Luna gradient in
-XP, a dark Unity panel in Ubuntu, a detached rounded pill in glass.
+XP, Ambiance's Unity panel in Ubuntu, and in Tahoe a menu bar with no
+material of its own.
 
 ### Focus
 
@@ -117,8 +123,8 @@ era's own way:
 | Windows 95 and 98 | caption turns grey, flat or graded |
 | Windows XP | washed-out Luna caption, desaturated buttons |
 | Windows 7 | close button stops being red, reflection dims |
-| Ubuntu | buttons and title fade to grey |
-| macOS | traffic lights turn grey |
+| Ubuntu | title dims, close turns grey like the other buttons, shadow shrinks |
+| macOS and Tahoe | traffic lights turn grey |
 
 The Windows taskbars name the focused window on their pressed button,
 and the Restore control is drawn as a push button of the era it appears
@@ -131,7 +137,7 @@ Windows kept its icons down the left of the desktop and macOS put the
 disk on the right, so both sit in the gutters behind the windows and
 fade on the era clock: My Computer, Network Neighborhood, Recycle Bin
 and My Briefcase for 95; My Documents and The Internet join them in 98;
-Luna and Aero versions after that; Macintosh HD for macOS. All drawn as
+Luna and Aero versions after that; Macintosh HD for macOS; widgets in Tahoe. All drawn as
 inline SVG, and hidden below 1240px where the gutter disappears.
 
 ### Wallpapers
@@ -184,8 +190,8 @@ nothing when you click its close box is worse than no window at all.
 Entries with a long body scroll inside their own window, capped at 296px
 with a soft bottom fade so the cut reads as *more below* rather than as
 clipping. The scrollbars are period-correct: a sunken dithered trough in
-the Windows 9x eras, a rounded blue thumb in XP, a thin orange overlay
-pill in Ubuntu, and block characters in the two text-mode eras.
+the Windows 9x eras, a rounded blue thumb in XP, Ubuntu's thin overlay
+line, orange only in the focused window, and block characters in the two text-mode eras.
 
 Three things this cost, all of them found by the test suite rather than
 by looking:

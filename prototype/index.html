@@ -1,4 +1,4 @@
-<title>Boot Sequence</title>
+<title>Evgeny Vinnik's personal site</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Ubuntu:wght@400;500;700&family=VT323&display=swap">
 <style>
@@ -24,9 +24,10 @@
   --hair:rgba(255,255,255,.20); --panel:rgba(14,14,30,.55);
   --thumb:#8FE3FF; --wire:#8FE3FF; --tb:54px;
 }
+html[data-era="glass"] { --fg:#FFFFFF; --dim:rgba(255,255,255,.86); --accent:#9ED8FF; --hair:rgba(255,255,255,.34);  --panel:rgba(18,30,52,.34);   --thumb:#FFFFFF; --wire:#FFFFFF; --tb:28px; }
 html[data-era="macos"] { --fg:#1D1D1F; --dim:#6E6E76; --accent:#0A7CFF; --hair:rgba(0,0,0,.13);        --panel:rgba(250,250,252,.72); --thumb:#0A7CFF; --wire:#0060DF; --tb:28px; }
 html[data-era="w10"]   { --fg:#FFFFFF; --dim:#A6A6A6; --accent:#0078D7; --hair:rgba(255,255,255,.16);  --panel:rgba(24,24,24,.86);   --thumb:#0078D7; --wire:#76B9ED; }
-html[data-era="ubuntu"]{ --fg:#F6EFEA; --dim:#B2879B; --accent:#E95420; --hair:rgba(233,84,32,.32);    --panel:rgba(34,0,22,.80);     --thumb:#E95420; --wire:#E95420; }
+html[data-era="ubuntu"]{ --fg:#DFDBD2; --dim:#A8A49C; --accent:#F07746; --hair:rgba(0,0,0,.45);        --panel:rgba(60,59,55,.92);    --thumb:#F07746; --wire:#F07746; --tb:24px; }
 html[data-era="aero"]  { --fg:#E8F2FD; --dim:#8FAFCE; --accent:#7EC8FF; --hair:rgba(180,220,255,.26);  --panel:rgba(12,28,48,.62);    --thumb:#7EC8FF; --wire:#7EC8FF; }
 html[data-era="xp"]    { --fg:#FFFFFF; --dim:#D3E2F7; --accent:#FFD24A; --hair:rgba(255,255,255,.34);  --panel:rgba(14,56,128,.72);   --thumb:#FFD24A; --wire:#FFD24A; }
 html[data-era="w98"]   { --fg:#000000; --dim:#3E3E3E; --accent:#1084D0; --hair:#7B7B7B;                --panel:#C0C0C0;               --thumb:#1084D0; --wire:#FFFFFF; }
@@ -119,21 +120,29 @@ a{color:inherit}
 .nav a:focus-visible,.mark:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 /* era-specific top bar treatments */
-html[data-era="glass"] .topbar{margin:10px;border:none;border-radius:22px;
-  background:linear-gradient(176deg,rgba(255,255,255,.13),rgba(14,14,34,.20) 48%,rgba(255,255,255,.07));
-  backdrop-filter:blur(3px) saturate(185%) brightness(1.07);
-  -webkit-backdrop-filter:blur(3px) saturate(185%) brightness(1.07);
-  box-shadow:inset 0 1.5px 1px -.5px rgba(255,255,255,.72),
-    inset 5px 5px 18px -9px rgba(255,255,255,.5),inset -5px -5px 18px -9px rgba(255,255,255,.36),
-    0 20px 46px -14px rgba(6,6,20,.55)}
-html[data-era="glass"] .topbar::after{content:"";position:absolute;inset:0;border-radius:inherit;
-  pointer-events:none;border:1.6px solid transparent;
-  background:linear-gradient(135deg,rgba(255,247,238,.94),rgba(255,255,255,.3) 16%,
-    rgba(255,255,255,.05) 40%,rgba(255,255,255,.05) 62%,rgba(226,240,255,.42) 86%,
-    rgba(210,234,255,.88)) border-box;
-  -webkit-mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);
-  -webkit-mask-composite:xor;mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);
-  mask-composite:exclude}
+/* Tahoe: the menu bar has no material of its own. The wallpaper runs to the
+   top edge, the text turns white, and only a faint shade keeps it legible */
+html[data-era="glass"] .topbar{padding:0 12px 0 16px;gap:4px;border-bottom:none;color:#FFF;
+  background:linear-gradient(180deg,rgba(0,0,0,.26),rgba(0,0,0,.1) 60%,rgba(0,0,0,0));
+  backdrop-filter:none;-webkit-backdrop-filter:none;text-shadow:0 0 8px rgba(0,0,0,.3)}
+/* where a window scrolls under it, the bar gets Tahoe's scroll edge effect:
+   a blur that fades out below the bar instead of a hard material edge */
+html[data-era="glass"] .topbar::before{content:"";position:absolute;left:0;right:0;top:0;bottom:-16px;z-index:-1;
+  pointer-events:none;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  -webkit-mask-image:linear-gradient(#000 50%,transparent);mask-image:linear-gradient(#000 50%,transparent)}
+html[data-era="glass"] .mark{order:0;font:700 13px var(--sf);color:#FFF;margin-right:12px}
+html[data-era="glass"] .mark s{color:inherit}
+html[data-era="glass"] .nav{order:1;margin-left:0;gap:0}
+html[data-era="glass"] .nav a{font:400 13px var(--sf);letter-spacing:0;text-transform:none;color:#FFF;
+  padding:3px 10px;border-radius:999px;border:none}
+html[data-era="glass"] .nav a:hover{background:rgba(255,255,255,.2)}
+html[data-era="glass"] .nav a[aria-current="page"]{background:rgba(255,255,255,.24);color:#FFF}
+html[data-era="glass"] .restore{order:2;margin-left:8px}
+html[data-era="glass"] .stamp{order:4;flex-direction:row-reverse;align-items:center;gap:7px}
+html[data-era="glass"] .stamp .yr{font:500 13px var(--sf);letter-spacing:0}
+html[data-era="glass"] .stamp .yr::after{content:"9:41";margin-left:8px}
+html[data-era="glass"] .stamp .os b{font:500 13px var(--sf)}
+html[data-era="glass"] .stamp .os i{display:none}
 /* macOS: the top bar is the menu bar. 28px of translucent white, the app name
    in bold, menus in regular weight, status items and the clock on the right */
 html[data-era="macos"] .topbar{padding:0 12px 0 16px;gap:4px;border-bottom:none;
@@ -150,13 +159,31 @@ html[data-era="macos"] .restore{order:2;margin-left:8px}
 .extras{display:none;align-items:center;gap:15px;color:#1D1D1F}
 .extras i{display:flex}
 .extras svg{width:16px;height:16px;display:block}
-html[data-era="macos"] .extras{display:flex;order:3;margin-left:auto;margin-right:16px}
+html[data-era="macos"] .extras.mac,html[data-era="glass"] .extras.mac{display:flex;order:3;margin-left:auto;margin-right:16px}
+html[data-era="glass"] .extras.mac{color:#FFF}
 html[data-era="macos"] .stamp{order:4;flex-direction:row-reverse;align-items:center;gap:7px}
 html[data-era="macos"] .stamp .yr{font:500 13px var(--sf);letter-spacing:0}
 html[data-era="macos"] .stamp .yr::after{content:"14:32";margin-left:8px;font-weight:400}
 html[data-era="macos"] .stamp .os b{font:400 13px var(--sf)}
 html[data-era="macos"] .stamp .os i{display:none}
-html[data-era="ubuntu"] .topbar{background:linear-gradient(180deg,#3B2C36,#241A21);border-bottom:1px solid #120C10}
+/* Unity's panel: the title bar's own gradient, the focused app's name on the
+   left, the indicators and the clock on the right, all in Ambiance's light ink */
+html[data-era="ubuntu"] .topbar{padding:0 6px 0 10px;gap:2px;border-bottom:none;color:#DFDBD2;
+  background:linear-gradient(180deg,#5A5852,#3E3D39);box-shadow:inset 0 1px 0 #605E58,0 1px 0 rgba(0,0,0,.55);
+  backdrop-filter:none;-webkit-backdrop-filter:none;text-shadow:0 -1px 0 #2A2926}
+html[data-era="ubuntu"] .mark{order:0;font:700 13px var(--ubuntu);color:#DFDBD2;margin-right:10px}
+html[data-era="ubuntu"] .mark s{color:inherit}
+html[data-era="ubuntu"] .nav{order:1;margin-left:0;gap:0}
+html[data-era="ubuntu"] .nav a{font:400 13px var(--ubuntu);letter-spacing:0;text-transform:none;color:#DFDBD2;
+  padding:3px 8px;border:none;border-radius:0}
+html[data-era="ubuntu"] .nav a:hover,html[data-era="ubuntu"] .nav a[aria-current="page"]{color:#FFF;
+  background:linear-gradient(180deg,#5A5852,#43413D)}
+html[data-era="ubuntu"] .extras.ub{display:flex;order:3;margin-left:auto;margin-right:12px;gap:14px;color:#DFDBD2}
+html[data-era="ubuntu"] .stamp{order:4;flex-direction:row-reverse;align-items:center;gap:8px}
+html[data-era="ubuntu"] .stamp .yr{font:400 13px var(--ubuntu)}
+html[data-era="ubuntu"] .stamp .yr::after{content:"14:32";margin-left:8px}
+html[data-era="ubuntu"] .stamp .os b{font:400 13px var(--ubuntu)}
+html[data-era="ubuntu"] .stamp .os i{display:none}
 /* Windows 10: a dark acrylic strip in Segoe UI, the current page marked by a
    2px accent underline the way a UWP pivot marks its selected tab */
 html[data-era="w10"] .topbar{background:rgba(26,26,26,.82);border-bottom:none;
@@ -256,21 +283,23 @@ body[data-maxed] main{z-index:80}
 .win[data-state="closed"]{display:none}
 
 /* minimised: everything below the caption folds away */
-.win[data-state="min"] .frame > :not(.bar):not(.mac):not(.tvwin),
+.win[data-state="min"] .frame > :not(.bar):not(.mac):not(.tvwin):not(.tahoe),
 .win[data-state="min"] .mcol > :not(.bar),
+.win[data-state="min"] .tcol > :not(.bar),
 .win[data-state="min"] .side > :not(.lights),
 .win[data-state="min"] .tvinner,.win[data-state="min"] .tvpos{display:none}
 .win[data-state="min"] .bar{cursor:pointer}
 .win[data-chrome="macos"][data-state="min"] .side{flex:0 0 auto;padding:0 9px;background:none;border-right:none}
 .win[data-chrome="macos"][data-state="min"] .lights{padding:11px 4px}
-.win[data-chrome="glass"][data-state="min"] .frame{--rim:9px}
+.win[data-chrome="glass"][data-state="min"] .side{flex:0 0 auto;padding:0 12px}
+.win[data-chrome="glass"][data-state="min"] .side .lights{padding:10px 0}
 
 /* maximised: out of the flow, filling the viewport, body scrolling inside */
 .win[data-state="max"]{position:fixed !important;left:0;right:0;top:0;bottom:0;
   width:auto !important;top:0 !important;z-index:70;padding:calc(var(--tb) + 8px) 14px 14px;margin:0}
 .win[data-state="max"] .frame{height:100%;display:flex;flex-direction:column}
 .win[data-state="max"] .pane,.win[data-state="max"] .field,.win[data-state="max"] .tvinner,
-.win[data-state="max"] .mac{flex:1;min-height:0}
+.win[data-state="max"] .mac,.win[data-state="max"] .tahoe{flex:1;min-height:0}
 .win[data-state="max"] .body{flex:1;min-height:0;max-height:none !important;overflow-y:auto}
 .win[data-state="max"] .tvwin{flex:1;min-height:0;display:flex;flex-direction:column}
 .win[data-state="max"] .web{height:100%}
@@ -299,12 +328,15 @@ body[data-maxed] main{z-index:80}
 .win[data-chrome="aero"] .body::-webkit-scrollbar-track{background:#F3F6F9;border-left:1px solid #DDE6EE}
 .win[data-chrome="aero"] .body::-webkit-scrollbar-thumb{border-radius:3px;
   background:linear-gradient(90deg,#E8F1F8,#B9CFE2);border:1px solid #A9C2DC}
-.win[data-chrome="ubuntu"] .body::-webkit-scrollbar{width:6px}
-.win[data-chrome="ubuntu"] .body::-webkit-scrollbar-thumb{border-radius:999px;background:#E95420}
+/* Ubuntu's overlay scrollbar at rest: a thin line, orange only in the focused window */
+.win[data-chrome="ubuntu"] .body::-webkit-scrollbar{width:4px}
+.win[data-chrome="ubuntu"] .body::-webkit-scrollbar-thumb{background:#F07746}
+.win[data-chrome="ubuntu"]:not([data-active]) .body::-webkit-scrollbar-thumb{background:#AEABA5}
 .win[data-chrome="macos"] .body::-webkit-scrollbar{width:9px}
 .win[data-chrome="macos"] .body::-webkit-scrollbar-thumb{border-radius:999px;background:rgba(0,0,0,.28)}
-.win[data-chrome="glass"] .body::-webkit-scrollbar{width:9px}
-.win[data-chrome="glass"] .body::-webkit-scrollbar-thumb{border-radius:999px;background:rgba(255,255,255,.34)}
+.win[data-chrome="glass"] .body::-webkit-scrollbar{width:11px}
+.win[data-chrome="glass"] .body::-webkit-scrollbar-thumb{border:3px solid transparent;background-clip:padding-box;
+  border-radius:999px;background-color:rgba(0,0,0,.3)}
 .win[data-chrome="mono"] .body::-webkit-scrollbar,.win[data-chrome="dos"] .body::-webkit-scrollbar{width:13px}
 .win[data-chrome="mono"] .body::-webkit-scrollbar-track{
   background:repeating-conic-gradient(#241A06 0 25%,#0B0A07 0 50%) 0 0/4px 4px}
@@ -327,16 +359,17 @@ html[data-era="xp"] .restore{border:1px solid #003C74;border-radius:3px;color:#0
   letter-spacing:0;text-transform:none;padding:4px 12px;background:linear-gradient(180deg,#FFF,#ECEBE6 86%,#D6D0C5)}
 html[data-era="aero"] .restore{border:1px solid #707070;border-radius:3px;color:#000;font:12px var(--segoe);
   letter-spacing:0;text-transform:none;padding:4px 12px;background:linear-gradient(180deg,#F2F2F2 0,#EBEBEB 50%,#DDD 51%,#CFCFCF)}
-html[data-era="ubuntu"] .restore{border:1px solid #1E1A1D;border-radius:4px;color:#F2EDE9;font:12px var(--ubuntu);
-  letter-spacing:0;text-transform:none;padding:4px 12px;background:linear-gradient(180deg,#5A5450,#3C3835)}
+html[data-era="ubuntu"] .restore{order:2;margin-left:8px;border:1px solid #2E2D2A;border-radius:3px;color:#DFDBD2;
+  font:12px var(--ubuntu);letter-spacing:0;text-transform:none;padding:1px 10px;background:#3C3B37;
+  box-shadow:inset 0 0 0 1px #5A5955}
 html[data-era="w10"] .restore{border:2px solid transparent;border-radius:0;color:#FFF;font:13px var(--segoe);
   letter-spacing:0;text-transform:none;padding:4px 14px;background:#333}
 html[data-era="w10"] .restore:hover{border-color:#858585}
 html[data-era="macos"] .restore{border:.5px solid rgba(0,0,0,.18);border-radius:6px;color:#1D1D1F;font:500 13px var(--sf);
   letter-spacing:0;text-transform:none;padding:3px 11px;background:#FFF;box-shadow:0 .5px 1px rgba(0,0,0,.14)}
-html[data-era="glass"] .restore{border:1px solid rgba(255,255,255,.2);border-radius:999px;color:#FFF;font:500 12px var(--sf);
-  letter-spacing:0;text-transform:none;padding:5px 13px;background:rgba(255,255,255,.12);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+html[data-era="glass"] .restore{border:none;border-radius:999px;color:#FFF;font:500 12px var(--sf);
+  letter-spacing:0;text-transform:none;padding:2px 11px;background:rgba(255,255,255,.22);
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.5)}
 html[data-era="mono"] .restore{border:1px solid #FFB000;border-radius:0;color:#FFD98A;font:16px var(--crt);
   letter-spacing:.04em;text-transform:uppercase;background:#0B0A07}
 
@@ -379,9 +412,9 @@ html[data-era="mono"] .restore{border:1px solid #FFB000;border-radius:0;color:#F
 .win[data-chrome="w95"] .frame,.win[data-chrome="w98"] .frame{color:#000}
 .win[data-chrome="xp"] .frame{color:#1A1A1A}
 .win[data-chrome="aero"] .frame{color:#12243A}
-.win[data-chrome="ubuntu"] .frame{color:#2C2B29}
+.win[data-chrome="ubuntu"] .frame{color:#3C3C3C}
 .win[data-chrome="macos"] .frame{color:#1D1D1F}
-.win[data-chrome="glass"] .frame{color:rgba(240,242,255,.90)}
+.win[data-chrome="glass"] .frame{color:#1D1D1F}
 
 /* ---- text mode: the amber CRT and Turbo Vision share one construction -----
    Text mode had no window manager. A window was a box of double-line
@@ -705,43 +738,81 @@ html[data-era="mono"] .restore{border:1px solid #FFB000;border-radius:0;color:#F
 .win[data-chrome="aero"] .details span{display:block;font-size:11.5px;line-height:1.45}
 .win[data-chrome="aero"] .details span b{font-weight:600;color:#12365C}
 
-/* ---- 2012–2015 · Ubuntu, Unity and Ambiance ---- */
+/* ---- 2012–2015 · Ubuntu, Unity and Ambiance ---------------------------------
+   Measured from the Ambiance theme as it shipped in 14.04. A 28px title bar
+   in the panel's gradient, the buttons on the left and the title left-aligned
+   and bold. The buttons are 17px discs in a dark ring with dark glyphs, and
+   close is orange only on the focused window. Nautilus runs its dark primary
+   toolbar on from the title bar and groups buttons into linked strips; the
+   sidebar is the theme's light grey with the selected place in Ambiance
+   orange. There is no status bar: Nautilus 3.10 floated it. */
 .win[data-chrome="ubuntu"]{font-family:var(--ubuntu);font-size:12.5px}
-.win[data-chrome="ubuntu"] .frame{background:#3B3A37;border:1px solid #191816;border-radius:7px 7px 3px 3px;
-  box-shadow:0 16px 40px rgba(0,0,0,.58)}
-.win[data-chrome="ubuntu"] .bar{background:linear-gradient(180deg,#57534E,#403C38);color:#F7F7F7;
-  padding:7px 10px;font-size:12.5px;font-weight:500;border-bottom:1px solid #262320;border-radius:6px 6px 0 0}
-.win[data-chrome="ubuntu"] .bar .t{text-align:center;text-shadow:0 -1px 0 rgba(0,0,0,.5)}
-.win[data-chrome="ubuntu"] .wbtns b{width:15px;height:15px;border-radius:50%;display:grid;place-items:center;
-  font:700 9px/1 var(--ubuntu);color:#FFF;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 1px 1px rgba(0,0,0,.4)}
-.win[data-chrome="ubuntu"] .b-cls{background:radial-gradient(circle at 35% 28%,#F5A388,#DB4B22)}
-.win[data-chrome="ubuntu"] .b-min,.win[data-chrome="ubuntu"] .b-max{
-  background:radial-gradient(circle at 35% 28%,#6E6862,#403C38);color:#D8D3CD}
-.win[data-chrome="ubuntu"] .tool{background:linear-gradient(180deg,#F4F2F0,#DEDAD6);
-  border-bottom:1px solid #B8B2AC;padding:6px 8px;color:#3B3A37}
-.win[data-chrome="ubuntu"] .tool b{font-weight:400;padding:2px 7px;border:1px solid #B8B2AC;border-radius:4px;
-  background:linear-gradient(180deg,#FCFBFA,#E8E4E0)}
-.win[data-chrome="ubuntu"] .tool .path{flex:1;display:flex;gap:0;min-width:0}
-.win[data-chrome="ubuntu"] .tool .path i{font-style:normal;padding:2px 9px;border:1px solid #B8B2AC;
-  border-right:none;background:linear-gradient(180deg,#FCFBFA,#E8E4E0);white-space:nowrap}
-.win[data-chrome="ubuntu"] .tool .path i:last-child{border-right:1px solid #B8B2AC;
-  background:linear-gradient(180deg,#F0A98E,#E95420);color:#FFF;border-color:#B4400F}
-.win[data-chrome="ubuntu"] .pane{background:#FCFCFC}
-.win[data-chrome="ubuntu"] .side{background:#F1EEEC;border-right:1px solid #DAD5D1;color:#3B3A37;flex:0 0 132px}
-.win[data-chrome="ubuntu"] .side i{color:#8A817B;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
-.win[data-chrome="ubuntu"] .side u{color:#3B3A37}
-.win[data-chrome="ubuntu"] .body{position:relative;color:#2C2B29;padding-right:24px}
-/* Unity's overlay scrollbar: a thin orange pill, not a trough */
-.win[data-chrome="ubuntu"] .body::after{content:"";position:absolute;top:12px;right:7px;
-  width:5px;height:46%;border-radius:999px;background:#E95420;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
-.win[data-chrome="ubuntu"] h3{color:#1F1E1C;font-weight:500}
-.win[data-chrome="ubuntu"] .kind{color:#C7451B;opacity:1;font:500 12px var(--ubuntu);letter-spacing:0;
-  text-transform:capitalize}
-.win[data-chrome="ubuntu"] .tags b{font:400 11.5px/1 var(--ubuntu);letter-spacing:0;text-transform:none;
-  padding:4px 9px;border-radius:999px;border:1px solid #D2CBC4;opacity:1;color:#3B3A37;
-  background:linear-gradient(180deg,#FFFFFF,#EEEAE6)}
-.win[data-chrome="ubuntu"] .status{background:#F1EEEC;border-top:1px solid #DAD5D1;padding:3px 8px;color:#6E6862}
-.win[data-chrome="ubuntu"] .status s:first-child{flex:1}
+.win[data-chrome="ubuntu"] .frame{background:#FFF;border-radius:6px 6px 0 0;
+  box-shadow:0 0 0 1px rgba(0,0,0,.5),1px 5px 30px rgba(0,0,0,.75)}
+.win[data-chrome="ubuntu"] .bar{height:28px;padding:1px 6px 0;gap:0;border-radius:6px 6px 0 0;color:#DFDBD2;
+  background:linear-gradient(180deg,#5A5852,#3E3D39);box-shadow:inset 0 1px 0 #605E58;
+  font:700 12.5px var(--ubuntu)}
+.win[data-chrome="ubuntu"] .bar .t{margin-left:10px;text-align:left;
+  text-shadow:1px 0 #333,-1px 0 #333,0 1px #333,0 -1px #333;
+  -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 35px),transparent);
+  mask-image:linear-gradient(90deg,#000 calc(100% - 35px),transparent)}
+/* window buttons: lit from above, a dark ring, a dark glyph with a light lip */
+.win[data-chrome="ubuntu"] .wbtns{gap:2px}
+.win[data-chrome="ubuntu"] .wbtns b{position:relative;width:17px;height:17px;margin:1px 0;border-radius:50%;
+  background:linear-gradient(180deg,#8E8D88,#75746D 50%,#5A5955);
+  box-shadow:inset 0 0 0 1px #383734,inset 0 0 0 2px rgba(255,255,255,.07)}
+.win[data-chrome="ubuntu"] .wbtns .b-cls{background:linear-gradient(180deg,#F58D6E,#E55E30 50%,#DE4C19)}
+.win[data-chrome="ubuntu"] .wbtns .b-cls:hover{background:linear-gradient(180deg,#FBA992,#F17750 50%,#E24F1B)}
+.win[data-chrome="ubuntu"] .wbtns .b-min:hover,.win[data-chrome="ubuntu"] .wbtns .b-max:hover{
+  background:linear-gradient(180deg,#CACACA,#BDBDBD 50%,#969696)}
+.win[data-chrome="ubuntu"] .wbtns b::before,.win[data-chrome="ubuntu"] .wbtns b::after{content:"";position:absolute;
+  left:50%;top:50%;background:#3C3B37;box-shadow:0 1px 0 rgba(255,255,255,.25)}
+.win[data-chrome="ubuntu"] .b-cls::before,.win[data-chrome="ubuntu"] .b-cls::after{width:8px;height:1.5px;
+  margin:-.75px 0 0 -4px;transform:rotate(45deg)}
+.win[data-chrome="ubuntu"] .b-cls::after{transform:rotate(-45deg)}
+.win[data-chrome="ubuntu"] .b-min::before{width:7px;height:1.5px;margin:-.5px 0 0 -3.5px}
+.win[data-chrome="ubuntu"] .b-max::before{width:7px;height:7px;margin:-3.5px 0 0 -3.5px;box-sizing:border-box;
+  background:none;border:1.5px solid #3C3B37;box-shadow:0 1px 0 rgba(255,255,255,.2)}
+.win[data-chrome="ubuntu"] .b-min::after,.win[data-chrome="ubuntu"] .b-max::after{display:none}
+/* the primary toolbar: dark, flat buttons outlined in a lighter ring, linked
+   strips divided by a light and a dark hairline, the current folder pressed */
+.win[data-chrome="ubuntu"] .tool{height:40px;padding:0 6px;gap:6px;color:#DFDBD2;
+  background:linear-gradient(180deg,#3A3935,#54524D);border-top:1px solid #413F3C;border-bottom:1px solid #42413D;
+  box-shadow:inset 0 1px 0 #383733}
+.win[data-chrome="ubuntu"] .tool b{height:28px;min-width:32px;padding:0 8px;display:flex;align-items:center;
+  justify-content:center;gap:6px;font-weight:400;color:#DFDBD2;white-space:nowrap;
+  border:1px solid #5B5A55;border-radius:3px;background:rgba(255,255,255,.02);
+  box-shadow:0 0 0 1px rgba(0,0,0,.14)}
+.win[data-chrome="ubuntu"] .tool b svg{width:16px;height:16px;display:block;flex:0 0 auto}
+.win[data-chrome="ubuntu"] .tool b.off{color:#86837D}
+.win[data-chrome="ubuntu"] .tool .lk{display:flex;flex:0 0 auto;min-width:0}
+.win[data-chrome="ubuntu"] .tool .lk b{border-radius:0;box-shadow:inset 1px 0 #54524D,inset -1px 0 #363531}
+.win[data-chrome="ubuntu"] .tool .lk b + b{border-left:none}
+.win[data-chrome="ubuntu"] .tool .lk b:first-child{border-radius:3px 0 0 3px;box-shadow:inset -1px 0 #363531}
+.win[data-chrome="ubuntu"] .tool .lk b:last-child{border-radius:0 3px 3px 0;box-shadow:inset 1px 0 #54524D}
+.win[data-chrome="ubuntu"] .tool .lk b.on,.win[data-chrome="ubuntu"] .tool b.on{background:rgba(0,0,0,.2);
+  border-color:#2A2926;box-shadow:inset 0 1px 2px rgba(0,0,0,.35)}
+.win[data-chrome="ubuntu"] .tool .lk b.on + b{border-left:1px solid #2A2926}
+.win[data-chrome="ubuntu"] .tool .path{min-width:0;overflow:hidden}
+.win[data-chrome="ubuntu"] .tool .fill{flex:1}
+/* sidebar and content */
+.win[data-chrome="ubuntu"] .pane{background:#FFF}
+.win[data-chrome="ubuntu"] .side{flex:0 0 152px;padding:4px 0 12px;background:#E6E5E4;border-right:1px solid #CBCAC9;
+  color:#3C3C3C;font-size:12.5px;line-height:1}
+.win[data-chrome="ubuntu"] .side i{display:block;font-style:normal;font-weight:700;color:#7C7A76;opacity:1;
+  font-size:12px;margin:12px 0 3px;padding:0 10px}
+.win[data-chrome="ubuntu"] .side u{display:flex;align-items:center;gap:6px;height:24px;padding:0 10px 0 12px;
+  text-decoration:none;opacity:1;color:#3C3C3C;white-space:nowrap}
+.win[data-chrome="ubuntu"] .side u.sel{background:#F07746;color:#FFF;text-shadow:0 1px #A85331}
+.win[data-chrome="ubuntu"] .side svg{width:16px;height:16px;display:block;flex:0 0 auto}
+.win[data-chrome="ubuntu"] .body{color:#3C3C3C;padding:14px 18px 18px}
+.win[data-chrome="ubuntu"] h3{color:#3C3C3C;font-weight:500;font-size:17px}
+.win[data-chrome="ubuntu"] .kind{color:#8A8680;opacity:1;font:400 12px var(--ubuntu);letter-spacing:0;
+  text-transform:capitalize;margin-bottom:4px}
+.win[data-chrome="ubuntu"] .org{color:#7C7A76;opacity:1}
+.win[data-chrome="ubuntu"] .tags b{font:400 12px/1 var(--ubuntu);letter-spacing:0;text-transform:none;
+  padding:5px 10px;border-radius:3px;border:1px solid #BAB8B5;opacity:1;color:#3C3C3C;
+  background:linear-gradient(180deg,#FBFBFA,#E8E7E5);box-shadow:inset 0 1px 0 #FFF}
 
 /* ---- 2016–2020 · Windows 10, File Explorer --------------------------------
    Flat, white and square. A 31px caption carries the folder icon, the Quick
@@ -969,46 +1040,91 @@ html[data-photos~="glass"] .lg{
 html[data-photos~="glass"] .lg::before{
   backdrop-filter:blur(18px) saturate(240%) brightness(1.04);
   -webkit-backdrop-filter:blur(18px) saturate(240%) brightness(1.04)}
-html[data-photos~="glass"][data-era="glass"] .topbar{
-  background:linear-gradient(176deg,rgba(255,255,255,.12),rgba(8,16,34,.44) 48%,rgba(8,16,34,.36));
-  backdrop-filter:blur(12px) saturate(160%) brightness(.92);-webkit-backdrop-filter:blur(12px) saturate(160%) brightness(.92)}
-html[data-photos~="glass"][data-era="glass"] .nav a{color:rgba(240,243,255,.84)}
-html[data-photos~="glass"][data-era="glass"] .nav a[aria-current="page"]{color:#FFF}
-html[data-photos~="glass"][data-era="glass"] .stamp .os i{color:rgba(230,236,255,.74)}
 
+/* The light material Tahoe uses for sidebars, the Dock and widgets: mostly
+   clear, faintly frosted, a rim that smears harder than the body, and a white
+   specular hairline brightest where the light lands. */
+.lgl{position:relative;
+  background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,255,255,.7));
+  backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%)}
+.lgl::before,.lgl::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
+.lgl::before{border:var(--rim,10px) solid transparent;
+  backdrop-filter:blur(30px) saturate(150%);-webkit-backdrop-filter:blur(30px) saturate(150%);
+  -webkit-mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);mask-composite:exclude}
+.lgl::after{border:1px solid transparent;
+  background:linear-gradient(160deg,rgba(255,255,255,.95),rgba(255,255,255,.4) 26%,
+    rgba(255,255,255,.16) 60%,rgba(255,255,255,.72)) border-box;
+  -webkit-mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);mask-composite:exclude}
+.lgl > *{position:relative;z-index:1}
+
+/* Tahoe keeps the page white and moves the glass to the navigation layer. The
+   sidebar is its own pane of light glass floating 8px inside the window, its
+   corners concentric with the window's 26px ones, the traffic lights at its
+   top left and the desktop showing through it. The toolbar has no strip: its
+   buttons sit in capsules over the content, grouped by what they do. */
 .win[data-chrome="glass"]{font-family:var(--sf);font-size:13px}
-.win[data-chrome="glass"] .frame{--r:28px;--rim:13px;overflow:visible}
-.win[data-chrome="glass"] .bar{padding:16px 18px 0}
-.win[data-chrome="glass"] .bar .t{flex:0 0 auto;font-family:var(--mono);font-size:9.5px;font-weight:500;
-  letter-spacing:.13em;text-transform:uppercase;color:rgba(244,246,255,.86);
-  padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.11);
-  border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.34)}
-.win[data-chrome="glass"] .wbtns{margin-left:auto;gap:7px;padding:6px 9px;border-radius:999px;
-  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.15);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
-.win[data-chrome="glass"] .wbtns b{width:11px;height:11px;border-radius:50%;font-size:0;
-  box-shadow:inset 0 0 0 .5px rgba(0,0,0,.18),0 1px 2px rgba(0,0,0,.3)}
-.win[data-chrome="glass"] .b-cls{background:radial-gradient(circle at 38% 30%,#FF8B84,#EE4B42)}
-.win[data-chrome="glass"] .b-min{background:radial-gradient(circle at 38% 30%,#FFD46B,#E5A013)}
-.win[data-chrome="glass"] .b-max{background:radial-gradient(circle at 38% 30%,#63E077,#1FAE36)}
-.win[data-chrome="glass"] .body{color:rgba(240,242,255,.90);padding:13px 19px 9px;
-  text-shadow:0 1px 3px rgba(6,6,20,.45)}
-.win[data-chrome="glass"] h3{color:#FFF;font-size:18.5px;letter-spacing:-.02em;
-  text-shadow:0 1px 4px rgba(6,6,20,.5)}
-.win[data-chrome="glass"] .org{color:rgba(240,242,255,.66)}
-.win[data-chrome="glass"] .kind{display:none}
-.win[data-chrome="glass"] .tags b{border-radius:999px;border-color:rgba(255,255,255,.26);
-  background:rgba(255,255,255,.09);opacity:1;color:rgba(244,246,255,.84);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.28)}
-/* concentric: the capsule sits 15px inside a 28px corner */
-.win[data-chrome="glass"] .pill{display:flex;gap:5px;margin:5px 15px 15px;padding:5px;
-  border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.15);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -6px 12px -8px rgba(10,10,34,.5)}
-.win[data-chrome="glass"] .pill b{font-family:var(--mono);font-size:9.5px;font-weight:500;
-  letter-spacing:.09em;text-transform:uppercase;padding:7px 14px;border-radius:999px;
-  color:rgba(240,242,255,.80)}
-.win[data-chrome="glass"] .pill b:first-child{color:#0C0C1C;background:rgba(255,255,255,.88);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 1px 3px rgba(8,8,22,.35)}
+.win[data-chrome="glass"] .frame{position:relative;border-radius:26px;background:transparent;
+  box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 30px 70px rgba(6,20,40,.34),0 4px 14px rgba(6,20,40,.16)}
+.win[data-chrome="glass"] .tahoe{display:flex;align-items:stretch}
+/* the white around the sidebar is the sidebar's own spread shadow, so nothing
+   opaque sits under the glass and what it samples is the desktop */
+.win[data-chrome="glass"] .side{--rim:8px;flex:0 0 184px;margin:8px 0 8px 8px;padding:0 8px 12px;border-radius:18px;
+  font-size:13px;line-height:1.3;color:#1D1D1F;
+  box-shadow:0 1px 6px rgba(0,0,0,.08),inset 0 0 0 .5px rgba(0,0,0,.06),0 0 0 8px #FFF}
+.win[data-chrome="glass"] .tcol{flex:1;min-width:0;display:flex;flex-direction:column;background:#FFF}
+/* traffic lights: 14px and 9px apart, flat, glyphs when the pointer reaches them */
+.win[data-chrome="glass"] .lights{display:flex;gap:9px;padding:15px 6px 16px}
+.win[data-chrome="glass"] .bar .lights{padding:0 8px 0 6px}
+.win[data-chrome="glass"] .lights b{position:relative;width:14px;height:14px;border-radius:50%;font-size:0;
+  box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)}
+.win[data-chrome="glass"] .tl-r{background:#FF5F57}
+.win[data-chrome="glass"] .tl-y{background:#FEBC2E}
+.win[data-chrome="glass"] .tl-g{background:#28C840}
+.win[data-chrome="glass"] .lights b::before,.win[data-chrome="glass"] .lights b::after{content:"";position:absolute;opacity:0}
+.win[data-chrome="glass"] .lights:hover b::before,.win[data-chrome="glass"] .lights:hover b::after,
+.win[data-chrome="glass"] .lights b:focus-visible::before,.win[data-chrome="glass"] .lights b:focus-visible::after{opacity:1}
+.win[data-chrome="glass"] .tl-r::before,.win[data-chrome="glass"] .tl-r::after{left:3px;top:6.4px;width:8px;height:1.2px;
+  background:#4D0000;transform:rotate(45deg)}
+.win[data-chrome="glass"] .tl-r::after{transform:rotate(-45deg)}
+.win[data-chrome="glass"] .tl-y::before{left:3px;top:6.4px;width:8px;height:1.2px;background:#995700}
+.win[data-chrome="glass"] .tl-g::before{left:3.5px;top:3.5px;border:3px solid transparent;border-top-color:#006500;border-left-color:#006500}
+.win[data-chrome="glass"] .tl-g::after{right:3.5px;bottom:3.5px;border:3px solid transparent;border-bottom-color:#006500;border-right-color:#006500}
+/* sidebar rows: 30px, rounded selection, symbols in the accent colour */
+.win[data-chrome="glass"] .side i{display:block;font-style:normal;font-weight:600;color:rgba(60,60,67,.6);
+  font-size:11px;margin:14px 0 4px;padding-left:10px}
+.win[data-chrome="glass"] .side i:first-of-type{margin-top:0}
+.win[data-chrome="glass"] .side u{display:flex;align-items:center;gap:8px;height:30px;padding:0 10px;
+  text-decoration:none;color:#1D1D1F;border-radius:10px}
+.win[data-chrome="glass"] .side u.sel{background:rgba(0,0,0,.08)}
+.win[data-chrome="glass"] .sym{flex:0 0 auto;width:16px;height:16px;display:grid;place-items:center;color:#0A84FF}
+.win[data-chrome="glass"] .sym svg{width:16px;height:16px;display:block}
+.win[data-chrome="glass"] .dot{flex:0 0 auto;width:10px;height:10px;margin:0 3px;border-radius:50%;
+  background:var(--c);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.18)}
+/* toolbar: capsules, the title bold beside the navigation group */
+.win[data-chrome="glass"] .bar{height:54px;flex:0 0 auto;padding:0 10px 0 10px;gap:8px;color:#1D1D1F}
+.win[data-chrome="glass"] .cap{display:flex;align-items:center;flex:0 0 auto;height:34px;padding:0 3px;border-radius:999px;
+  background:rgba(255,255,255,.92);color:#1D1D1F;
+  box-shadow:0 0 0 .5px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.08),0 5px 14px rgba(0,0,0,.06),inset 0 1px 0 #FFF}
+.win[data-chrome="glass"] .cap b{height:28px;min-width:30px;padding:0 6px;display:grid;place-items:center;
+  border-radius:999px;font-weight:400}
+.win[data-chrome="glass"] .cap b:hover{background:rgba(0,0,0,.06)}
+.win[data-chrome="glass"] .cap b.off{color:#BDBDC2}
+.win[data-chrome="glass"] .cap i{width:1px;height:16px;background:rgba(0,0,0,.12)}
+.win[data-chrome="glass"] .cap svg{width:16px;height:16px;display:block}
+.win[data-chrome="glass"] .ttl{flex:1;min-width:0;padding-left:4px}
+.win[data-chrome="glass"] .ttl .t{display:block;font-size:15px;font-weight:700;letter-spacing:-.012em}
+/* content: a large bold title, grey secondary text, tags as quiet capsules */
+.win[data-chrome="glass"] .body{color:#1D1D1F;padding:6px 24px 22px}
+.win[data-chrome="glass"] .body .kind{font:600 12px var(--sf);letter-spacing:0;text-transform:capitalize;
+  color:#86868B;opacity:1;margin:0 0 2px}
+.win[data-chrome="glass"] h3{font-size:26px;font-weight:700;letter-spacing:-.022em;line-height:1.15;margin-bottom:4px}
+.win[data-chrome="glass"] .org{color:#6E6E73;opacity:1}
+.win[data-chrome="glass"] .blurb{font-size:13.5px;line-height:1.55}
+.win[data-chrome="glass"] .tags b{font-family:var(--sf);font-size:11.5px;font-weight:500;letter-spacing:0;
+  text-transform:none;padding:4px 10px;border:none;border-radius:999px;background:rgba(0,0,0,.05);
+  color:#3C3C43;opacity:1}
 
 /* ---- focus, in the eras that marked it more quietly ------------------------ */
 /* the glass keeps its density so status text stays readable; focus is carried
@@ -1019,11 +1135,23 @@ html[data-photos~="glass"][data-era="glass"] .stamp .os i{color:rgba(230,236,255
 /* Windows 7 only lit the close button red on the focused window */
 .win[data-chrome="aero"]:not([data-active]) .wbtns b:last-child{color:#13293F;
   background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(210,230,250,.30))}
-.win[data-chrome="ubuntu"]:not([data-active]) .bar{background:linear-gradient(180deg,#4A4743,#3A3733);color:#A29C95}
-.win[data-chrome="ubuntu"]:not([data-active]) .wbtns b{color:#BEB8B1;
-  background:radial-gradient(circle at 35% 28%,#77716B,#4A4642);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
-.win[data-chrome="glass"]:not([data-active]) .wbtns b{background:rgba(255,255,255,.34);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
-.win[data-chrome="glass"]:not([data-active]) .frame.lg::after{opacity:.55}
+/* Unity dims an unfocused title bar and turns its close button grey too */
+.win[data-chrome="ubuntu"]:not([data-active]) .frame{box-shadow:0 0 0 1px rgba(0,0,0,.4),0 3px 25px rgba(0,0,0,.3)}
+.win[data-chrome="ubuntu"]:not([data-active]) .bar{background:linear-gradient(180deg,#41403D,#3C3B37);color:#807D78}
+.win[data-chrome="ubuntu"]:not([data-active]) .bar .t{text-shadow:none}
+.win[data-chrome="ubuntu"]:not([data-active]) .wbtns b{background:linear-gradient(180deg,#605F59,#5B5A54)}
+.win[data-chrome="ubuntu"]:not([data-active]) .wbtns b::before,
+.win[data-chrome="ubuntu"]:not([data-active]) .wbtns b::after{box-shadow:none}
+/* Tahoe, like every macOS, greys the lights of windows that are not key */
+.win[data-chrome="glass"]:not([data-active]) .lights b{background:#D8D8DC;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.1)}
+.win[data-chrome="glass"]:not([data-active]) .lights:hover .tl-r{background:#FF5F57}
+.win[data-chrome="glass"]:not([data-active]) .lights:hover .tl-y{background:#FEBC2E}
+.win[data-chrome="glass"]:not([data-active]) .lights:hover .tl-g{background:#28C840}
+.win[data-chrome="glass"]:not([data-active]) .ttl,.win[data-chrome="glass"]:not([data-active]) .cap{color:#8E8E93}
+.win[data-chrome="glass"]:not([data-active]) .side u.sel{background:rgba(0,0,0,.05)}
+.win[data-chrome="glass"]:not([data-active]) .sym{color:#8E8E93}
+.win[data-chrome="glass"]:not([data-active]) .frame{
+  box-shadow:0 0 0 .5px rgba(0,0,0,.14),0 14px 36px rgba(6,20,40,.2),0 2px 6px rgba(6,20,40,.1)}
 
 /* ========================= era furniture =========================
    The desktop shell of each era, cross-faded on the same clock as the
@@ -1111,7 +1239,7 @@ html[data-photos~="glass"][data-era="glass"] .stamp .os i{color:rgba(230,236,255
   border-left:1px solid rgba(255,255,255,.28)}
 
 /* ubuntu: the Unity launcher, on the left where it belongs */
-.sh-ubuntu{top:54px;right:auto;width:60px;bottom:0;display:flex;flex-direction:column;align-items:center;
+.sh-ubuntu{top:var(--tb);right:auto;width:60px;bottom:0;display:flex;flex-direction:column;align-items:center;
   gap:8px;padding:9px 0;background:linear-gradient(180deg,rgba(58,46,56,.90),rgba(38,26,36,.90));
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-right:1px solid rgba(0,0,0,.5)}
 .sh-ubuntu .dash{width:42px;height:42px;border-radius:6px;display:grid;place-items:center;
@@ -1130,7 +1258,7 @@ html[data-photos~="glass"][data-era="glass"] .stamp .os i{color:rgba(230,236,255
 .sh-ubuntu .t-term{background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 52%),linear-gradient(180deg,#4A2A40,#2A1624)}
 .sh-ubuntu .t-bag{background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 52%),linear-gradient(180deg,#F0A060,#D65A18)}
 .sh-ubuntu .tile.on::before{content:"";position:absolute;left:-7px;top:50%;margin-top:-4px;
-  border:4px solid transparent;border-left-color:#E95420}
+  border:4px solid transparent;border-left-color:rgba(255,255,255,.9)}
 .sh-ubuntu .tile.on::after{content:"";position:absolute;right:-7px;top:50%;margin-top:-4px;
   border:4px solid transparent;border-right-color:rgba(255,255,255,.75)}
 
@@ -1162,37 +1290,37 @@ html[data-photos~="glass"][data-era="glass"] .stamp .os i{color:rgba(230,236,255
   .win[data-chrome="w10"] .navb em{display:none}
 }
 
-/* macos: the dock */
-.sh-macos{display:flex;justify-content:center;padding:0 0 9px;background:none}
-.sh-macos .dock{display:flex;align-items:flex-end;gap:9px;padding:7px 9px;border-radius:19px;
-  background:rgba(250,250,253,.58);backdrop-filter:blur(26px) saturate(1.8);
-  -webkit-backdrop-filter:blur(26px) saturate(1.8);border:1px solid rgba(255,255,255,.6);
-  box-shadow:0 12px 34px rgba(30,32,44,.26)}
-/* Big Sur squircles: a tinted ground, a white glyph, a top sheen */
-.sh-macos .dock i{position:relative;width:42px;height:42px;border-radius:11px;display:grid;place-items:center;
-  color:#FFF;box-shadow:0 2px 5px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 .5px rgba(0,0,0,.1)}
-.sh-macos .dock i svg{width:26px;height:26px;display:block}
-.sh-macos .dock i svg [stroke]{stroke-width:2.3}
-.sh-macos .d-finder{background:linear-gradient(180deg,#6CB4FF,#1F74E8)}
-.sh-macos .d-web{background:linear-gradient(180deg,#FFFFFF,#E4E8EE);color:#1F74E8}
-.sh-macos .d-mail{background:linear-gradient(180deg,#5DC1FF,#1E7CF0)}
-.sh-macos .d-notes{background:linear-gradient(180deg,#FFD84A 0,#FFD84A 28%,#FFFDF4 28%,#F2EEE2 100%);color:#B8A878}
-.sh-macos .d-term{background:linear-gradient(180deg,#3A3A40,#141418);color:#E6E6EA}
-.sh-macos .d-gear{background:linear-gradient(180deg,#A8A8B0,#6E6E76)}
-.sh-macos .d-trash{background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(214,216,226,.72));color:#48484E}
-.sh-macos .dock .div{width:1px;height:42px;border-radius:0;background:rgba(0,0,0,.14);box-shadow:none}
-.sh-macos .dock i.run::after{content:"";position:absolute;left:50%;bottom:-6px;width:4px;height:4px;
-  margin-left:-2px;border-radius:50%;background:rgba(0,0,0,.45)}
-
-/* glass: a floating control pill */
-.sh-glass{display:flex;justify-content:center;padding:0 0 18px;background:none}
-.sh-glass .bar2{--r:999px;--rim:10px;display:flex;align-items:center;gap:7px;padding:8px 10px}
-/* a tab bar: glyphs in a capsule, the selected one sitting on its own lens */
-.sh-glass .bar2 i{width:40px;height:34px;border-radius:999px;display:grid;place-items:center;
-  color:rgba(245,247,255,.84)}
-.sh-glass .bar2 i svg{width:20px;height:20px;display:block}
-.sh-glass .bar2 i.sel{color:#8FE3FF;background:rgba(255,255,255,.16);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -4px 8px -6px rgba(10,10,34,.6)}
+/* The Dock, in both Apple eras: app icons drawn edge to edge in their
+   squircles, running apps marked with a dot, a divider before the Downloads
+   stack and the Trash. The shells fade on opacity, which would cut the glass
+   off from the desktop behind it, so these two do not promote their layer. */
+#shells .sh-macos,#shells .sh-glass{will-change:auto}
+.sh-macos,.sh-glass{display:flex;justify-content:center;background:none}
+.dock{display:flex;align-items:center}
+.dock i{position:relative;display:block;flex:0 0 auto;font-style:normal}
+.dock i svg{width:100%;height:100%;display:block;overflow:visible}
+.dock .div{align-self:stretch;width:1px;margin:4px 5px}
+.dock i.run::after{content:"";position:absolute;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%}
+/* Big Sur to Sequoia: a frosted shelf */
+.sh-macos{padding:0 0 6px}
+.sh-macos .dock{gap:5px;padding:5px 6px;border-radius:18px;background:rgba(246,246,250,.42);
+  backdrop-filter:blur(30px) saturate(1.8);-webkit-backdrop-filter:blur(30px) saturate(1.8);
+  box-shadow:0 0 0 .5px rgba(0,0,0,.14),inset 0 0 0 .5px rgba(255,255,255,.5),0 10px 30px rgba(0,0,0,.14)}
+.sh-macos .dock i{width:46px;height:46px}
+.sh-macos .dock i svg{filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.18))}
+.sh-macos .dock .div{background:rgba(0,0,0,.16)}
+.sh-macos .dock i.run::after{bottom:-4px;background:rgba(0,0,0,.5)}
+/* Tahoe: nearly clear. A lens with almost no frost, the wallpaper reading
+   straight through it, and the icons the only opaque things on it */
+.sh-glass{padding:0 0 8px}
+.sh-glass .dock{--rim:9px;gap:6px;padding:7px 8px;border-radius:26px;
+  background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.08));
+  backdrop-filter:blur(5px) saturate(160%);-webkit-backdrop-filter:blur(5px) saturate(160%);
+  box-shadow:0 0 0 .5px rgba(0,0,0,.08),0 12px 34px rgba(0,0,0,.16)}
+.sh-glass .dock i{width:50px;height:50px}
+.sh-glass .dock i svg{filter:drop-shadow(0 1px 2px rgba(0,0,0,.2))}
+.sh-glass .dock .div{background:rgba(255,255,255,.55);box-shadow:1px 0 0 rgba(0,0,0,.08)}
+.sh-glass .dock i.run::after{bottom:-6px;background:rgba(0,0,0,.62);box-shadow:0 0 0 .5px rgba(255,255,255,.4)}
 
 /* ========================= desktop icons =========================
    Windows kept its icons down the left of the desktop, macOS put the disk
@@ -1212,7 +1340,23 @@ html[data-photos~="glass"][data-era="glass"] .stamp .os i{color:rgba(230,236,255
 /* on a photograph macOS draws desktop labels white with a shadow */
 html[data-photos~="macos"] .ic-macos .di span{color:#FFF;text-shadow:0 1px 3px rgba(0,0,0,.65),0 0 1px rgba(0,0,0,.8)}
 @media (max-width:1239px){ #icons{display:none} }
-@media (max-width:900px){ html[data-era="macos"] .extras{display:none} }
+/* Tahoe: widgets on the desktop, in the same light glass as the Dock */
+#icons .ic-glass{will-change:auto;top:14px;right:18px;gap:14px}
+.ic-glass .wg{--rim:9px;width:164px;height:164px;border-radius:24px;padding:13px 14px;color:#FFF;font-family:var(--sf);
+  background:linear-gradient(180deg,rgba(24,44,72,.16),rgba(24,44,72,.28));
+  backdrop-filter:blur(18px) saturate(130%);-webkit-backdrop-filter:blur(18px) saturate(130%);
+  box-shadow:0 8px 26px rgba(0,0,0,.14);text-shadow:0 1px 2px rgba(0,0,0,.28)}
+.ic-glass .cal b{display:block;font-size:11px;font-weight:700;color:#FF8A80;letter-spacing:.02em;margin-bottom:5px}
+.ic-glass .mo{display:grid;grid-template-columns:repeat(7,1fr);row-gap:2px;text-align:center;
+  font-size:9.5px;font-weight:600;line-height:17px}
+.ic-glass .mo s{text-decoration:none;color:rgba(255,255,255,.66);font-size:8.5px}
+.ic-glass .mo em{font-style:normal}
+.ic-glass .mo em.now{justify-self:center;width:17px;border-radius:50%;background:#FF453A;text-shadow:none}
+.ic-glass .wx b{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:600}
+.ic-glass .wx b svg{width:9px;height:9px;display:block}
+.ic-glass .wx strong{display:block;font-size:42px;font-weight:300;line-height:1.05;letter-spacing:-.02em;margin-top:2px}
+.ic-glass .wx p{margin:13px 0 0;font-size:11.5px;font-weight:600;line-height:1.35}
+.ic-glass .wx p svg{width:16px;height:16px;display:block;margin-bottom:3px}
 
 /* an entry's optional link, shown on its project card */
 .pcard .plink{align-self:flex-start;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;
@@ -1270,6 +1414,19 @@ body[data-route="projects"] main,body[data-route="links"] main{display:none}
   .win .cb.w{width:112px}
   .sh-dos b:nth-child(n+6){display:none}
   .sh-mono b:nth-child(2){display:none}
+}
+/* phones: the Dock keeps its ends, the menu bars drop their status items,
+   and a Tahoe window folds its sidebar down to a strip that holds the lights */
+@media (max-width:900px){
+  .sh-macos .dock i,.sh-glass .dock i{width:38px;height:38px}
+  .dock i:nth-child(n+6):nth-child(-n+12){display:none}
+  html[data-era] .extras.mac,html[data-era] .extras.ub{display:none}
+  .win[data-chrome="glass"] .side{display:block;flex:0 0 auto;padding:0 8px}
+  .win[data-chrome="glass"] .side > :not(.lights){display:none}
+  .win[data-chrome="glass"] .side .lights{flex-direction:column;padding:14px 0}
+  .win[data-chrome="glass"] .cap.v,.win[data-chrome="glass"] .cap.a{display:none}
+  .win[data-chrome="glass"] h3{font-size:22px}
+  .win[data-chrome="ubuntu"] .tool .lk.views,.win[data-chrome="ubuntu"] .tool .gear{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;transition-duration:.01ms !important}
@@ -1379,10 +1536,10 @@ body[data-route="projects"] main,body[data-route="links"] main{display:none}
 
 <div id="shells" aria-hidden="true">
   <div class="sh sh-glass" data-era="glass">
-    <div class="bar2 lg"><i class="sel" data-art="g24:house"></i><i data-art="g24:search"></i><i data-art="g24:compass"></i><i data-art="g24:bubble"></i><i data-art="g24:person"></i></div>
+    <div class="dock lgl"><i class="run" data-art="app:finder"></i><i data-art="app:apps"></i><i class="run" data-art="app:safari"></i><i data-art="app:messages"></i><i class="run" data-art="app:mail"></i><i data-art="app:maps"></i><i data-art="app:photos"></i><i data-art="app:facetime"></i><i data-art="app:calendar"></i><i data-art="app:notes"></i><i class="run" data-art="app:music"></i><i data-art="app:settings"></i><span class="div"></span><i data-art="app:downloads"></i><i data-art="app:trash"></i></div>
   </div>
   <div class="sh sh-macos" data-era="macos">
-    <div class="dock"><i class="run d-finder" data-art="g24:folder"></i><i class="d-web" data-art="g24:compass"></i><i class="run d-mail" data-art="g24:mail"></i><i class="d-notes" data-art="g24:notes"></i><i class="run d-term" data-art="g24:terminal"></i><i class="d-gear" data-art="g24:gear"></i><span class="div"></span><i class="d-trash" data-art="g24:trash"></i></div>
+    <div class="dock"><i class="run" data-art="app:finder"></i><i data-art="app:apps"></i><i class="run" data-art="app:safari"></i><i data-art="app:messages"></i><i class="run" data-art="app:mail"></i><i data-art="app:maps"></i><i data-art="app:photos"></i><i data-art="app:facetime"></i><i data-art="app:calendar"></i><i data-art="app:notes"></i><i class="run" data-art="app:music"></i><i data-art="app:settings"></i><span class="div"></span><i data-art="app:downloads"></i><i data-art="app:trash"></i></div>
   </div>
   <div class="sh sh-w10" data-era="w10">
     <i data-art="i16:w10_start"></i>
@@ -1440,7 +1597,8 @@ body[data-route="projects"] main,body[data-route="links"] main{display:none}
     <div class="os"><b id="osOut">Liquid Glass</b><i id="eraOut">present day</i></div>
   </div>
   <button class="restore" id="restore" type="button">Restore windows</button>
-  <span class="extras" aria-hidden="true"><i data-art="mb:search"></i><i data-art="mb:battery"></i><i data-art="mb:wifi"></i><i data-art="mb:cc"></i></span>
+  <span class="extras ub" aria-hidden="true"><i data-art="ub:mail"></i><i data-art="ub:net"></i><i data-art="ub:battery"></i><i data-art="ub:sound"></i></span>
+  <span class="extras mac" aria-hidden="true"><i data-art="mb:search"></i><i data-art="mb:battery"></i><i data-art="mb:wifi"></i><i data-art="mb:cc"></i></span>
   <nav class="nav">
     <a href="#/" id="nav-timeline">Timeline</a>
     <a href="#/projects" id="nav-projects">Projects</a>
@@ -1486,11 +1644,17 @@ body[data-route="projects"] main,body[data-route="links"] main{display:none}
 </section>
 
 <style>
-.win.hero h1{margin:0 0 11px;font-size:clamp(28px,4.6vw,44px);font-weight:600;letter-spacing:-.032em;
-  color:#FFF;text-wrap:balance;line-height:1.06}
-.win.hero .lede{margin:0;font-size:15px;line-height:1.62;color:rgba(236,238,250,.86);max-width:52ch}
-.win.hero .hint{margin-top:17px;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
-  text-transform:uppercase;color:rgba(236,238,250,.54)}
+.win.hero .body{padding:8px 30px 26px}
+.win.hero h1{margin:0 0 10px;font-size:clamp(30px,4.6vw,44px);font-weight:700;letter-spacing:-.032em;
+  color:#1D1D1F;text-wrap:balance;line-height:1.06}
+.win.hero .lede{margin:0;font-size:15px;line-height:1.6;color:#48484A;max-width:52ch}
+.win.hero .hint{margin:16px 0 0;font-size:12px;font-weight:500;color:#8E8E93}
+.win.hero .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.win.hero .pbtn{font:500 13px var(--sf);color:#1D1D1F;text-decoration:none;padding:7px 16px;
+  border-radius:999px;background:rgba(0,0,0,.06)}
+.win.hero .pbtn:hover{background:rgba(0,0,0,.1)}
+.win.hero .pbtn.pri{background:#0A84FF;color:#FFF}
+.win.hero .pbtn:focus-visible{outline:2px solid #0A84FF;outline-offset:2px}
 .win.coda .body{padding:14px 16px 18px}
 .win.coda .line{margin:0 0 2px;font-size:16px;color:#FFC046}
 .win.coda .line s{text-decoration:none;color:#8E6C24}
@@ -1627,6 +1791,9 @@ const SYM = Object.fromEntries(Object.entries(drawn(16, {
   clock:'<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 4.4V8l2.6 1.6" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
   apps:'<g fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2.3" y="2.3" width="4.7" height="4.7" rx="1.2"/><rect x="9" y="2.3" width="4.7" height="4.7" rx="1.2"/><rect x="2.3" y="9" width="4.7" height="4.7" rx="1.2"/><rect x="9" y="9" width="4.7" height="4.7" rx="1.2"/></g>',
   doc:'<path d="M4 1.8h5l3 3v9.4H4z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M9 1.8v3h3" fill="none" stroke="currentColor" stroke-width="1.3"/>',
+  desktop:'<rect x="1.8" y="2.6" width="12.4" height="8.4" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 13.6h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
+  airdrop:'<path d="M3.3 11.6a6.2 6.2 0 119.4 0M5.4 9.9a3.4 3.4 0 115.2 0" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="8" r="1.1" fill="currentColor"/>',
+  download:'<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 4.6v6M5.6 8.4L8 10.8l2.4-2.4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>',
   folder:'<path d="M1.8 3.8h4.4l1.4 1.6h6.6v7.8H1.8z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>'
 })).map(([k, v]) => [k, '<span class="sym">' + v + '</span>']));
 const TAG_COLOUR = {work:'#0A7CFF', side:'#AF52DE', education:'#FF9500', life:'#34C759'};
@@ -1647,8 +1814,95 @@ const MB = drawn(16, {
   wifi:'<path d="M1.8 6.3a9 9 0 0112.4 0M4.1 8.7a5.7 5.7 0 017.8 0M6.3 11a2.5 2.5 0 013.4 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="13.1" r="1" fill="currentColor"/>',
   cc:'<rect x="1.5" y="2.8" width="13" height="4.4" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="4.3" cy="5" r="1.3" fill="currentColor"/><rect x="1.5" y="8.8" width="13" height="4.4" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="11.7" cy="11" r="1.3" fill="currentColor"/>'
 });
-const ART = {i16:I16, i20:I20, i32:I32, g24:G24, mb:MB};
-const artOf = key => { const [set, name] = key.split(':'); return (ART[set] || {})[name] || ''; };
+/* Ubuntu 14.04: light symbolic glyphs on the dark toolbar and the panel,
+   Humanity's full-colour places in the sidebar */
+const H_FOLDER = '<path d="M1.5 3.5h4.8l1.2 1.3h7v8.7h-13z" fill="#C8773B" stroke="#8E4F20"/><path d="M1.5 6.3h13v7.2h-13z" fill="#E8964F"/><path d="M2 6.8h12" stroke="#F4B67C"/>';
+const UB = drawn(16, {
+  back:'<path d="M10 3.5L5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+  fwd:'<path d="M6 3.5L10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+  home:'<path d="M2.5 8L8 3l5.5 5M4 7v6h3v-3.5h2V13h3V7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>',
+  search:'<circle cx="6.8" cy="6.8" r="4.3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 10l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  icons:'<path d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" fill="currentColor"/>',
+  list:'<path d="M2 3.5h12M2 8h12M2 12.5h12" stroke="currentColor" stroke-width="2"/>',
+  gear:'<circle cx="8" cy="8" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-dasharray="2 1.93"/>',
+  mail:'<path d="M2 4h12v8.5H2z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M2.4 4.6L8 9l5.6-4.4" fill="none" stroke="currentColor" stroke-width="1.3"/>',
+  net:'<path d="M8 13.5L1 5.2a10.5 10.5 0 0114 0z" fill="currentColor"/>',
+  battery:'<rect x="4.5" y="2.5" width="7" height="12" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M6.5 1.2h3" stroke="currentColor" stroke-width="1.4"/><rect x="6" y="6" width="4" height="7" fill="currentColor"/>',
+  sound:'<path d="M2 6h2.6L8 3v10L4.6 10H2z" fill="currentColor"/><path d="M10.4 5.2a4 4 0 010 5.6M12.3 3.4a6.6 6.6 0 010 9.2" fill="none" stroke="currentColor" stroke-width="1.3"/>',
+  recent:'<circle cx="8" cy="8" r="6.5" fill="#FBFBFA" stroke="#77756F"/><path d="M8 4.2V8l2.6 1.7" fill="none" stroke="#3C3C3C" stroke-width="1.3" stroke-linecap="round"/>',
+  folder:H_FOLDER,
+  homeF:H_FOLDER + '<path d="M5.5 10.5L8 8.3l2.5 2.2M6.3 10v2.3h3.4V10" fill="none" stroke="#FFF" stroke-width="1.1"/>',
+  desktopF:H_FOLDER + '<rect x="5.3" y="8.6" width="5.4" height="3.4" fill="none" stroke="#FFF" stroke-width="1"/>',
+  docsF:H_FOLDER + '<path d="M6 8.6h4M6 10.3h4M6 12h2.6" stroke="#FFF" stroke-width="1"/>',
+  downF:H_FOLDER + '<path d="M8 8v4M6.2 10.4L8 12.2l1.8-1.8" fill="none" stroke="#FFF" stroke-width="1.1"/>',
+  computer:'<rect x="1.5" y="2.5" width="13" height="9" rx="1" fill="#5E5C58" stroke="#3C3B37"/><rect x="3" y="4" width="10" height="6" fill="#8DB1D8"/><path d="M5.5 14h5M8 11.5V14" stroke="#5E5C58" stroke-width="1.4"/>',
+  network:'<circle cx="8" cy="8" r="6.5" fill="#6FA5DC" stroke="#35679E"/><path d="M1.8 8h12.4M8 1.5c2.2 2 2.2 11 0 13M8 1.5c-2.2 2-2.2 11 0 13" fill="none" stroke="#E7F0FA" stroke-width=".9"/>'
+});
+
+/* Dock icons, drawn edge to edge in a continuous-corner squircle with the
+   light rim Tahoe gives every icon. {u} becomes a per-instance id when the
+   icon is painted, so a gradient never points at a copy hidden elsewhere. */
+const SQ = 'M31.8 0C44 0 48 4 48 16.2V31.8C48 44 44 48 31.8 48H16.2C4 48 0 44 0 31.8V16.2C0 4 4 0 16.2 0z';
+const lin = (id, a, b) => '<linearGradient id="' + id + '{u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + a +
+  '"/><stop offset="1" stop-color="' + b + '"/></linearGradient>';
+const app = (defs, body, bare) => '<svg viewBox="0 0 48 48" aria-hidden="true"><defs>' + defs +
+  (bare ? '</defs>' + body : '<clipPath id="q{u}"><path d="' + SQ + '"/></clipPath></defs><g clip-path="url(#q{u})">' + body +
+  '<path d="' + SQ + '" fill="none" stroke="#FFF" stroke-opacity=".5" stroke-width="2"/></g>') + '</svg>';
+const fill = id => '<rect width="48" height="48" fill="url(#' + id + '{u})"/>';
+const APP = {
+  finder: app(lin('a', '#6CC4FF', '#1E77F2') + lin('b', '#F4F8FF', '#CFE0F7'), fill('a') +
+    '<path d="M25 0h23v48H23.5c.6-3.6 1-7.2 1.1-10.8-2.8.3-5.4.1-7.6-.5 1.8-6.2 3.2-13.6 4.2-21.6C22 10.1 23.3 4.9 25 0z" fill="url(#b{u})"/>' +
+    '<path d="M14 14v7M34 14v7" stroke="#11315C" stroke-width="3" stroke-linecap="round"/>' +
+    '<path d="M11 31.5c7.5 5.6 18.5 5.6 26 0" fill="none" stroke="#11315C" stroke-width="2.4" stroke-linecap="round"/>'),
+  apps: app(lin('a', '#FFFFFF', '#E3E3E8'), fill('a') +
+    ['#FF5F57', '#FFBD2E', '#28C840', '#0A84FF', '#5E5CE6', '#BF5AF2', '#FF9F0A', '#30D158', '#64D2FF'].map((c, k) =>
+      '<rect x="' + (10 + k % 3 * 10.5) + '" y="' + (10 + Math.floor(k / 3) * 10.5) + '" width="7" height="7" rx="2" fill="' + c + '"/>').join('')),
+  safari: app(lin('a', '#FFFFFF', '#E4E4EA') + lin('b', '#3AD0FF', '#1668E8'), fill('a') +
+    '<circle cx="24" cy="24" r="17.5" fill="url(#b{u})"/>' +
+    '<circle cx="24" cy="24" r="14.5" fill="none" stroke="#FFF" stroke-opacity=".75" stroke-width="2.4" stroke-dasharray=".6 .92"/>' +
+    '<path d="M33.5 14.5L26.2 26.2 21.8 21.8z" fill="#FF3B30"/><path d="M14.5 33.5l7.3-11.7 4.4 4.4z" fill="#F2F2F7"/>'),
+  messages: app(lin('a', '#6CF383', '#10BF34'), fill('a') +
+    '<ellipse cx="24" cy="22.5" rx="15" ry="12.5" fill="#FFF"/><path d="M13.2 30.5c-.6 3-2.2 5.3-4.4 6.8 4.2.2 7.8-1.1 10.4-3.3z" fill="#FFF"/>'),
+  mail: app(lin('a', '#5BC8FF', '#1673F2'), fill('a') +
+    '<rect x="8.5" y="14" width="31" height="21" rx="2.5" fill="#FFF"/>' +
+    '<path d="M9.5 15.5L24 26.5l14.5-11" fill="none" stroke="#9CC6F5" stroke-width="1.8" stroke-linejoin="round"/>'),
+  maps: app(lin('a', '#F4F1E8', '#E2DDD0'), fill('a') +
+    '<path d="M0 30c9-4 15 3 24 1s15-10 24-9v26H0z" fill="#86D37A"/>' +
+    '<path d="M6 48L31 0" stroke="#FFF" stroke-width="6"/><path d="M6 48L31 0" stroke="#F8C33C" stroke-width="2.4"/>' +
+    '<circle cx="33" cy="20" r="7.5" fill="#0A84FF" stroke="#FFF" stroke-width="2"/><path d="M33 15.5l3.3 8-3.3-1.7-3.3 1.7z" fill="#FFF"/>'),
+  photos: app(lin('a', '#FFFFFF', '#EDEDF0'), fill('a') +
+    ['#FF9F0A', '#FFD60A', '#A4D63A', '#30D158', '#40C8E0', '#5E5CE6', '#BF5AF2', '#FF375F'].map((c, k) =>
+      '<ellipse cx="24" cy="14.5" rx="5.2" ry="9" fill="' + c + '" fill-opacity=".82" transform="rotate(' + k * 45 + ' 24 24)"/>').join('')),
+  facetime: app(lin('a', '#6CF383', '#10BF34'), fill('a') +
+    '<rect x="9" y="16" width="20" height="16" rx="4" fill="#FFF"/><path d="M30.5 21.5L39 16v16l-8.5-5.5z" fill="#FFF"/>'),
+  calendar: app(lin('a', '#FFFFFF', '#EDEDF0'), fill('a') +
+    '<text x="24" y="14.5" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="8.5" font-weight="600" fill="#FF3B30">MON</text>' +
+    '<text x="24" y="39" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="24" fill="#1D1D1F">14</text>'),
+  notes: app(lin('a', '#FFE45C', '#FFC92E') + lin('b', '#FFFFFF', '#F2F2F5'), fill('b') +
+    '<rect width="48" height="14" fill="url(#a{u})"/><path d="M0 14.5h48" stroke="#C9C9CE" stroke-dasharray="1.5 1.5"/>' +
+    '<path d="M8 23h32M8 30h32M8 37h32" stroke="#DADADF" stroke-width="1.2"/>'),
+  music: app(lin('a', '#FF6179', '#F5213D'), fill('a') +
+    '<path d="M20.5 33.5V15.2L34.5 12v17" fill="none" stroke="#FFF" stroke-width="2.8" stroke-linejoin="round"/>' +
+    '<ellipse cx="17" cy="33.8" rx="4.4" ry="3.6" fill="#FFF"/><ellipse cx="31" cy="29.3" rx="4.4" ry="3.6" fill="#FFF"/>'),
+  settings: app(lin('a', '#D4D4D9', '#8E8E93'), fill('a') +
+    '<circle cx="24" cy="24" r="15" fill="none" stroke="#5B5B60" stroke-width="5" stroke-dasharray="3.6 2.68"/>' +
+    '<circle cx="24" cy="24" r="12" fill="#6E6E73"/><circle cx="24" cy="24" r="9" fill="#D8D8DC"/><circle cx="24" cy="24" r="3.6" fill="#6E6E73"/>'),
+  downloads: app(lin('a', '#9ED9FC', '#58B4F0'),
+    '<path d="M4 13a3 3 0 013-3h11.5l4 4H41a3 3 0 013 3v20a3 3 0 01-3 3H7a3 3 0 01-3-3z" fill="#4FA8E8"/>' +
+    '<path d="M4 18.5A2.5 2.5 0 016.5 16h35a2.5 2.5 0 012.5 2.5V37a3 3 0 01-3 3H7a3 3 0 01-3-3z" fill="url(#a{u})"/>' +
+    '<path d="M24 20.5v12M18.8 27.6L24 32.8l5.2-5.2" fill="none" stroke="#2A7FC4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>', true),
+  trash: app(lin('a', '#FFFFFF', '#DCDCE2'),
+    '<path d="M12.5 13h23l-2.1 28.6A3 3 0 0130.4 44H17.6a3 3 0 01-3-2.4z" fill="url(#a{u})" fill-opacity=".86" stroke="#FFF" stroke-opacity=".9"/>' +
+    '<path d="M18.5 17l.8 23M24 17v23M29.5 17l-.8 23" stroke="#A7A7AD" stroke-width="1.2" stroke-opacity=".7"/>' +
+    '<rect x="10" y="8.5" width="28" height="5" rx="2.5" fill="#F4F4F7" stroke="#C7C7CC" stroke-width=".8"/>', true)
+};
+
+const ART = {i16:I16, i20:I20, i32:I32, g24:G24, mb:MB, ub:UB, app:APP};
+let artN = 0;
+const artOf = key => {
+  const [set, name] = key.split(':'), v = (ART[set] || {})[name] || '';
+  return v.indexOf('{u}') < 0 ? v : v.replace(/\{u\}/g, 'i' + (++artN));
+};
 function paintArt(root){
   (root || document).querySelectorAll('[data-art]').forEach(n => { n.innerHTML = artOf(n.dataset.art); });
 }
@@ -1773,14 +2027,25 @@ const CHROME = {
     <div class="status"><s>${e.tags.length} items</s></div>`,
 
   ubuntu: e => `
-    <div class="bar"><span class="wbtns"><b class="b-cls">×</b><b class="b-min">−</b><b class="b-max">□</b></span>
-      <span class="t">${cap(e)}</span></div>
-    <div class="tool"><b>◀</b><b>▶</b><div class="path"><i>evgeny</i><i>${e.y}</i></div><b>⌕</b></div>
-    <div class="pane">
-      <div class="side"><i>Places</i><u>Home</u><u>Desktop</u><u>Documents</u><i>Devices</i><u>File System</u></div>
-      <div class="body">${bodyOf(e)}</div>
+    <div class="bar"><span class="wbtns"><b class="b-cls"></b><b class="b-min"></b><b class="b-max"></b></span>
+      <span class="t">${e.y}</span></div>
+    <div class="tool">
+      <span class="lk"><b>${UB.back}</b><b class="off">${UB.fwd}</b></span>
+      <span class="lk path"><b>${UB.home}evgeny</b><b class="on">${e.y}</b></span>
+      <span class="fill"></span>
+      <b>${UB.search}</b>
+      <span class="lk views"><b class="on">${UB.icons}</b><b>${UB.list}</b></span>
+      <b class="gear">${UB.gear}</b>
     </div>
-    <div class="status"><s>${e.tags.length} items</s><s>Free space: 12.4 GB</s></div>`,
+    <div class="pane">
+      <div class="side">
+        <u>${UB.recent}Recent</u><u>${UB.homeF}Home</u><u>${UB.desktopF}Desktop</u>
+        <u class="sel">${UB.folder}${e.y}</u><u>${UB.docsF}Documents</u><u>${UB.downF}Downloads</u>
+        <i>Devices</i><u>${UB.computer}Computer</u>
+        <i>Network</i><u>${UB.network}Browse Network</u>
+      </div>
+      <div class="body">${bodyOf(e)}</div>
+    </div>`,
 
   w10: e => `
     <div class="bar"><span class="ico">${W10.folder}</span>
@@ -1825,10 +2090,25 @@ const CHROME = {
     </div>`,
 
   glass: e => `
-    <div class="bar"><span class="t">${esc(e.kind)}</span>
-      <span class="wbtns"><b class="b-cls"></b><b class="b-min"></b><b class="b-max"></b></span></div>
-    <div class="body">${bodyOf(e)}</div>
-    <div class="pill"><b>Open</b><b>Share</b><b>${e.y}</b></div>`
+    <div class="tahoe">
+      <div class="side lgl">
+        <div class="lights"><b class="tl-r"></b><b class="tl-y"></b><b class="tl-g"></b></div>
+        <i>Favourites</i>
+        <u>${SYM.airdrop}AirDrop</u><u>${SYM.clock}Recents</u><u>${SYM.apps}Applications</u>
+        <u>${SYM.desktop}Desktop</u><u class="sel">${SYM.folder}${e.y}</u><u>${SYM.download}Downloads</u>
+        <i>Tags</i><u><em class="dot" style="--c:${TAG_COLOUR[e.lane] || '#8E8E93'}"></em>${esc(e.lane)}</u>
+      </div>
+      <div class="tcol">
+        <div class="bar">
+          <span class="cap"><b>${TB.back}</b><b class="off">${TB.fwd}</b></span>
+          <span class="ttl"><span class="t">${e.y}</span></span>
+          <span class="cap v"><b>${TB.grid}</b></span>
+          <span class="cap a"><b>${TB.share}</b><b>${TB.tag}</b><b>${TB.more}</b></span>
+          <span class="cap"><b>${TB.search}</b></span>
+        </div>
+        <div class="body">${bodyOf(e)}</div>
+      </div>
+    </div>`
 };
 
 /* ==========================================================================
@@ -1889,15 +2169,18 @@ function buildTimeline(){
       el = document.createElement('article');
       el.className = 'win hero';
       el.dataset.chrome = 'glass';
-      el.innerHTML = '<div class="frame lg"><div class="bar"><span class="t">evgeny.fyi</span>' +
-        '<span class="wbtns"><b class="b-cls"></b><b class="b-min"></b><b class="b-max"></b></span>' +
-        '</div><div class="body">' +
+      el.innerHTML = '<div class="frame"><div class="tahoe"><div class="tcol">' +
+        '<div class="bar"><span class="lights"><b class="tl-r"></b><b class="tl-y"></b><b class="tl-g"></b></span>' +
+        '<span class="ttl"><span class="t">evgeny.fyi</span></span></div><div class="body">' +
         '<h1>Evgeny Vinnik</h1>' +
         '<p class="lede">Forty years of computing, read newest first. The page ages backwards as you ' +
         'scroll: Liquid Glass gives way to macOS, to Windows 10, to Ubuntu, to Aero, to XP, to Windows 98 and 95, ' +
         'to a DOS prompt. Every entry arrives wearing the interface of its year.</p>' +
-        '<p class="hint">↓ scroll back to 1986</p></div>' +
-        '<div class="pill"><b>Timeline</b><b>Projects</b><b>Links</b></div></div>';
+        '<p class="hint">↓ Scroll back to 1986</p>' +
+        '<div class="acts"><a class="pbtn pri" href="#/" data-go="timeline">Timeline</a>' +
+        '<a class="pbtn" href="#/projects" data-go="projects">Projects</a>' +
+        '<a class="pbtn" href="#/links" data-go="links">Links</a></div>' +
+        '</div></div></div></div>';
     } else if (it.t === 'coda'){
       el = document.createElement('article');
       el.className = 'win coda';
@@ -1920,7 +2203,7 @@ function buildTimeline(){
       el.dataset.chrome = era.id;
       el.dataset.i = it.i;
       if (e.long) el.dataset.long = '1';
-      el.innerHTML = '<div class="frame' + (era.id === 'glass' ? ' lg' : '') + '">' +
+      el.innerHTML = '<div class="frame">' +
         CHROME[era.id](e, seen[era.id]) + '</div>';
     }
     el.dataset.k = it.k;
@@ -2046,6 +2329,9 @@ function setState(el, action){
 }
 
 entriesEl.addEventListener('click', ev => {
+  // the hero's buttons route the same way the top bar does
+  const go = ev.target.closest('[data-go]');
+  if (go){ ev.preventDefault(); document.getElementById('nav-' + go.dataset.go).click(); return; }
   const btn = ev.target.closest('[data-act]');
   const win = ev.target.closest('.win');
   if (!win) return;
@@ -2107,22 +2393,33 @@ function setActive(el){
 /* ==========================================================================
    DESKTOP ICONS
    ========================================================================== */
+/* Tahoe's desktop carries widgets rather than icons: a month and the weather.
+   September 2026 starts on a Tuesday. */
+const WIDGETS =
+  '<div class="wg cal lgl"><b>SEPTEMBER</b><div class="mo">' +
+  ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => '<s>' + d + '</s>').join('') + '<em></em><em></em>' +
+  Array.from({length:30}, (_, i) => '<em' + (i === 13 ? ' class="now"' : '') + '>' + (i + 1) + '</em>').join('') +
+  '</div></div>' +
+  '<div class="wg wx lgl"><b>Lake Tahoe' + svgOf(10, '<path d="M9 1L1 4.6l3.6 1 1 3.6z" fill="#FFF"/>') + '</b>' +
+  '<strong>64°</strong><p>' + svgOf(16, '<circle cx="8" cy="8" r="3.4" fill="#FFD60A"/><path d="M8 1v2.2M8 12.8V15M1 8h2.2M12.8 8H15M3 3l1.6 1.6M11.4 11.4L13 13M3 13l1.6-1.6M11.4 4.6L13 3" stroke="#FFD60A" stroke-width="1.4" stroke-linecap="round"/>') +
+  'Sunny<br>H:71° L:48°</p></div>';
 const DESKTOP = {
   w95:   {items:[['computer95', 'My Computer'], ['network95', 'Network Neighborhood'], ['bin95', 'Recycle Bin'], ['briefcase', 'My Briefcase']]},
   w98:   {items:[['computer95', 'My Computer'], ['docs98', 'My Documents'], ['globe', 'The Internet'], ['network95', 'Network Neighborhood'], ['bin95', 'Recycle Bin']]},
   xp:    {items:[['docsXP', 'My Documents'], ['computerXP', 'My Computer'], ['binXP', 'Recycle Bin']]},
   aero:  {items:[['user7', 'evgeny'], ['computer7', 'Computer'], ['bin7', 'Recycle Bin']]},
   w10:   {items:[['bin10', 'Recycle Bin']]},
-  macos: {right:true, items:[['hd', 'Macintosh HD']]}
+  macos: {right:true, items:[['hd', 'Macintosh HD']]},
+  glass: {right:true, html:WIDGETS}
 };
 let deskIcons = [];
 function buildDesktopIcons(){
   const host = document.getElementById('icons');
   host.innerHTML = Object.entries(DESKTOP).map(([id, d]) =>
     '<div class="ic ic-' + id + (d.right ? ' right' : '') + '" data-era="' + id + '">' +
-    d.items.map(([art, label], n) =>
+    (d.html || d.items.map(([art, label], n) =>
       '<div class="di' + (n === 0 && (id === 'w95' || id === 'w98') ? ' sel' : '') + '">' +
-      I32[art] + '<span>' + label + '</span></div>').join('') + '</div>'
+      I32[art] + '<span>' + label + '</span></div>').join('')) + '</div>'
   ).join('');
   deskIcons = [...host.querySelectorAll('.ic')];
 }
