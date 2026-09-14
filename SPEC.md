@@ -217,9 +217,9 @@ buttons.
 | Path | Contents |
 |---|---|
 | `/` | The timeline, newest first. Deep-linkable by year via `/#1998`. |
-| `/projects` | Every side project, newest first. |
+| `/projects` | Every side project, newest first, as a Tahoe Finder window: a gallery whose thumbnails are the desktop of each project's year, kinds in the sidebar as filters, and a preview pane with the write-up, tags and a jump back to the timeline. |
 | `/projects/<slug>` | One project: write-up, screenshots, links, the timeline entry it came from. |
-| `/links` | Social and contact links. One canonical list. |
+| `/links` | Social and contact links, one canonical list. Each account is a window in the interface of the year it was opened, newest first. |
 | `/cv` | Résumé, derived from the same data as the work branch. |
 | `/404` | Terminal-era "bad command or file name". |
 
@@ -247,7 +247,7 @@ start: 2026-03              # required, YYYY or YYYY-MM, 1986 to 2026
 end: present                # optional, YYYY, YYYY-MM or present
 org: Personal               # optional, the line under the title
 tags: [swift, weatherkit]   # required, at least one
-link: https://example.com   # optional, shown on the project card
+link: https://example.com   # optional, shown in the project's preview on /projects
 ---
 
 First paragraph: the summary on the timeline.

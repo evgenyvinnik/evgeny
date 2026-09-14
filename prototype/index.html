@@ -1358,42 +1358,87 @@ html[data-photos~="macos"] .ic-macos .di span{color:#FFF;text-shadow:0 1px 3px r
 .ic-glass .wx p{margin:13px 0 0;font-size:11.5px;font-weight:600;line-height:1.35}
 .ic-glass .wx p svg{width:16px;height:16px;display:block;margin-bottom:3px}
 
-/* an entry's optional link, shown on its project card */
-.pcard .plink{align-self:flex-start;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;
-  color:var(--accent);text-decoration:none}
-.pcard .plink:hover{text-decoration:underline;text-underline-offset:3px}
-
-/* ========================= /projects and /links ========================= */
+/* ========================= /projects and /links =========================
+   Projects is a Tahoe Finder window: a gallery whose thumbnails are the
+   desktop of each project's year, filtered from the sidebar, with a preview
+   pane. Links shows every account in the interface of the year it was opened. */
 .route{display:none;position:relative;z-index:10;padding:96px 0 150px}
 .route.on{display:block}
 body[data-route="projects"] main,body[data-route="links"] main{display:none}
+body[data-maxed] .route{z-index:80}
 .wrap{width:min(1040px,100% - 128px);margin:0 auto}
-.route h2{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--dim);margin:0 0 7px}
-.route .h{font-size:clamp(26px,4vw,38px);font-weight:600;letter-spacing:-.022em;margin:0 0 9px;text-wrap:balance}
-.route .sub{font-size:14.5px;line-height:1.62;max-width:62ch;color:var(--dim);margin:0 0 34px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(276px,1fr));gap:15px}
-.pcard{--r:24px;--rim:11px;padding:18px;display:flex;flex-direction:column;gap:8px;
-  transition:transform .22s ease}
-.pcard:hover{transform:translateY(-3px)}
-.pcard:hover::after{background:linear-gradient(135deg,rgba(255,255,255,1) 0%,rgba(255,255,255,.5) 15%,
-  rgba(255,255,255,.14) 37%,rgba(255,255,255,.14) 63%,rgba(226,240,255,.6) 85%,
-  rgba(210,234,255,1) 100%) border-box}
-.pcard .yr{font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim)}
-.pcard h3{margin:0;font-size:16.5px;font-weight:600;letter-spacing:-.012em;color:#FFF}
-.pcard p{margin:0;font-size:13px;line-height:1.56;color:var(--dim);flex:1}
-.pcard .foot{display:flex;flex-wrap:wrap;gap:5px}
-.pcard .foot b{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
-  padding:3px 7px;border-radius:999px;border:1px solid rgba(255,255,255,.16);color:var(--dim)}
-.lnks{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:11px}
-.lnk{--r:18px;--rim:9px;display:flex;align-items:center;gap:13px;padding:15px 17px;
-  text-decoration:none;transition:transform .2s ease}
-.lnk:hover{transform:translateY(-2px)}
-.lnk .g{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--accent);width:26px}
-.lnk b{display:block;font-size:14px;font-weight:500;color:#FFF}
-.lnk small{display:block;font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.02em}
-.credits{margin:30px 0 0;max-width:72ch;font:11px/1.65 var(--mono);color:var(--dim)}
+.route .win{position:relative;left:auto;width:auto}
+.credits{margin:30px 0 0;max-width:72ch;font:11px/1.65 var(--mono);color:rgba(255,255,255,.88);
+  text-shadow:0 1px 4px rgba(0,10,30,.5)}
 .credits a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+
+.reopen{display:inline-flex;font:500 12.5px var(--sf);color:#FFF;padding:8px 16px;border-radius:999px;border:0;cursor:pointer;
+  background:rgba(16,28,48,.4);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.4)}
+.rhead{display:flex;flex-direction:column;gap:6px;margin:0 0 26px;color:#FFF;text-shadow:0 1px 12px rgba(0,20,40,.4)}
+.rhead h1{margin:0;font:700 clamp(30px,4vw,40px)/1.05 var(--sf);letter-spacing:-.028em;text-wrap:balance}
+.rhead p{margin:0;font:500 14.5px/1.5 var(--sf);color:rgba(255,255,255,.92);max-width:58ch}
+
+/* ---- Projects: a Finder gallery with a preview pane ---- */
+.fwin .frame{height:clamp(540px,calc(100vh - 180px),780px)}
+.fwin[data-state="min"] .frame{height:auto}
+.fwin .tahoe{height:100%}
+.fwin .side{flex-basis:196px;overflow:hidden}
+.fwin .side u{text-transform:capitalize}
+.fwin .side u[data-kind]{cursor:pointer}
+.fwin .side u[data-kind]:focus-visible{outline:2px solid #0A84FF;outline-offset:-2px}
+.fwin .tcol{min-height:0}
+.fbody{flex:1;min-height:0;display:flex}
+.fmain{flex:1;min-width:0;overflow-y:auto;padding:4px 22px 24px}
+.fhead{display:flex;align-items:baseline;gap:12px;margin:2px 2px 18px}
+.fhead h1{margin:0;font:700 26px/1.1 var(--sf);letter-spacing:-.022em;color:#1D1D1F}
+.fhead span{font:500 12px var(--sf);color:#86868B;font-variant-numeric:tabular-nums}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:18px 10px}
+.tile{all:unset;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;
+  text-align:center;cursor:pointer}
+.tile[hidden]{display:none}
+/* .pic, not .thumb: .thumb is the year scrubber's handle */
+.tile .pic{position:relative;display:block;flex:none;width:100%;height:0;padding-top:75%;border-radius:12px}
+.shot{position:absolute;inset:6px;border-radius:6px;overflow:hidden;background:var(--sw) center/cover;
+  box-shadow:0 0 0 .5px rgba(0,0,0,.22),0 2px 6px rgba(0,0,0,.14)}
+.shot em{position:absolute;left:7px;top:6px;font:600 8.5px/1 var(--mono);font-style:normal;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink)}
+.shot b{position:absolute;right:8px;bottom:5px;font:600 20px/1 var(--sf);letter-spacing:-.02em;color:var(--ink);
+  font-variant-numeric:tabular-nums}
+.shot.ph em,.shot.ph b{color:#FFF;text-shadow:0 1px 3px rgba(0,0,0,.55)}
+.tile .nm{max-width:100%;padding:2px 7px;border-radius:5px;font:500 12px/1.3 var(--sf);color:#1D1D1F;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile .mt{font:400 11px var(--sf);color:#86868B;text-transform:capitalize;font-variant-numeric:tabular-nums}
+.tile[aria-pressed="true"] .pic{background:rgba(0,0,0,.07)}
+.tile[aria-pressed="true"] .nm{background:#0A84FF;color:#FFF}
+.tile:focus-visible .pic{box-shadow:0 0 0 3px rgba(10,132,255,.45)}
+.insp{flex:0 0 276px;overflow-y:auto;padding:4px 20px 24px;border-left:.5px solid rgba(0,0,0,.08);color:#1D1D1F;font-family:var(--sf)}
+.insp .pv{position:relative;aspect-ratio:4/3}
+.insp .pv .shot{inset:0;border-radius:10px}
+.insp .pv .shot em{font-size:10px;left:10px;top:9px}
+.insp .pv .shot b{font-size:30px;right:12px;bottom:9px}
+.insp h2{margin:14px 0 2px;font:700 17px/1.25 var(--sf);letter-spacing:-.012em;text-wrap:balance}
+.insp .k{margin:0;font:500 12px var(--sf);color:#86868B;text-transform:capitalize}
+.insp .bl{margin:12px 0 0;font:400 13px/1.55 var(--sf)}
+.fwin .insp h3{margin:18px 0 0;font:600 13px/1.3 var(--sf);letter-spacing:0}
+.insp dl{display:grid;grid-template-columns:auto 1fr;gap:7px 12px;margin:8px 0 0;padding-top:9px;
+  border-top:.5px solid rgba(0,0,0,.1);font:12px var(--sf)}
+.insp dt{color:#86868B}
+.insp dd{margin:0;text-align:right;text-transform:capitalize;font-variant-numeric:tabular-nums}
+.insp .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.insp .acts a,.insp .acts button{font:500 12.5px var(--sf);padding:6px 14px;border:0;border-radius:999px;cursor:pointer;
+  background:rgba(0,0,0,.06);color:#1D1D1F;text-decoration:none}
+.insp .acts .pri{background:#0A84FF;color:#FFF}
+.insp .acts :focus-visible{outline:2px solid #0A84FF;outline-offset:2px}
+/* ---- Links: every account in the chrome of the year it was opened ---- */
+@media (min-width:901px){ #route-links .wrap{width:min(1180px,100% - 128px)} }
+.egrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(520px,100%),1fr));gap:38px 26px;align-items:start}
+.ew{margin:0;min-width:0}
+.ew figcaption{display:flex;align-items:baseline;gap:10px;margin:0 0 11px 2px;color:#FFF;text-shadow:0 1px 8px rgba(0,10,30,.55)}
+.ew figcaption b{font:700 15px/1 var(--sf);font-variant-numeric:tabular-nums}
+.ew figcaption s{text-decoration:none;font:600 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;opacity:.88}
+.ew .win[data-chrome="mono"] .frame{background:#07070A;padding:16px 10px 10px}
+.ew .win[data-chrome="dos"] .frame{background:#0000AA;padding:16px 10px 10px}
 
 /* ========================= responsive ========================= */
 @media (max-width:1120px){ .sh-ubuntu{display:none} }
@@ -1427,10 +1472,15 @@ body[data-route="projects"] main,body[data-route="links"] main{display:none}
   .win[data-chrome="glass"] .cap.v,.win[data-chrome="glass"] .cap.a{display:none}
   .win[data-chrome="glass"] h3{font-size:22px}
   .win[data-chrome="ubuntu"] .tool .lk.views,.win[data-chrome="ubuntu"] .tool .gear{display:none}
+  .route{padding-top:88px}
+  .fwin .frame{height:auto}
+  .fbody{flex-direction:column}
+  .fmain{overflow:visible;padding:4px 14px 18px}
+  .gal{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
+  .insp{flex:none;border-left:0;border-top:.5px solid rgba(0,0,0,.08);padding:16px 14px 20px}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;transition-duration:.01ms !important}
-  .pcard:hover{transform:none}
 }
 </style>
 
@@ -1619,22 +1669,12 @@ body[data-route="projects"] main,body[data-route="links"] main{display:none}
 </main>
 
 <section class="route" id="route-projects">
-  <div class="wrap">
-    <h2>/projects</h2>
-    <p class="h">Everything shipped on the side</p>
-    <p class="sub">The same records as the timeline, newest first. Each one keeps a deep link, so
-      <code>/projects/slug</code> resolves to a standalone page with its own write-up and screenshots.</p>
-    <div class="grid" id="pgrid"></div>
-  </div>
+  <div class="wrap" id="pview"></div>
 </section>
 
 <section class="route" id="route-links">
   <div class="wrap">
-    <h2>/links</h2>
-    <p class="h">Where else to find me</p>
-    <p class="sub">One canonical list, referenced from the footer of every page and from the newest
-      entry on the timeline.</p>
-    <div class="lnks" id="lgrid"></div>
+    <div id="lview"></div>
     <p class="credits">Wallpapers. Windows XP: <i>Bliss</i>, photograph by Charles O'Rear.
       Ubuntu: <i>warty-final-ubuntu</i> by Kenneth Wimer and Otto Greenslade, from
       <a href="https://launchpad.net/ubuntu-wallpapers">ubuntu-wallpapers</a>, resized, licensed
@@ -1687,12 +1727,13 @@ const LANES = [{id:'life',x:14},{id:'education',x:42},{id:'work',x:70},{id:'side
 const ENTRIES = JSON.parse(document.getElementById('entries-data').textContent);
 
 const LINKS = [
-  {g:'gh',name:'GitHub',h:'github.com/[handle]'},
-  {g:'in',name:'LinkedIn',h:'linkedin.com/in/[handle]'},
-  {g:'@',name:'Email',h:'[you]@evgeny.fyi'},
-  {g:'x',name:'X',h:'x.com/[handle]'},
-  {g:'bs',name:'Bluesky',h:'[handle].bsky.social'},
-  {g:'cv',name:'Résumé',h:'evgeny.fyi/cv.pdf'}
+  // since: the year the account was opened [placeholder]; it picks the era its window wears on /links
+  {g:'gh',name:'GitHub',h:'github.com/[handle]',since:2013,about:'Code, including this site.'},
+  {g:'in',name:'LinkedIn',h:'linkedin.com/in/[handle]',since:2006,about:'Work history, the formal version.'},
+  {g:'@',name:'Email',h:'[you]@evgeny.fyi',since:1997,about:'The address that has outlived every inbox.'},
+  {g:'x',name:'X',h:'x.com/[handle]',since:2009,about:'Short posts, mostly about interfaces.'},
+  {g:'bs',name:'Bluesky',h:'[handle].bsky.social',since:2023,about:'The same posts, somewhere newer.'},
+  {g:'cv',name:'Résumé',h:'evgeny.fyi/cv.pdf',since:2026,about:'One page, updated whenever the timeline is.'}
 ];
 
 /* ==========================================================================
@@ -2329,9 +2370,6 @@ function setState(el, action){
 }
 
 entriesEl.addEventListener('click', ev => {
-  // the hero's buttons route the same way the top bar does
-  const go = ev.target.closest('[data-go]');
-  if (go){ ev.preventDefault(); document.getElementById('nav-' + go.dataset.go).click(); return; }
   const btn = ev.target.closest('[data-act]');
   const win = ev.target.closest('.win');
   if (!win) return;
@@ -2356,7 +2394,9 @@ entriesEl.addEventListener('keydown', ev => {
 document.addEventListener('keydown', ev => {
   if (ev.key !== 'Escape') return;
   const maxed = document.querySelector('.win[data-state="max"]');
-  if (maxed) setState(maxed, null);
+  if (!maxed) return;
+  if (maxed.closest('.route')){ delete maxed.dataset.state; document.body.removeAttribute('data-maxed'); }
+  else setState(maxed, null);
 });
 document.getElementById('restore').addEventListener('click', () => {
   document.querySelectorAll('.win[data-state]').forEach(w => { delete w.dataset.state; });
@@ -2493,19 +2533,90 @@ function buildRuler(){
   }));
 }
 
-function buildRoutes(){
-  const projects = ENTRIES.filter(e => e.lane === 'side').slice().reverse();
-  document.getElementById('pgrid').innerHTML = projects.map(p =>
-    '<article class="pcard lg"><span class="yr">' + p.y + ' · ' + esc(p.kind) + '</span>' +
-    '<h3>' + esc(p.title) + '</h3><p>' + esc(p.blurb) + '</p>' +
-    '<div class="foot">' + p.tags.map(t => '<b>' + esc(t) + '</b>').join('') + '</div>' +
-    (p.link ? '<a class="plink" href="' + esc(p.link).replace(/"/g, '&quot;') + '" target="_blank" rel="noopener">' +
-      esc(new URL(p.link).host) + ' ↗</a>' : '') + '</article>'
-  ).join('');
-  document.getElementById('lgrid').innerHTML = LINKS.map(l =>
-    '<a class="lnk lg" href="#/links"><span class="g">' + esc(l.g) + '</span>' +
-    '<span><b>' + esc(l.name) + '</b><small>' + esc(l.h) + '</small></span></a>'
-  ).join('');
+const KIND_TINT = {'project':'#0A84FF', 'open source':'#30D158', 'writing':'#FF9F0A', 'this site':'#BF5AF2',
+  'tinkering':'#FF375F', 'first program':'#64D2FF', 'first website':'#5E5CE6'};
+const LIGHTS = '<div class="lights"><b class="tl-r"></b><b class="tl-y"></b><b class="tl-g"></b></div>';
+const sideProjects = () => ENTRIES.filter(e => e.lane === 'side').slice().reverse();
+const encounterYear = e => e.y + (e.m || 0) / 12;
+
+/* a project's thumbnail is the desktop of the year it was started */
+function shotOf(e){
+  const era = eraOf(encounterYear(e));
+  const photo = (document.documentElement.dataset.photos || '').split(' ').includes(era.id);
+  return '<span class="shot' + (photo ? ' ph' : '') + '" style="--sw:' + era.sw + ';--ink:' + era.ink +
+    (photo ? ';background-image:url(' + WALLPAPERS[era.id] + ')' : '') + '"><em>' + esc(era.os) + '</em><b>' + e.y + '</b></span>';
+}
+
+function finderProjects(list){
+  const kinds = [...new Set(list.map(p => p.kind))];
+  return '<article class="win fwin" data-chrome="glass" data-active><div class="frame"><div class="tahoe">' +
+    '<div class="side lgl">' + LIGHTS + '<i>Favourites</i>' +
+    '<u>' + SYM.clock + 'Recents</u><u>' + SYM.apps + 'Applications</u><u>' + SYM.desktop + 'Desktop</u>' +
+    '<u class="sel" data-kind="" role="button" tabindex="0">' + SYM.folder + 'Projects</u><i>Kinds</i>' +
+    kinds.map(k => '<u data-kind="' + esc(k) + '" role="button" tabindex="0"><em class="dot" style="--c:' +
+      (KIND_TINT[k] || '#8E8E93') + '"></em>' + esc(k) + '</u>').join('') +
+    '</div><div class="tcol"><div class="bar">' +
+    '<span class="cap"><b>' + TB.back + '</b><b class="off">' + TB.fwd + '</b></span>' +
+    '<span class="ttl"><span class="t">Projects</span></span>' +
+    '<span class="cap v"><b>' + TB.grid + '</b></span>' +
+    '<span class="cap a"><b>' + TB.share + '</b><b>' + TB.tag + '</b><b>' + TB.more + '</b></span>' +
+    '<span class="cap"><b>' + TB.search + '</b></span></div>' +
+    '<div class="fbody"><div class="fmain"><div class="fhead"><h1>Projects</h1><span class="fcount"></span></div><div class="gal">' +
+    list.map((p, k) => '<button class="tile" type="button" data-k="' + k + '" data-y="' + p.y + '" data-kind="' + esc(p.kind) +
+      '" aria-pressed="false"><span class="pic">' + shotOf(p) + '</span><span class="nm">' + esc(p.title) +
+      '</span><span class="mt">' + p.y + ' · ' + esc(p.kind) + '</span></button>').join('') +
+    '</div></div><aside class="insp" aria-live="polite"></aside></div></div></div></div></article>';
+}
+function inspect(view, k){
+  const p = sideProjects()[k], era = eraOf(encounterYear(p));
+  view.querySelector('.insp').innerHTML = '<div class="pv">' + shotOf(p) + '</div>' +
+    '<h2>' + esc(p.title) + '</h2><p class="k">' + esc(p.kind) + (p.org ? ' · ' + esc(p.org) : '') + '</p>' +
+    '<p class="bl">' + esc(p.blurb) + '</p><h3>Information</h3>' +
+    '<dl><dt>Started</dt><dd>' + p.y + '</dd><dt>Interface</dt><dd>' + esc(era.os) + '</dd>' +
+    '<dt>Tags</dt><dd>' + p.tags.map(esc).join(', ') + '</dd></dl>' +
+    '<div class="acts"><button class="pri" type="button" data-year="' + encounterYear(p) + '">Show on timeline</button>' +
+    (p.link ? '<a href="' + esc(p.link).replace(/"/g, '&quot;') + '" target="_blank" rel="noopener">' +
+      esc(new URL(p.link).host) + ' ↗</a>' : '') + '</div>';
+  view.querySelectorAll('.tile').forEach(t => t.setAttribute('aria-pressed', String(+t.dataset.k === k)));
+}
+function filterKind(view, kind){
+  const tiles = [...view.querySelectorAll('.tile')];
+  tiles.forEach(t => { t.hidden = !!kind && t.dataset.kind !== kind; });
+  view.querySelectorAll('.side u[data-kind]').forEach(u => u.classList.toggle('sel', u.dataset.kind === kind));
+  const shown = tiles.filter(t => !t.hidden), ys = shown.map(t => +t.dataset.y);
+  const lo = Math.min(...ys), hi = Math.max(...ys);
+  view.querySelector('.fcount').textContent = shown.length + (shown.length === 1 ? ' item' : ' items') +
+    ' · ' + (lo === hi ? lo : lo + '–' + hi);
+  if (shown.length) inspect(view, +shown[0].dataset.k);
+}
+function eraWindow(e, seen){
+  const era = eraOf(encounterYear(e));
+  seen[era.id] = (seen[era.id] || 0) + 1;
+  return '<figure class="ew"><figcaption><b>' + e.y + '</b><s>' + esc(era.os) + ' · ' + esc(era.name) + '</s></figcaption>' +
+    '<article class="win" data-chrome="' + era.id + '" data-active' + (e.long ? ' data-long="1"' : '') +
+    '><div class="frame">' + CHROME[era.id](e, seen[era.id]) + '</div></article></figure>';
+}
+function erasLinks(){
+  const seen = {};
+  const items = LINKS.map(l => ({title:l.name, kind:'link', org:l.h, lane:'side', y:l.since, m:0,
+    blurb:l.about + (l.name === 'Résumé' ? ' Current as of ' : ' Opened in ') + l.since + '.',
+    tags:[l.h.split('/')[0]]})).sort((a, b) => b.y - a.y);
+  return '<header class="rhead"><h1>Links</h1><p>Six accounts, each shown in the interface of the year it was ' +
+    'opened.</p></header><div class="egrid">' + items.map(e => eraWindow(e, seen)).join('') + '</div>';
+}
+
+/* views are built when their route opens and emptied when it closes, so the
+   timeline's invariants only ever see the timeline's own windows */
+function renderRoute(name){
+  const pv = document.getElementById('pview'), lv = document.getElementById('lview');
+  pv.innerHTML = ''; lv.innerHTML = '';
+  document.querySelectorAll('.route .reopen').forEach(r => r.remove());
+  document.body.toggleAttribute('data-maxed', !!document.querySelector('.win[data-state="max"]'));
+  if (name !== 'projects' && name !== 'links') return;
+  const view = name === 'projects' ? pv : lv, list = sideProjects();
+  view.innerHTML = name === 'projects' ? finderProjects(list) : erasLinks();
+  view.querySelectorAll('.win').forEach(wireControls);
+  if (view.querySelector('.fwin')) filterKind(view, '');
 }
 
 /* The shipped site serves /projects and /links as real static files. In this
@@ -2515,6 +2626,7 @@ function route(explicit){
   const h = explicit || (location.hash || '#/').replace('#/', '') || 'timeline';
   const name = ['projects','links'].includes(h) ? h : 'timeline';
   document.body.dataset.route = name;
+  renderRoute(name);
   document.querySelectorAll('.route').forEach(r => r.classList.toggle('on', r.id === 'route-' + name));
   ['timeline','projects','links'].forEach(n => {
     const a = document.getElementById('nav-' + n);
@@ -2577,7 +2689,6 @@ function init(){
   metrics();
   buildTimeline();
   buildRuler();
-  buildRoutes();
   paintArt();
   buildDesktopIcons();
   loadWallpapers().then(() => { BOOT.wallpapersSettled = true; });
@@ -2604,6 +2715,58 @@ window.addEventListener('hashchange', () => route());
     try { history.replaceState(null, '', n === 'timeline' ? '#/' : '#/' + n); } catch (_) {}
     window.scrollTo(0, 0);
     route(n);
+  });
+});
+/* anything marked data-go routes the same way the top bar does */
+document.addEventListener('click', ev => {
+  const go = ev.target.closest('[data-go]');
+  if (!go) return;
+  ev.preventDefault();
+  document.getElementById('nav-' + go.dataset.go).click();
+});
+/* the route windows operate like the timeline's, without touching its layout */
+document.querySelectorAll('.route').forEach(sec => {
+  sec.addEventListener('click', ev => {
+    const win = ev.target.closest('.win'), btn = ev.target.closest('[data-act]');
+    if (btn && win){
+      ev.preventDefault();
+      const act = btn.dataset.act, now = win.dataset.state;
+      if (act === 'close'){
+        win.dataset.state = 'closed';
+        const t = win.querySelector('.bar .t, .tvtitle span');
+        win.insertAdjacentHTML('afterend', '<button class="reopen" type="button">Reopen “' +
+          esc(t ? t.textContent.trim() : 'window') + '”</button>');
+      } else if (act === 'min'){
+        if (now === 'min') delete win.dataset.state; else win.dataset.state = 'min';
+      } else if (now === 'max'){
+        delete win.dataset.state;
+      } else {
+        sec.querySelectorAll('.win[data-state="max"]').forEach(w => { delete w.dataset.state; });
+        win.dataset.state = 'max';
+      }
+      document.body.toggleAttribute('data-maxed', !!document.querySelector('.win[data-state="max"]'));
+      return;
+    }
+    const re = ev.target.closest('.reopen');
+    if (re){ const w = re.previousElementSibling; if (w) delete w.dataset.state; re.remove(); return; }
+    if (win && win.dataset.state === 'min' && ev.target.closest('.bar')){ delete win.dataset.state; return; }
+    const view = ev.target.closest('#pview, #lview');
+    const tile = ev.target.closest('.tile');
+    if (tile){ inspect(view, +tile.dataset.k); return; }
+    const kind = ev.target.closest('.side u[data-kind]');
+    if (kind){ filterKind(view, kind.dataset.kind); return; }
+    const yr = ev.target.closest('[data-year]');
+    if (yr){
+      const y = +yr.dataset.year;
+      document.getElementById('nav-timeline').click();
+      requestAnimationFrame(() => BOOT.gotoYear(y));
+    }
+  });
+  sec.addEventListener('keydown', ev => {
+    if (ev.key !== 'Enter' && ev.key !== ' ') return;
+    if (!ev.target.matches('[data-act], .side u[data-kind]')) return;
+    ev.preventDefault();
+    ev.target.click();
   });
 });
 document.querySelector('.mark').addEventListener('click', ev => {
