@@ -63,12 +63,12 @@ Markdown formatting such as `**bold**` or links shows up literally.
 |---|---|---|---|
 | `title` | yes | The name, shown in large type | `title: University` |
 | `lane` | yes | `life`, `education`, `work` or `side` | `lane: work` |
-| `kind` | yes | A short label, shown in the window and on project cards | `kind: position` |
+| `kind` | yes | A short label, shown in the window and used as a filter on the Projects page | `kind: position` |
 | `start` | yes | When it began, from 1986 to 2026. The month is optional | `start: 2019-10` |
 | `end` | no | When it ended: a year, a year and month, or `present`. Leave it out for a one-off event | `end: 2023` |
 | `org` | no | The line under the title: company and role, school, or place | `org: Staff engineer` |
 | `tags` | yes | A list in square brackets, with at least one tag | `tags: [go, kubernetes]` |
-| `link` | no | A web address starting with `https://`, shown on the project's card | `link: https://example.com` |
+| `link` | no | A web address starting with `https://`, shown in the project's preview on the Projects page | `link: https://example.com` |
 
 ## Lanes
 
@@ -138,7 +138,9 @@ live the same way as a new entry.
 
 ## Not in Markdown yet
 
-- The Links page, in the `LINKS` list inside `prototype/index.html`.
+- The Links page, in the `LINKS` list inside `prototype/index.html`. Each link has a
+  `since` year, the year the account was opened, which picks the era its window
+  is drawn in.
 - The eras, their window styles and their wallpapers, also in
   `prototype/index.html`. To use a real wallpaper photo, see
   `prototype/wallpapers/README.md`.
