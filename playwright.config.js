@@ -1,4 +1,10 @@
-const { defineConfig } = require('@playwright/test');
+const { defineConfig, devices } = require('@playwright/test');
+
+/* Apple's device descriptors carry the viewport Safari leaves after its own
+   toolbars, the retina scale, touch and the user agent. They default to
+   WebKit; these run in Chromium so the suite needs no second browser, which
+   means they check layout at iPhone and iPad sizes, not Safari's rendering. */
+const apple = (name) => ({ ...devices[name], browserName: 'chromium' });
 
 module.exports = defineConfig({
   testDir: './tests',
@@ -34,6 +40,12 @@ module.exports = defineConfig({
   projects: [
     { name: 'desktop', use: { viewport: { width: 1280, height: 900 } } },
     { name: 'mobile',  use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
+    // 402x681 at 3x: the phone layout under Safari's toolbars
+    { name: 'iphone',  use: apple('iPhone 17 Pro') },
+    // 834x1194 at 2x: still below the 900px breakpoint, so the phone layout at tablet width
+    { name: 'ipad',    use: apple('iPad Pro 11') },
+    // 1194x834 at 2x: the desktop layout without the gutters for icons and the Ubuntu launcher
+    { name: 'ipad-landscape', use: apple('iPad Pro 11 landscape') },
   ],
 
   webServer: {
