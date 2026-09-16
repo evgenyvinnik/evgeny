@@ -53,9 +53,9 @@ monochrome years are nothing like the Turbo Vision blue that followed.
 | 1995–1998 | Windows 95 | teal `#008080` | WordPad: toolbar, format bar, ruler, Times document, "For Help, press F1" | Tahoma stack |
 | 1999–2000 | Windows 98 | teal `#008080`, as in 95 | Explorer web view, coolbar with greyscale icons, address bar | Tahoma stack |
 | 2001–2006 | Windows XP | Bliss photograph, SVG drawing as fallback | Luna caption, task pane on its blue ground, drawn caption glyphs | Trebuchet MS |
-| 2007–2011 | Windows 7 | dark blue with light streaks | glass frame, opaque content, breadcrumb bar | Segoe UI stack |
+| 2007–2011 | Windows 7 | *Harmony*, the `img0` default; drawn aurora as fallback | glass frame, opaque content, breadcrumb bar | Segoe UI stack |
 | 2012–2015 | Ubuntu | 14.04 default, `warty-final-ubuntu` | Ambiance 14.04 values: 28px caption, buttons and title on the left, dark Nautilus toolbar of linked buttons, Humanity sidebar, no status bar, Unity panel | Ubuntu |
-| 2016–2020 | Windows 10 | drawn light shaft on navy; `win10.jpg` takes over if supplied | File Explorer: 46px hairline caption buttons, collapsed ribbon with a blue File tab, breadcrumb bar, Quick access pane, dark taskbar | Segoe UI stack |
+| 2016–2020 | Windows 10 | the original dark *Hero* from 1507; drawn light shaft on navy as fallback | File Explorer: 46px hairline caption buttons, collapsed ribbon with a blue File tab, breadcrumb bar, Quick access pane, dark taskbar | Segoe UI stack |
 | 2021–2024 | macOS | Sonoma | full-height sidebar, traffic lights over it, unified toolbar, frosted Dock | Inter as SF stand-in |
 | 2025–2026 | Liquid Glass | Tahoe Day still | transparent menu bar, white window with a floating glass sidebar carrying the lights, toolbar capsules, clear glass Dock, desktop widgets | Inter |
 
@@ -142,10 +142,11 @@ inline SVG, and hidden below 1240px where the gutter disappears.
 
 ### Wallpapers
 
-Every era has a drawn wallpaper, and four also have the real one layered
+Every era has a drawn wallpaper, and six also have the real one layered
 over it. Windows 95 and 98 had no default wallpaper, only a flat teal
 desktop, and MS-DOS had none, so those drawings already are the originals.
-Windows 7 keeps its drawn aurora of four rotated ellipses.
+Windows 7 and 10 keep their drawings, an aurora of four rotated ellipses
+and a shaft of light on navy, as fallbacks.
 
 The first version used `feGaussianBlur` for the clouds and the aurora.
 It looked correct and cost up to 25 seconds per screenshot, because the
@@ -153,8 +154,11 @@ filter re-rasterised a full-bleed fixed layer. Radial-gradient falloff
 looks the same and costs nothing. That one change took the visual suite
 from eleven minutes to three.
 
-Four real files are included. Bliss for XP is downscaled from an 8K scan
-on Internet Archive. Ubuntu's is the 14.04 default from Ubuntu's own
+Six real files are included. Bliss for XP is downscaled from an 8K scan
+on Internet Archive. Windows 7's *Harmony* and Windows 10's original dark
+*Hero* are the systems' own `img0` files from Internet Archive uploads,
+checked by checksum; most copies of Hero online are the lighter 1903
+replacement, so it comes from an upload taken from an installed 1507. Ubuntu's is the 14.04 default from Ubuntu's own
 package archive, checksum-verified and licensed CC BY-SA 3.0, with the
 required credit on the Links page. macOS uses Sonoma and Liquid Glass a
 still from Tahoe Day, both taken from the owner's Mac. All are 2560px
