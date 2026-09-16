@@ -76,16 +76,6 @@ test.describe('invariants', () => {
     expect(stacked).toEqual(ERAS.map((e) => e.id).reverse());
   });
 
-  test('the desktop shells cover every era exactly once', async ({ page }) => {
-    await open(page);
-    const shells = await page.evaluate(() =>
-      [...document.querySelectorAll('#shells .sh')].map((b) => b.dataset.era).sort());
-    expect(shells).toEqual(ERAS.map((e) => e.id).sort());
-  });
-
-  /* This is the invariant the design rests on, and the one that broke twice
-     while building: the year in the header, the wallpaper and the window
-     chrome on screen all have to belong to the same era. */
   test('header year, wallpaper and window chrome agree in every era', async ({ page }) => {
     await open(page);
     for (const era of ERAS) {
@@ -279,37 +269,6 @@ test.describe('invariants', () => {
       expect(s.count, `focused windows in ${era.id}`).toBe(1);
       expect(s.nearer, `windows nearer the line than the focused one in ${era.id}`).toBe(0);
       expect(s.chrome, `focused window era at ${midOf(era)}`).toBe(era.id);
-    }
-  });
-
-  test('the taskbar names the focused window', async ({ page }) => {
-    await open(page);
-    for (const id of ['w95', 'w98', 'xp']) {
-      const era = ERAS.find((e) => e.id === id);
-      const s = await page.evaluate(({ y, id }) => {
-        window.BOOT.gotoYear(y);
-        const act = document.querySelector('.win[data-active]');
-        return {
-          caption: act.dataset.caption,
-          task: document.querySelector('.sh-' + id + ' [data-task] span').textContent,
-        };
-      }, { y: midOf(era), id });
-      expect(s.caption.length, `caption in ${id}`).toBeGreaterThan(2);
-      expect(s.task, `taskbar button in ${id}`).toBe(s.caption);
-    }
-  });
-
-  test('desktop icons appear only in their own era', async ({ page }) => {
-    await open(page);
-    const withIcons = ['w95', 'w98', 'xp', 'aero', 'w10', 'macos', 'glass'];
-    for (const era of ERAS) {
-      const lit = await page.evaluate((y) => {
-        window.BOOT.gotoYear(y);
-        return [...document.querySelectorAll('#icons .ic')]
-          .filter((i) => parseFloat(i.style.opacity || '0') > 0.5)
-          .map((i) => i.dataset.era);
-      }, midOf(era));
-      expect(lit, `desktop icons lit in ${era.id}`).toEqual(withIcons.includes(era.id) ? [era.id] : []);
     }
   });
 

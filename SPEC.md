@@ -49,15 +49,15 @@ monochrome years are nothing like the Turbo Vision blue that followed.
 | Years | Era | Wallpaper | Window furniture | Caption face |
 |---|---|---|---|---|
 | 1986–1990 | Monochrome CRT | black, amber scanlines | double-line box, notched 8.3 filename in inverse video, block cursor | VT323 |
-| 1991–1994 | MS-DOS | `#0000AA` with shade dither | Turbo Pascal 7: one menu bar and status line, close box, window number, zoom box, cursor position | VT323 |
+| 1991–1994 | MS-DOS | `#0000AA` with shade dither | Turbo Vision box: close box, window number, zoom box, cursor position | VT323 |
 | 1995–1998 | Windows 95 | teal `#008080` | WordPad: toolbar, format bar, ruler, Times document, "For Help, press F1" | Tahoma stack |
 | 1999–2000 | Windows 98 | teal `#008080`, as in 95 | Explorer web view, coolbar with greyscale icons, address bar | Tahoma stack |
 | 2001–2006 | Windows XP | Bliss photograph, SVG drawing as fallback | Luna caption, task pane on its blue ground, drawn caption glyphs | Trebuchet MS |
 | 2007–2011 | Windows 7 | *Harmony*, the `img0` default; drawn aurora as fallback | glass frame, opaque content, breadcrumb bar | Segoe UI stack |
 | 2012–2015 | Ubuntu | 14.04 default, `warty-final-ubuntu` | Ambiance 14.04 values: 28px caption, buttons and title on the left, dark Nautilus toolbar of linked buttons, Humanity sidebar, no status bar, Unity panel | Ubuntu |
-| 2016–2020 | Windows 10 | the original dark *Hero* from 1507; drawn light shaft on navy as fallback | File Explorer: 46px hairline caption buttons, collapsed ribbon with a blue File tab, breadcrumb bar, Quick access pane, dark taskbar | Segoe UI stack |
-| 2021–2024 | macOS | Sonoma | full-height sidebar, traffic lights over it, unified toolbar, frosted Dock | Inter as SF stand-in |
-| 2025–2026 | Liquid Glass | Tahoe Day still | transparent menu bar, white window with a floating glass sidebar carrying the lights, toolbar capsules, clear glass Dock, desktop widgets | Inter |
+| 2016–2020 | Windows 10 | the original dark *Hero* from 1507; drawn light shaft on navy as fallback | File Explorer: 46px hairline caption buttons, collapsed ribbon with a blue File tab, breadcrumb bar, Quick access pane | Segoe UI stack |
+| 2021–2024 | macOS | Sonoma | full-height sidebar, traffic lights over it, unified toolbar | Inter as SF stand-in |
+| 2025–2026 | Liquid Glass | Tahoe Day still | white window with a floating glass sidebar carrying the lights, toolbar capsules | Inter |
 
 Era boundaries are content decisions, not release dates. They mark when
 *Evgeny* moved to that interface, so they should shift once real
@@ -74,8 +74,7 @@ white page, and the glass is reserved for what floats over content. The
 sidebar is a separate pane of light glass inset 8px inside the window,
 its corners concentric with the window's 26px ones, with the traffic
 lights at its top left. Toolbar buttons sit in capsules with no toolbar
-strip behind them. The menu bar has no material at all, and the Dock is
-nearly clear. Reference: Apple's Newsroom screenshots of Tahoe.
+strip behind them. Reference: Apple's Newsroom screenshots of Tahoe.
 
 The light material still keeps the lens relationship between body and
 rim, and a test asserts it on the sidebar:
@@ -91,24 +90,17 @@ than a window background, so nothing opaque sits under the glass and it
 samples the desktop. Where a window scrolls under the menu bar, the bar
 applies Tahoe's scroll edge effect: a blur that fades out below it.
 
-### Desktop furniture
+### One header, and no desktop simulation
 
-Each era also carries its own shell, cross-faded on the same clock as
-the wallpaper and purely decorative. This is where most of the
-recognition happens, more than the windows do.
+The site wears each era in two places only: the wallpaper behind the page
+and the windows on it. There are no taskbars, no Start buttons, no Dock,
+no launcher and no desktop icons. Imitating a whole desktop invites a
+comparison the page cannot win, and none of it was ever the content.
 
-Monochrome gets a DOS status line. MS-DOS gets the Turbo Pascal
-status line, with the site's top bar as its menu bar. Windows 95 and 98 get the taskbar, Start button and
-tray clock, with Quick Launch added in 98. XP gets the blue taskbar and
-the green Start button. Windows 7 gets the glass taskbar and the Start
-orb. Ubuntu gets the Unity launcher, on the left where it belongs.
-macOS gets the frosted Dock. Tahoe gets its nearly clear glass Dock with
-the same drawn app icons, and calendar and weather widgets on the desktop.
-
-The site's own top bar persists in every era but takes on that era's
-treatment: beveled grey in the Windows 9x years, the Luna gradient in
-XP, Ambiance's Unity panel in Ubuntu, and in Tahoe a menu bar with no
-material of its own.
+The header is one stripe, black in every era, carrying the three routes
+and nothing else. The Restore control joins it on the right once
+something is hidden, in one style rather than nine. The year reads out on
+the scrubber's own handle, where the years already are.
 
 ### Focus
 
@@ -126,19 +118,8 @@ era's own way:
 | Ubuntu | title dims, close turns grey like the other buttons, shadow shrinks |
 | macOS and Tahoe | traffic lights turn grey |
 
-The Windows taskbars name the focused window on their pressed button,
-and the Restore control is drawn as a push button of the era it appears
-in. Inactive captions are excluded from the contrast test on purpose,
+The Restore control is one button in the header stripe. Inactive captions are excluded from the contrast test on purpose,
 because the real systems dimmed them below it.
-
-### Desktop icons
-
-Windows kept its icons down the left of the desktop and macOS put the
-disk on the right, so both sit in the gutters behind the windows and
-fade on the era clock: My Computer, Network Neighborhood, Recycle Bin
-and My Briefcase for 95; My Documents and The Internet join them in 98;
-Luna and Aero versions after that; Macintosh HD for macOS; widgets in Tahoe. All drawn as
-inline SVG, and hidden below 1240px where the gutter disappears.
 
 ### Wallpapers
 
@@ -326,8 +307,8 @@ maintaining the same entry in four places.
 src/
   content/timeline/*.md      one file per entry, frontmatter = Entry
   content/config.ts          the Zod schema
-  eras/                      one CSS module per era: window + shell
-  components/                Window, EraShell, CommitGraph, YearRuler, Wallpapers
+  eras/                      one CSS module per era: the window
+  components/                Window, CommitGraph, YearRuler, Wallpapers
   pages/                     index, projects/index, projects/[slug], links, cv, 404
 public/
   CNAME                      contains: evgeny.fyi
@@ -365,7 +346,7 @@ would differ.
 
 ## 9. Quality bars
 
-**Performance.** Nine wallpaper layers plus nine shells plus
+**Performance.** Ten wallpaper layers plus
 `backdrop-filter` on the glass, Aero and macOS windows is the main risk.
 Two mitigations are in already: no SVG filters anywhere, and wallpaper
 layers below a fully opaque one are dropped out of the composite rather
@@ -396,17 +377,17 @@ and nothing translates on scroll.
 
 ## 10. Tests
 
-Playwright, five projects, thirty-eight tests in each. `npm run
+Playwright, five projects, thirty-five tests in each. `npm run
 test:visual` runs them; `npm run test:visual:update` accepts new
 baselines after a deliberate change.
 
 | Project | Viewport | What it covers |
 |---|---|---|
-| `desktop` | 1280x900 | the full layout: scrubber, gutters, desktop icons, launcher |
+| `desktop` | 1280x900 | the full layout: the scrubber, the graph gutter, 640px windows |
 | `mobile` | 390x844, touch | a phone in Chrome |
 | `iphone` | 402x681 at 3x, touch | iPhone 17 Pro, the viewport Safari leaves under its toolbars |
 | `ipad` | 834x1194 at 2x, touch | iPad Pro 11 portrait, the phone layout at tablet width |
-| `ipad-landscape` | 1194x834 at 2x, touch | iPad Pro 11 landscape, the desktop layout without the icon gutter or the Ubuntu launcher |
+| `ipad-landscape` | 1194x834 at 2x, touch | iPad Pro 11 landscape, the desktop layout at tablet width |
 
 The Apple projects use Playwright's device descriptors but run in
 Chromium, so they check layout at those sizes rather than Safari's own
@@ -431,11 +412,10 @@ keep, because they fail with a readable message instead of a diff image:
 
 - The era table in the page matches the era table in the suite, and the
   eras tile 1986 to 2026 with no gap and no overlap.
-- The wallpaper layers are stacked newest to oldest, and the shells
-  cover every era exactly once. A hand edit reordered two layers and
-  shifted every era; this caught it.
+- The wallpaper layers are stacked newest to oldest. A hand edit
+  reordered two layers and shifted every era; this caught it.
 - The header year, the wallpaper and the window chrome on screen all
-  belong to the same era, at the middle of all nine eras.
+  belong to the same era, at the middle of all ten eras.
 - Walking down the page never moves forward in time, the top is 2026 and
   the bottom is 1986.
 - Nothing overflows sideways in any era.
@@ -449,8 +429,6 @@ keep, because they fail with a readable message instead of a diff image:
 - The Liquid Glass rim blurs more than its body.
 - Exactly one window is focused in every era, no other window sits nearer
   the reading line, and it belongs to that era.
-- The Windows 95, 98 and XP taskbars name the focused window.
-- Desktop icons light up in their own era and nowhere else.
 - Every Markdown file in `content/entries/` renders exactly one window.
 - The committed entries pass `npm run check`, and a deliberately broken
   entry stops the build with the messages an author needs to fix it.
@@ -488,12 +466,11 @@ for what a phone will struggle with.
    experience you want, or should the timeline default to the last decade
    and load the rest on demand?
 2. **Mobile.** A phone cannot show four branch lanes, a side pane and a
-   640px window together. The prototype hides the scrubber below 900px,
-   the Unity launcher below 1120px, and the windows' side panes only at
-   640px and below, so tablets keep them. On phones that is a compromise
+   640px window together. The prototype hides the scrubber below 900px and the
+   windows' side panes at 640px and below, so tablets keep them. On phones that is a compromise
    rather than a design.
 3. **Authenticity ceiling.** The prototype draws real bevels, real
-   taskbars and real dock geometry. The next increments are bitmap-exact
+   caption geometry and real toolbars. The next increments are bitmap-exact
    fonts, window shadows per era, and hover states on the caption
    buttons. Each one costs maintenance in nine places.
 4. **Do the personal entries stay?** Two entries are marked
