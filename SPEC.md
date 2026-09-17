@@ -256,19 +256,36 @@ Lanes are fixed tracks in the graph at increasing x offsets. Lane
 identity is carried by horizontal position, not by colour, because no
 colour survives all ten wallpapers legibly.
 
-### What I need from you to replace the placeholders
+### What is real, and what is still a placeholder
 
-The prototype carries forty-two entries, which is roughly the right
-density. Each one is a file with square-bracket placeholders to replace:
-the real name of the school, company or project, your role, the dates,
-two or three sentences, and a few tags. For projects, also a `link`.
+Fifty-nine entries, which is roughly the right density. Some are now
+drawn from public sources rather than invented:
+
+| Real | Source |
+|---|---|
+| Twenty-four side projects, 2015 to 2026, with their dates, stacks, star counts and links | the public repositories on GitHub |
+| Simon Fraser University, 2011 to 2015, computing science, GPA 3.67 | the public LinkedIn profile |
+| President of the SFU CS Graduate Students' Association, Apr 2012 to Aug 2013 | the same |
+| Google as the current employer | the same, and the GitHub profile |
+
+Still bracketed, and needing you rather than a web page: the five
+earlier jobs, each with a title, an employer and dates; the title and
+start date of the Google role, whose date on that entry is a
+placeholder; the name of the school listed as 2003 to 2008; the side
+projects before 2015, which predate the GitHub account; and the life
+entries.
+
+One conflict to settle while you are there: the placeholder chronology
+opens in 1986 and puts primary school at 1991, which does not sit with a
+school ending in 2008 and a degree finishing in 2015. The era boundaries
+are content decisions, so they should move to your real dates.
 
 ---
 
 ## 6. Timeline mechanics
 
 - **Layout** is time-proportional at 122px per year on desktop, but with
-  forty-two entries the content is denser than the time axis, so
+  fifty-nine entries the content is denser than the time axis, so
   collisions dominate and total scroll lands near 12,500px.
 - **Collision** pushes an entry down until it clears the one above by
   30px. The graph node stays at the true year and the branch bridges the

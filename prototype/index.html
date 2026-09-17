@@ -1298,8 +1298,8 @@ body[data-maxed] .route{z-index:80}
 <script>
 /* ==========================================================================
    DATA
-   Nine eras, forty-two entries, four branches. The whole site is this plus
-   nine stylesheets. Everything in [brackets] is a placeholder to fill in.
+   Ten eras, fifty-nine entries, four branches. The whole site is this plus
+   ten stylesheets. Square brackets mark what is still a placeholder.
    ========================================================================== */
 const ERAS = [
   {id:'mono',   os:'Monochrome CRT', name:'amber text mode',     from:1986, to:1990, sw:'#1A1408', ink:'#FFB000'},
@@ -1321,13 +1321,10 @@ const LANES = [{id:'life',x:14},{id:'education',x:42},{id:'work',x:70},{id:'side
 const ENTRIES = JSON.parse(document.getElementById('entries-data').textContent);
 
 const LINKS = [
-  // since: the year the account was opened [placeholder]; it picks the era its window wears on /links
-  {g:'gh',name:'GitHub',h:'github.com/[handle]',since:2013,about:'Code, including this site.'},
-  {g:'in',name:'LinkedIn',h:'linkedin.com/in/[handle]',since:2006,about:'Work history, the formal version.'},
-  {g:'@',name:'Email',h:'[you]@evgeny.fyi',since:1997,about:'The address that has outlived every inbox.'},
-  {g:'x',name:'X',h:'x.com/[handle]',since:2009,about:'Short posts, mostly about interfaces.'},
-  {g:'bs',name:'Bluesky',h:'[handle].bsky.social',since:2023,about:'The same posts, somewhere newer.'},
-  {g:'cv',name:'Résumé',h:'evgeny.fyi/cv.pdf',since:2026,about:'One page, updated whenever the timeline is.'}
+  // since: the year the account was opened, which picks the era its window
+  // wears on /links. Without one the window is drawn in the present day.
+  {g:'gh',name:'GitHub',h:'github.com/evgenyvinnik',since:2011,about:'Everything public, including this site.'},
+  {g:'in',name:'LinkedIn',h:'linkedin.com/in/evgenyvinnik',about:'Work history, the formal version.'}
 ];
 
 /* ==========================================================================
@@ -1718,7 +1715,7 @@ function buildTimeline(){
       el.className = 'win';
       el.dataset.chrome = era.id;
       el.dataset.i = it.i;
-      if (e.long) el.dataset.long = '1';
+      if (e.long){ el.dataset.long = '1'; el.dataset.longsrc = '1'; }
       el.innerHTML = '<div class="frame">' +
         CHROME[era.id](e, seen[era.id]) + '</div>';
     }
@@ -2032,8 +2029,9 @@ function eraWindow(e, seen){
 }
 function erasLinks(){
   const seen = {};
-  const items = LINKS.map(l => ({title:l.name, kind:'link', org:l.h, lane:'side', y:l.since, m:0,
-    blurb:l.about + (l.name === 'Résumé' ? ' Current as of ' : ' Opened in ') + l.since + '.',
+  const items = LINKS.map(l => ({title:l.name, kind:'link', org:l.h, lane:'side', m:0,
+    y:l.since || Y1,
+    blurb:l.about + (l.since ? ' Opened in ' + l.since + '.' : ''),
     tags:[l.h.split('/')[0]]})).sort((a, b) => b.y - a.y);
   return '<header class="rhead"><h1>Links</h1><p>Six accounts, each shown in the interface of the year it was ' +
     'opened.</p></header><div class="egrid">' + items.map(e => eraWindow(e, seen)).join('') + '</div>';
@@ -2110,6 +2108,20 @@ function loadWallpapers(){
   })));
 }
 
+/* The build marks an entry long when it has more than one paragraph, but the
+   296px cap and the bottom fade only mean anything on a body that actually
+   outgrows them. A short entry hands the attribute back once it is laid out,
+   and gets it again if a narrower window makes its text taller. */
+const BODY_CAP = 296;
+function trimLongs(){
+  document.querySelectorAll('.win[data-longsrc]').forEach(w => {
+    const b = w.querySelector('.body');
+    if (!b) return;
+    delete w.dataset.long;                       // uncapped, so this is the true height
+    if (b.scrollHeight > BODY_CAP + 4) w.dataset.long = '1';
+  });
+}
+
 function metrics(){
   YEAR_H = window.innerWidth < 900 ? 96 : 122;
   TOP = window.innerWidth < 900 ? 170 : 210;
@@ -2119,7 +2131,7 @@ function init(){
   buildTimeline();
   buildRuler();
   loadWallpapers().then(() => { BOOT.wallpapersSettled = true; });
-  requestAnimationFrame(() => { place(); route(); });
+  requestAnimationFrame(() => { place(); trimLongs(); route(); });
 }
 /* place() changes every offset, so a re-layout after fonts load or on resize
    would slide the page under the reader. Hold the year instead of the pixel. */
@@ -2127,6 +2139,7 @@ function relayout(){
   const held = ANCH.length ? yearAtPx(window.scrollY + window.innerHeight * .42) : null;
   metrics();
   place();
+  trimLongs();
   if (held !== null && document.body.dataset.route === 'timeline'){
     window.scrollTo({top:Math.max(0, pxAtYear(held) - window.innerHeight * .42), behavior:'auto'});
   }

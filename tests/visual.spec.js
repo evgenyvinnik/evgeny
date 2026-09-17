@@ -409,7 +409,11 @@ test.describe('window controls', () => {
         }).length,
       };
     });
-    expect(audit.count).toBeGreaterThanOrEqual(4);
+    /* The cap is claimed after layout rather than at build time, so the count
+       follows the viewport: with the current entries three bodies outgrow it at
+       desktop, iPad and iPad landscape, and six on the phones. What has to hold
+       is that nothing claims the cap without overflowing it. */
+    expect(audit.count, 'something exercises the cap').toBeGreaterThanOrEqual(1);
     expect(audit.scrolling, 'every long entry actually overflows its body').toBe(audit.count);
   });
 
