@@ -904,20 +904,22 @@ html[data-photos~="glass"] .lg::before{
   backdrop-filter:blur(18px) saturate(240%) brightness(1.04);
   -webkit-backdrop-filter:blur(18px) saturate(240%) brightness(1.04)}
 
-/* The light material Tahoe uses for sidebars, the Dock and widgets: mostly
-   clear, faintly frosted, a rim that smears harder than the body, and a white
-   specular hairline brightest where the light lands. */
+/* The light material Tahoe uses for sidebars, the Dock and widgets. One
+   frosted pass, not two: an element that has a backdrop-filter is itself a
+   backdrop root, so a second filter on an inset ring could only ever sample
+   its parent's own flat background. It refracted nothing and drew a visible
+   band 8px inside every edge. The frost is heavy enough that a hard edge in
+   the wallpaper — a rock against water — arrives as a wash rather than a
+   seam across the rows. */
 .lgl{position:relative;
-  background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,255,255,.7));
-  backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%)}
-.lgl::before,.lgl::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
-.lgl::before{border:var(--rim,10px) solid transparent;
-  backdrop-filter:blur(30px) saturate(150%);-webkit-backdrop-filter:blur(30px) saturate(150%);
-  -webkit-mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);-webkit-mask-composite:xor;
-  mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);mask-composite:exclude}
-.lgl::after{border:1px solid transparent;
-  background:linear-gradient(160deg,rgba(255,255,255,.95),rgba(255,255,255,.4) 26%,
-    rgba(255,255,255,.16) 60%,rgba(255,255,255,.72)) border-box;
+  background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(255,255,255,.66));
+  backdrop-filter:blur(34px) saturate(180%) brightness(1.04);
+  -webkit-backdrop-filter:blur(34px) saturate(180%) brightness(1.04)}
+/* one specular hairline, brightest where the light lands and fading away */
+.lgl::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  border:1px solid transparent;
+  background:linear-gradient(150deg,rgba(255,255,255,.8),rgba(255,255,255,.26) 32%,
+    rgba(255,255,255,.1) 64%,rgba(255,255,255,.34)) border-box;
   -webkit-mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);-webkit-mask-composite:xor;
   mask:linear-gradient(#000,#000) padding-box,linear-gradient(#000,#000);mask-composite:exclude}
 .lgl > *{position:relative;z-index:1}
@@ -929,13 +931,13 @@ html[data-photos~="glass"] .lg::before{
    buttons sit in capsules over the content, grouped by what they do. */
 .win[data-chrome="glass"]{font-family:var(--sf);font-size:13px}
 .win[data-chrome="glass"] .frame{position:relative;border-radius:26px;background:transparent;
-  box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 30px 70px rgba(6,20,40,.34),0 4px 14px rgba(6,20,40,.16)}
+  box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 30px 70px rgba(6,20,40,.32),0 4px 14px rgba(6,20,40,.14)}
 .win[data-chrome="glass"] .tahoe{display:flex;align-items:stretch}
 /* the white around the sidebar is the sidebar's own spread shadow, so nothing
    opaque sits under the glass and what it samples is the desktop */
-.win[data-chrome="glass"] .side{--rim:8px;flex:0 0 184px;margin:8px 0 8px 8px;padding:0 8px 12px;border-radius:18px;
+.win[data-chrome="glass"] .side{flex:0 0 184px;margin:8px 0 8px 8px;padding:0 8px 12px;border-radius:18px;
   font-size:13px;line-height:1.3;color:#1D1D1F;
-  box-shadow:0 1px 6px rgba(0,0,0,.08),inset 0 0 0 .5px rgba(0,0,0,.06),0 0 0 8px #FFF}
+  box-shadow:0 2px 10px rgba(12,24,44,.1),0 0 0 8px #FFF}
 .win[data-chrome="glass"] .tcol{flex:1;min-width:0;display:flex;flex-direction:column;background:#FFF}
 /* traffic lights: 14px and 9px apart, flat, glyphs when the pointer reaches them */
 .win[data-chrome="glass"] .lights{display:flex;gap:9px;padding:15px 6px 16px}
@@ -960,7 +962,7 @@ html[data-photos~="glass"] .lg::before{
 .win[data-chrome="glass"] .side i:first-of-type{margin-top:0}
 .win[data-chrome="glass"] .side u{display:flex;align-items:center;gap:8px;height:30px;padding:0 10px;
   text-decoration:none;color:#1D1D1F;border-radius:10px}
-.win[data-chrome="glass"] .side u.sel{background:rgba(0,0,0,.08)}
+.win[data-chrome="glass"] .side u.sel{background:rgba(0,0,0,.1)}
 .win[data-chrome="glass"] .sym{flex:0 0 auto;width:16px;height:16px;display:grid;place-items:center;color:#0A84FF}
 .win[data-chrome="glass"] .sym svg{width:16px;height:16px;display:block}
 .win[data-chrome="glass"] .dot{flex:0 0 auto;width:10px;height:10px;margin:0 3px;border-radius:50%;
@@ -1006,15 +1008,15 @@ html[data-photos~="glass"] .lg::before{
 .win[data-chrome="ubuntu"]:not([data-active]) .wbtns b::before,
 .win[data-chrome="ubuntu"]:not([data-active]) .wbtns b::after{box-shadow:none}
 /* Tahoe, like every macOS, greys the lights of windows that are not key */
-.win[data-chrome="glass"]:not([data-active]) .lights b{background:#D8D8DC;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.1)}
+.win[data-chrome="glass"]:not([data-active]) .lights b{background:#C9C9CF;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
 .win[data-chrome="glass"]:not([data-active]) .lights:hover .tl-r{background:#FF5F57}
 .win[data-chrome="glass"]:not([data-active]) .lights:hover .tl-y{background:#FEBC2E}
 .win[data-chrome="glass"]:not([data-active]) .lights:hover .tl-g{background:#28C840}
 .win[data-chrome="glass"]:not([data-active]) .ttl,.win[data-chrome="glass"]:not([data-active]) .cap{color:#8E8E93}
-.win[data-chrome="glass"]:not([data-active]) .side u.sel{background:rgba(0,0,0,.05)}
+.win[data-chrome="glass"]:not([data-active]) .side u.sel{background:rgba(0,0,0,.07)}
 .win[data-chrome="glass"]:not([data-active]) .sym{color:#8E8E93}
 .win[data-chrome="glass"]:not([data-active]) .frame{
-  box-shadow:0 0 0 .5px rgba(0,0,0,.14),0 14px 36px rgba(6,20,40,.2),0 2px 6px rgba(6,20,40,.1)}
+  box-shadow:0 0 0 .5px rgba(0,0,0,.1),0 14px 36px rgba(6,20,40,.18),0 2px 6px rgba(6,20,40,.09)}
 
 /* ========================= /projects and /links =========================
    Projects is a Tahoe Finder window: a gallery whose thumbnails are the

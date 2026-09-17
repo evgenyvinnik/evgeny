@@ -272,18 +272,26 @@ test.describe('invariants', () => {
     }
   });
 
-  test('Liquid Glass keeps its interior clearer than its rim', async ({ page }) => {
+  test('Tahoe glasses the navigation layer, not the content', async ({ page }) => {
     await open(page);
-    // the lens model, asserted on Tahoe's glass sidebar: the edge zone must blur more than the body
-    const filters = await page.evaluate(() => {
-      const el = document.querySelector('.win[data-chrome="glass"] .side');
-      const read = (pseudo) => getComputedStyle(el, pseudo).backdropFilter;
+    /* The redesign's whole claim: the window is a white page and the glass is
+       reserved for what floats over it. A second backdrop-filter on an inset
+       ring cannot refract anything, because an element that has one is itself
+       a backdrop root, so this asserts the single frosted pass instead. */
+    const glass = await page.evaluate(() => {
+      // the hero is a Tahoe window without a sidebar, so ask an entry window
+      const win = document.querySelector('.win[data-chrome="glass"]:not(.hero)');
       const px = (s) => { const m = /blur\(([\d.]+)px\)/.exec(s || ''); return m ? +m[1] : null; };
-      return { body: px(read(null)), rim: px(read('::before')) };
+      const cs = (el) => el && getComputedStyle(el);
+      return {
+        sidebarBlur: px(cs(win.querySelector('.side')).backdropFilter),
+        contentBg: cs(win.querySelector('.tcol')).backgroundColor,
+        frameBg: cs(win.querySelector('.frame')).backgroundColor,
+      };
     });
-    expect(filters.body).not.toBeNull();
-    expect(filters.rim).not.toBeNull();
-    expect(filters.rim).toBeGreaterThan(filters.body);
+    expect(glass.sidebarBlur, 'the sidebar is frosted').toBeGreaterThanOrEqual(20);
+    expect(glass.contentBg, 'the content pane stays opaque white').toBe('rgb(255, 255, 255)');
+    expect(glass.frameBg, 'the frame itself carries no material').toBe('rgba(0, 0, 0, 0)');
   });
 });
 
