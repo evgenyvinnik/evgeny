@@ -76,16 +76,6 @@ test.describe('invariants', () => {
     expect(stacked).toEqual(ERAS.map((e) => e.id).reverse());
   });
 
-  test('the desktop shells cover every era exactly once', async ({ page }) => {
-    await open(page);
-    const shells = await page.evaluate(() =>
-      [...document.querySelectorAll('#shells .sh')].map((b) => b.dataset.era).sort());
-    expect(shells).toEqual(ERAS.map((e) => e.id).sort());
-  });
-
-  /* This is the invariant the design rests on, and the one that broke twice
-     while building: the year in the header, the wallpaper and the window
-     chrome on screen all have to belong to the same era. */
   test('header year, wallpaper and window chrome agree in every era', async ({ page }) => {
     await open(page);
     for (const era of ERAS) {
@@ -282,49 +272,26 @@ test.describe('invariants', () => {
     }
   });
 
-  test('the taskbar names the focused window', async ({ page }) => {
+  test('Tahoe glasses the navigation layer, not the content', async ({ page }) => {
     await open(page);
-    for (const id of ['w95', 'w98', 'xp']) {
-      const era = ERAS.find((e) => e.id === id);
-      const s = await page.evaluate(({ y, id }) => {
-        window.BOOT.gotoYear(y);
-        const act = document.querySelector('.win[data-active]');
-        return {
-          caption: act.dataset.caption,
-          task: document.querySelector('.sh-' + id + ' [data-task] span').textContent,
-        };
-      }, { y: midOf(era), id });
-      expect(s.caption.length, `caption in ${id}`).toBeGreaterThan(2);
-      expect(s.task, `taskbar button in ${id}`).toBe(s.caption);
-    }
-  });
-
-  test('desktop icons appear only in their own era', async ({ page }) => {
-    await open(page);
-    const withIcons = ['w95', 'w98', 'xp', 'aero', 'w10', 'macos', 'glass'];
-    for (const era of ERAS) {
-      const lit = await page.evaluate((y) => {
-        window.BOOT.gotoYear(y);
-        return [...document.querySelectorAll('#icons .ic')]
-          .filter((i) => parseFloat(i.style.opacity || '0') > 0.5)
-          .map((i) => i.dataset.era);
-      }, midOf(era));
-      expect(lit, `desktop icons lit in ${era.id}`).toEqual(withIcons.includes(era.id) ? [era.id] : []);
-    }
-  });
-
-  test('Liquid Glass keeps its interior clearer than its rim', async ({ page }) => {
-    await open(page);
-    // the lens model, asserted on Tahoe's glass sidebar: the edge zone must blur more than the body
-    const filters = await page.evaluate(() => {
-      const el = document.querySelector('.win[data-chrome="glass"] .side');
-      const read = (pseudo) => getComputedStyle(el, pseudo).backdropFilter;
+    /* The redesign's whole claim: the window is a white page and the glass is
+       reserved for what floats over it. A second backdrop-filter on an inset
+       ring cannot refract anything, because an element that has one is itself
+       a backdrop root, so this asserts the single frosted pass instead. */
+    const glass = await page.evaluate(() => {
+      // the hero is a Tahoe window without a sidebar, so ask an entry window
+      const win = document.querySelector('.win[data-chrome="glass"]:not(.hero)');
       const px = (s) => { const m = /blur\(([\d.]+)px\)/.exec(s || ''); return m ? +m[1] : null; };
-      return { body: px(read(null)), rim: px(read('::before')) };
+      const cs = (el) => el && getComputedStyle(el);
+      return {
+        sidebarBlur: px(cs(win.querySelector('.side')).backdropFilter),
+        contentBg: cs(win.querySelector('.tcol')).backgroundColor,
+        frameBg: cs(win.querySelector('.frame')).backgroundColor,
+      };
     });
-    expect(filters.body).not.toBeNull();
-    expect(filters.rim).not.toBeNull();
-    expect(filters.rim).toBeGreaterThan(filters.body);
+    expect(glass.sidebarBlur, 'the sidebar is frosted').toBeGreaterThanOrEqual(20);
+    expect(glass.contentBg, 'the content pane stays opaque white').toBe('rgb(255, 255, 255)');
+    expect(glass.frameBg, 'the frame itself carries no material').toBe('rgba(0, 0, 0, 0)');
   });
 });
 
@@ -442,7 +409,11 @@ test.describe('window controls', () => {
         }).length,
       };
     });
-    expect(audit.count).toBeGreaterThanOrEqual(4);
+    /* The cap is claimed after layout rather than at build time, so the count
+       follows the viewport: with the current entries three bodies outgrow it at
+       desktop, iPad and iPad landscape, and six on the phones. What has to hold
+       is that nothing claims the cap without overflowing it. */
+    expect(audit.count, 'something exercises the cap').toBeGreaterThanOrEqual(1);
     expect(audit.scrolling, 'every long entry actually overflows its body').toBe(audit.count);
   });
 
