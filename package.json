@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node scripts/build.mjs dist",
     "check": "node scripts/build.mjs --check",
+    "share-image": "node scripts/share-image.mjs",
     "dev": "node scripts/build.mjs .testbuild && echo 'Previewing at http://127.0.0.1:4173' && python3 -m http.server 4173 --directory .testbuild --bind 127.0.0.1",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",

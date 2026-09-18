@@ -509,3 +509,89 @@ test.describe('screenshots', () => {
     await expect(page).toHaveScreenshot('links.png');
   });
 });
+
+/* What a crawler or a link preview reads. These inspect the built document
+   rather than the timeline's live DOM, so one viewport covers them. */
+test.describe('sharing and search', () => {
+  test.beforeEach(({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop', 'the head is the same at every size');
+  });
+
+  const head = (page) => page.evaluate(() => {
+    const content = (sel) => document.head.querySelector(sel)?.getAttribute('content') ?? null;
+    const pairs = (sel, key) => Object.fromEntries([...document.head.querySelectorAll(sel)]
+      .map((n) => [n.getAttribute(key), n.getAttribute('content')]));
+    return {
+      lang: document.documentElement.lang,
+      title: document.title,
+      titleInHead: !!document.head.querySelector('title'),
+      titleInBody: !!document.body.querySelector('title'),
+      description: content('meta[name="description"]'),
+      canonical: document.head.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? null,
+      og: pairs('meta[property^="og:"]', 'property'),
+      tw: pairs('meta[name^="twitter:"]', 'name'),
+    };
+  });
+
+  test('the head names the page, describes it and gives one address', async ({ page }) => {
+    await open(page);
+    const h = await head(page);
+    expect(h.lang).toBe('en');
+    expect(h.title).toBe("Evgeny Vinnik's personal site");
+    expect(h.titleInHead, 'the title belongs in the head').toBe(true);
+    expect(h.titleInBody, 'and only there').toBe(false);
+    expect(h.description?.length, 'a description search results can show whole').toBeGreaterThanOrEqual(70);
+    expect(h.description.length).toBeLessThanOrEqual(160);
+    expect(h.description, 'no placeholder reaches a search result').not.toMatch(/\[/);
+    expect(h.canonical).toMatch(/^https:\/\/[^\s]+\/$/);
+  });
+
+  test('a shared link unfurls into a large card', async ({ page, request }) => {
+    await open(page);
+    const h = await head(page);
+    expect(h.og['og:title']).toBe(h.title);
+    expect(h.og['og:description']).toBe(h.description);
+    expect(h.og['og:url'], 'the card and the canonical address agree').toBe(h.canonical);
+    expect(h.og['og:image']).toBe(h.canonical + 'og.png');
+    expect(h.og['og:image:alt']?.length).toBeGreaterThan(20);
+    expect(h.tw['twitter:card']).toBe('summary_large_image');
+    expect(h.tw['twitter:image']).toBe(h.og['og:image']);
+
+    // the card the tags promise exists, and is the size they claim
+    const png = await (await request.get('/og.png')).body();
+    expect(png.subarray(1, 4).toString(), 'a PNG').toBe('PNG');
+    expect([png.readUInt32BE(16), png.readUInt32BE(20)])
+      .toEqual([Number(h.og['og:image:width']), Number(h.og['og:image:height'])]);
+    expect([Number(h.og['og:image:width']), Number(h.og['og:image:height'])]).toEqual([1200, 630]);
+    for (const icon of ['/favicon.svg', '/apple-touch-icon.png']) {
+      expect((await request.get(icon)).status(), icon).toBe(200);
+    }
+  });
+
+  test('search engines get a person, a sitemap and a page that reads without script',
+    async ({ page, request }) => {
+    await open(page);
+    const s = await page.evaluate(() => {
+      const person = JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent);
+      // with scripting on, a noscript block is raw markup, so parse it the way a crawler would
+      const doc = new DOMParser().parseFromString(document.querySelector('noscript').textContent, 'text/html');
+      return {
+        person,
+        h1: doc.querySelector('h1')?.textContent,
+        links: doc.querySelectorAll('a[href^="https://"]').length,
+        placeholders: /\[/.test(doc.body.textContent),
+      };
+    });
+    expect(s.person['@type']).toBe('Person');
+    expect(s.person.name).toBe('Evgeny Vinnik');
+    expect(s.person.sameAs).toContain('https://github.com/evgenyvinnik');
+    expect(s.h1).toBe('Evgeny Vinnik');
+    expect(s.links, 'every project reachable by a crawler').toBeGreaterThanOrEqual(20);
+    expect(s.placeholders, 'no placeholder in what a crawler reads').toBe(false);
+
+    const robots = await (await request.get('/robots.txt')).text();
+    expect(robots).toMatch(/^Sitemap: https:\/\/\S+sitemap\.xml$/m);
+    const sitemap = await (await request.get('/sitemap.xml')).text();
+    expect(sitemap).toContain('<loc>' + s.person.url + '</loc>');
+  });
+});

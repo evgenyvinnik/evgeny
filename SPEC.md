@@ -349,6 +349,31 @@ The screenshot tests stay local. Their baselines are rendered on macOS, and
 Linux has none of the system fonts the Windows eras use, so every capture
 would differ.
 
+**Sharing and search.** The build writes the page's head, which an Artifact
+cannot carry: the title, a description, a canonical address, Open Graph and
+Twitter card tags for a large share card, and a schema.org `Person`. Every
+fact in them, the role, the employer and the university, is derived from
+the entries, and anything still in square brackets is left out, so a
+placeholder never reaches a search result or a preview. The timeline is
+drawn by script, so the build also writes a `<noscript>` copy of the same
+facts with every project linked, for crawlers and link scrapers that run
+none.
+
+The share card, `og.png` at 1200×630, and the home-screen icon are rendered
+by `npm run share-image` into `prototype/public/` and committed, because the
+deploy job has no browser to render them. The card is drawn from owned
+material only, the header stripe's black, the era swatches and type, with no
+wallpaper: a share card travels further than this repository's wallpapers
+are meant to. Rerun it after changing the name, the current role or the
+eras.
+
+`robots.txt` and `sitemap.xml` are written next to the page. On the Pages
+subpath the robots file is ignored, since crawlers only read it at a host's
+root; it starts to count on evgeny.fyi. Platforms cache previews, so after a
+change to the card, refresh it with LinkedIn's Post Inspector or Facebook's
+Sharing Debugger. The `/projects` and `/links` routes are hash fragments, so
+they share the site's one preview until they become real pages.
+
 **Later, for evgeny.fyi.**
 
 1. Add `CNAME` containing `evgeny.fyi` to the published folder, so each
@@ -358,6 +383,8 @@ would differ.
    from GitHub's Pages documentation; they have changed before.
 3. Set the custom domain in the repository's Pages settings, then enable
    **Enforce HTTPS** once the certificate is issued.
+4. Change `SITE_URL` in `scripts/build.mjs` to `https://evgeny.fyi/`, so the
+   canonical address, the share tags and the sitemap follow the domain.
 
 ---
 
@@ -394,8 +421,9 @@ and nothing translates on scroll.
 
 ## 10. Tests
 
-Playwright, five projects, thirty-five tests in each. `npm run
-test:visual` runs them; `npm run test:visual:update` accepts new
+Playwright, five projects, thirty-five tests in each, plus three sharing
+and search checks that run on desktop only, because the head is the same at
+every size. `npm run test:visual` runs them; `npm run test:visual:update` accepts new
 baselines after a deliberate change.
 
 | Project | Viewport | What it covers |

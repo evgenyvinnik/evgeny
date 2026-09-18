@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- An E drawn from rectangles rather than a font, so it looks the same
+       everywhere, over a strip of the ten era swatches, newest on the left -->
+  <defs><clipPath id="c"><rect width="32" height="32" rx="7"/></clipPath></defs>
+  <g clip-path="url(#c)">
+    <rect width="32" height="32" fill="#000"/>
+    <path fill="#FFF" d="M9 5h14v4H13v3.5h9v4h-9V20h10v4H9z"/>
+    <rect x="0" y="27.5" width="3.2" height="4.5" fill="#14122E"/>
+    <rect x="3.2" y="27.5" width="3.2" height="4.5" fill="#E4DCF0"/>
+    <rect x="6.4" y="27.5" width="3.2" height="4.5" fill="#0B3F7A"/>
+    <rect x="9.6" y="27.5" width="3.2" height="4.5" fill="#2C001E"/>
+    <rect x="12.8" y="27.5" width="3.2" height="4.5" fill="#0E2B4C"/>
+    <rect x="16" y="27.5" width="3.2" height="4.5" fill="#2A6FD8"/>
+    <rect x="19.2" y="27.5" width="3.2" height="4.5" fill="#006B6B"/>
+    <rect x="22.4" y="27.5" width="3.2" height="4.5" fill="#008080"/>
+    <rect x="25.6" y="27.5" width="3.2" height="4.5" fill="#0000AA"/>
+    <rect x="28.8" y="27.5" width="3.2" height="4.5" fill="#1A1408"/>
+  </g>
+</svg>

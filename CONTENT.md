@@ -144,3 +144,7 @@ live the same way as a new entry.
 - The eras, their window styles and their wallpapers, also in
   `prototype/index.html`. To use a real wallpaper photo, see
   `prototype/wallpapers/README.md`.
+- The share card and home-screen icon, in `prototype/public/`. They are drawn
+  from your name, your current role and the eras, so after changing any of
+  those, run `npm run share-image` and commit the new images. The page's
+  description and search data follow the entries on their own.

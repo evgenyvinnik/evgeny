@@ -3,6 +3,9 @@
      prototype/index.html    the page, with an empty entries-data block
      content/entries/*.md    one Markdown file per timeline entry (CONTENT.md)
      prototype/wallpapers/   photographs, copied next to the page
+     prototype/public/       the share card and icons (npm run share-image),
+                             copied to the site root beside robots.txt and
+                             sitemap.xml, which the build writes itself
 
    node scripts/build.mjs [outDir]         the full page. dist for GitHub Pages,
                                            .testbuild (the default) for tests
@@ -29,12 +32,14 @@ const present = (v) => v !== undefined && v !== null && v !== '';
 
 /* The Artifact runtime supplies this skeleton around a published page. The
    build supplies the same one, so Pages and the tests render what the
-   Artifact renders instead of a quirks-mode approximation. */
-const SKELETON = (body) => `<!doctype html>
-<html><head>
+   Artifact renders instead of a quirks-mode approximation. The deployed page
+   adds what an Artifact cannot carry: a language, and the head tags that
+   search engines and link previews read. */
+const SKELETON = (body, head = '') => `<!doctype html>
+<html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<style>
+${head}<style>
 :root{color-scheme:light}
 body{margin:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;background:#faf9f7}
 img{max-width:100%}
@@ -44,6 +49,111 @@ img{max-width:100%}
 ${body}
 </body></html>
 `;
+
+/* Where the site is served. Canonical links, share cards and the sitemap all
+   need absolute addresses. When evgeny.fyi goes live, change the default
+   here, or set SITE_URL for a single build. */
+export const SITE_URL = (process.env.SITE_URL || 'https://evgenyvinnik.github.io/evgeny/').replace(/\/?$/, '/');
+export const SITE = {
+  name: 'Evgeny Vinnik',
+  role: 'Software engineer',                     // the GitHub profile's own words
+  profiles: ['https://github.com/evgenyvinnik', 'https://www.linkedin.com/in/evgenyvinnik/'],
+  image: { file: 'og.png', width: 1200, height: 630 },
+};
+
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const isPlaceholder = (s) => /\[/.test(s || '');
+const lowerFirst = (s) => s.charAt(0).toLowerCase() + s.slice(1);
+
+/** The facts every summary of the site is built from, with placeholders left
+    out: nothing a crawler or a share card shows should be in brackets. */
+export function summary(entries) {
+  const current = entries.find((e) => e.lane === 'work' && e.end === LAST_YEAR && !isPlaceholder(e.title));
+  const schools = entries.filter((e) => e.lane === 'education' && e.kind === 'university' && !isPlaceholder(e.title));
+  const role = SITE.role + (current ? ' at ' + current.title : '');
+  const description = `${SITE.name}, ${lowerFirst(role)}. A timeline of projects, study and work ` +
+    'that ages from macOS Liquid Glass back to a DOS prompt as you scroll.';
+  return { current, schools, role, description };
+}
+
+/** The head of the deployed page: its name, its description, its canonical
+    address, the share card, and a schema.org Person for search engines. */
+function headFor(title, entries) {
+  const { current, schools, role, description } = summary(entries);
+  const image = SITE_URL + SITE.image.file;
+  const alt = `${SITE.name}, ${lowerFirst(role)}. Ten interface eras, from Liquid Glass back to a monochrome CRT.`;
+  const person = {
+    '@context': 'https://schema.org', '@type': 'Person', name: SITE.name, url: SITE_URL, jobTitle: SITE.role,
+    ...(current && { worksFor: { '@type': 'Organization', name: current.title } }),
+    ...(schools.length && { alumniOf: schools.map((u) => ({ '@type': 'CollegeOrUniversity', name: u.title })) }),
+    sameAs: SITE.profiles,
+  };
+  return [
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(description)}">`,
+    `<link rel="canonical" href="${esc(SITE_URL)}">`,
+    '<meta name="theme-color" content="#000000">',
+    '<link rel="icon" href="favicon.svg" type="image/svg+xml">',
+    '<link rel="apple-touch-icon" href="apple-touch-icon.png">',
+    '<meta property="og:type" content="website">',
+    `<meta property="og:site_name" content="${esc(SITE.name)}">`,
+    `<meta property="og:title" content="${esc(title)}">`,
+    `<meta property="og:description" content="${esc(description)}">`,
+    `<meta property="og:url" content="${esc(SITE_URL)}">`,
+    `<meta property="og:image" content="${esc(image)}">`,
+    `<meta property="og:image:width" content="${SITE.image.width}">`,
+    `<meta property="og:image:height" content="${SITE.image.height}">`,
+    `<meta property="og:image:alt" content="${esc(alt)}">`,
+    '<meta property="og:locale" content="en_US">',
+    '<meta name="twitter:card" content="summary_large_image">',
+    `<meta name="twitter:title" content="${esc(title)}">`,
+    `<meta name="twitter:description" content="${esc(description)}">`,
+    `<meta name="twitter:image" content="${esc(image)}">`,
+    `<meta name="twitter:image:alt" content="${esc(alt)}">`,
+    `<script type="application/ld+json">${JSON.stringify(person).replace(/</g, '\\u003c')}</script>`,
+  ].join('\n') + '\n';
+}
+
+/* What a crawler or a link scraper that runs no JavaScript sees: the same
+   facts as the timeline as plain HTML, every project linked. The timeline is
+   drawn by script, so without this the page would read as empty. */
+function noscriptFor(entries) {
+  const { description } = summary(entries);
+  const real = entries.filter((e) => !isPlaceholder(e.title)).slice().reverse();
+  const span = (e) => e.end === undefined || e.end === e.y ? String(e.y)
+    : e.y + '–' + (e.end === LAST_YEAR ? 'present' : e.end);
+  const list = (heading, items) => items.length ? `<h2>${heading}</h2>\n<ul>\n${items.join('\n')}\n</ul>\n` : '';
+  const projects = real.filter((e) => e.lane === 'side').map((e) =>
+    `<li>${e.link ? `<a href="${esc(e.link)}">${esc(e.title)}</a>` : esc(e.title)} (${e.y}). ${esc(e.blurb)}</li>`);
+  const study = real.filter((e) => e.lane === 'education').map((e) =>
+    `<li>${esc(e.title)}, ${span(e)}${e.org && !isPlaceholder(e.org) ? '. ' + esc(e.org) : ''}</li>`);
+  // a work entry's dates can be placeholders even when its employer is real
+  const work = real.filter((e) => e.lane === 'work').map((e) =>
+    `<li>${esc(e.title)}${e.end === LAST_YEAR ? ', current' : ''}</li>`);
+  const elsewhere = SITE.profiles.map((u) =>
+    `<li><a href="${esc(u)}">${esc(u.replace(/^https:\/\/(www\.)?/, '').replace(/\/$/, ''))}</a></li>`);
+  return '<noscript><style>.nojs{max-width:62ch;margin:0 auto;padding:40px 20px;color:#111;background:#fff;' +
+    'font:16px/1.55 system-ui,sans-serif}.nojs a{color:#0645ad}</style>\n<div class="nojs">\n' +
+    `<h1>${esc(SITE.name)}</h1>\n<p>${esc(description)}</p>\n` +
+    list('Projects', projects) + list('Education', study) + list('Work', work) + list('Elsewhere', elsewhere) +
+    '</div>\n</noscript>\n';
+}
+
+/* The page keeps its <title> in its body, where an Artifact needs it. A real
+   document wants it in the head, beside the share tags. */
+function documentFor(page, entries) {
+  const TITLE = /<title>([\s\S]*?)<\/title>\s*/;
+  const title = (TITLE.exec(page) || [])[1]?.trim() || SITE.name;
+  return SKELETON(noscriptFor(entries) + page.replace(TITLE, ''), headFor(title, entries));
+}
+
+/* The timeline's routes are hash fragments, so the site is one address. */
+function sitemap() {
+  const day = new Date().toISOString().slice(0, 10);
+  return '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    `  <url><loc>${esc(SITE_URL)}</loc><lastmod>${day}</lastmod></url>\n</urlset>\n`;
+}
 
 /** "2018-06", "2018" or 2018 becomes { y, m }, with m counted from zero. */
 function yearMonth(value, field, problems) {
@@ -228,8 +338,14 @@ async function main(argv) {
 
   const outDir = path.resolve(ROOT, opts.out);
   await mkdir(outDir, { recursive: true });
-  await writeFile(path.join(outDir, 'index.html'), opts.body ? page : SKELETON(page));
+  await writeFile(path.join(outDir, 'index.html'), opts.body ? page : documentFor(page, entries));
   await cp(path.join(ROOT, 'prototype', 'wallpapers'), path.join(outDir, 'wallpapers'), { recursive: true }).catch(() => {});
+  if (!opts.body) {
+    // the share card and the icons, and what crawlers look for beside the page
+    await cp(path.join(ROOT, 'prototype', 'public'), outDir, { recursive: true }).catch(() => {});
+    await writeFile(path.join(outDir, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}sitemap.xml\n`);
+    await writeFile(path.join(outDir, 'sitemap.xml'), sitemap());
+  }
   console.log(`built ${entries.length} entries into ${show(path.join(outDir, 'index.html'))}`);
   return 0;
 }
