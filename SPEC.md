@@ -191,9 +191,9 @@ by looking:
 
 The buttons keep each era's exact pixel geometry, so they are `<b>`
 elements given a button role, a tab index, an accessible name and
-keyboard handling rather than being swapped for `<button>`. In the Astro
-build, where the markup is authored per era anyway, they become real
-buttons.
+keyboard handling rather than being swapped for `<button>`. A build that
+authors the markup per era, such as the Astro step in section 7, could
+make them real buttons.
 
 ---
 
@@ -208,11 +208,14 @@ buttons.
 | `/cv` | Résumé, derived from the same data as the work branch. |
 | `/404` | Terminal-era "bad command or file name". |
 
-Every project page is a real static file, not a client-side route. That
-keeps deep links, link previews and search indexing working, which a
-hash router on GitHub Pages does not. The prototype uses hash routes as
-a stand-in, driven directly on click so the nav works in sandboxes that
-refuse hash navigation.
+Today the site is one static page. `/projects` and `/links` are hash
+routes on it (`#/projects`, `#/links`), driven directly on click so the
+nav works in sandboxes that refuse hash navigation. `/projects/<slug>`,
+`/cv` and `/404` are not built yet. When they are, each project page
+should be a real static file rather than a client-side route, because
+that keeps deep links, link previews and search indexing working, which
+a hash router on GitHub Pages does not. That is the step section 7 names
+Astro for.
 
 ---
 
@@ -306,29 +309,59 @@ are content decisions, so they should move to your real dates.
 
 ## 7. Stack
 
-**Astro**, static output, React only where it earns its place.
+**Plain HTML, CSS and JavaScript.** No framework, no bundler, no
+TypeScript, and nothing shipped to a visitor but the page itself.
 
-- Content collections with a Zod schema give the entry model above
-  compile-time validation, so a malformed date fails the build.
-- One static file per project page, via `getStaticPaths`.
-- The scroll engine is a single client island. Every other page ships
-  zero JavaScript.
-- `astro build` to `dist/`, deployed by GitHub Actions.
+| Piece | What it is |
+|---|---|
+| `prototype/index.html` | The whole site in about 2,200 lines: markup, inline styles and one script. It is authored as a Claude Artifact body, with no `<head>`, so the same file publishes as a preview and builds into the deployed page. |
+| `content/entries/*.md` | One Markdown file per entry: a YAML header and paragraphs. See [CONTENT.md](CONTENT.md). |
+| `scripts/build.mjs` | A Node script. It validates every entry and reports every problem at once, injects the entries into the page as JSON, and writes the head, the `<noscript>` copy, `robots.txt` and `sitemap.xml`. It also copies the wallpapers and the share card. |
+| `scripts/share-image.mjs` | Renders the share card and the home-screen icon with Playwright. |
+| `tests/visual.spec.js` | The Playwright suite, section 10. |
+| `.github/workflows/pages.yml` | Tests every pull request, then builds and deploys `main` to GitHub Pages, section 8. |
 
-The alternatives and why not: Next.js static export carries a framework
-the site never uses; a Vite single-page app needs the `404.html`
-redirect hack and gives up per-project metadata; plain HTML means
-maintaining the same entry in four places.
+There are two development dependencies and no runtime ones: `yaml`, to
+read the entry headers, and `@playwright/test`, for the tests and the
+share card.
+
+**Why plain works here.** The timeline is DOM and CSS work: ten eras of
+window chrome, cross-fading wallpapers and a clock driven by scroll
+position. A component framework makes none of that easier, and a virtual
+DOM would sit in its way. The build validates the entry model with
+messages an author can act on, which is the job a schema library would
+do. And the usual objection to plain HTML, maintaining the same entry in
+four places, does not apply: every view reads the one JSON block the
+build injects.
+
+**Next steps, in order, and only when needed.**
+
+1. Split `prototype/index.html` into a stylesheet per era and a script
+   module or two. It is the file most likely to hurt first, and the split
+   needs no new tooling.
+2. For type checking, `// @ts-check` with JSDoc types on the scripts
+   gives most of what TypeScript would, with no compile step.
+3. Move to **Astro**, with static output, once projects need real pages:
+   `/projects/<slug>` with its own title, description and share card,
+   which hash routes cannot give it. Content collections would take over
+   from the build's validation, and the scroll engine would become the
+   page's one client island.
+4. React only if a single island genuinely needs component state. None
+   does today.
 
 ```
-src/
-  content/timeline/*.md      one file per entry, frontmatter = Entry
-  content/config.ts          the Zod schema
-  eras/                      one CSS module per era: the window
-  components/                Window, CommitGraph, YearRuler, Wallpapers
-  pages/                     index, projects/index, projects/[slug], links, cv, 404
-public/
-  CNAME                      contains: evgeny.fyi
+prototype/
+  index.html                  the page: markup, styles, the scroll engine
+  wallpapers/                 the real wallpapers, with their sources and rights
+  public/                     share card, touch icon, favicon; copied to the root
+content/entries/*.md          one file per entry
+scripts/
+  build.mjs                   entries in, deployable page out
+  share-image.mjs             renders prototype/public/
+tests/
+  visual.spec.js              invariants and screenshots at five viewports
+  __screenshots__/            the baselines
+.github/workflows/pages.yml   test, build, deploy
 ```
 
 ---
@@ -413,9 +446,12 @@ only carrier of meaning; every entry states its year in text.
 **Motion sickness.** Cross-fades are opacity only. Nothing parallaxes
 and nothing translates on scroll.
 
-**Search.** Per-page title, description and Open Graph image. JSON-LD
-`Person` on the home page and `CreativeWork` on each project. One
-`sitemap.xml` generated from the content collection.
+**Search.** One page, so one title, one description and one share card,
+all derived from the entries (section 8). JSON-LD `Person` on the home
+page, a `<noscript>` copy of the timeline's facts for crawlers that run no
+script, and a one-address `sitemap.xml` written by the build. When
+projects become real pages, each gets its own title, description, card
+and a `CreativeWork`.
 
 ---
 
@@ -440,7 +476,7 @@ rendering. Switching them to WebKit is one line in `playwright.config.js`
 once the WebKit browser is installed.
 
 The prototype is authored as an Artifact body, with no doctype and no
-`<head>`. Served raw it would render in quirks mode, so `tests/wrap.mjs`
+`<head>`. Served raw it would render in quirks mode, so `scripts/build.mjs`
 wraps it in the same skeleton the Artifact runtime supplies before the
 server sees it. The suite therefore measures what the published page
 actually renders, not a quirks-mode approximation.
