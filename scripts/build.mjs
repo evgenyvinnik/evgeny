@@ -1,6 +1,7 @@
 /* Builds evgeny.fyi from its sources.
 
      prototype/index.html    the page, with an empty entries-data block
+     prototype/privacy.html  the privacy policy for the iOS apps, built to privacy/
      content/entries/*.md    one Markdown file per timeline entry (CONTENT.md)
      prototype/wallpapers/   photographs, copied next to the page
      prototype/public/       the share card and icons (npm run share-image),
@@ -60,6 +61,15 @@ export const SITE = {
   profiles: ['https://github.com/evgenyvinnik', 'https://www.linkedin.com/in/evgenyvinnik/'],
   image: { file: 'og.png', width: 1200, height: 630 },
 };
+
+/* Pages with an address of their own beside the timeline. Each is built to a
+   real file, so App Store Connect, a crawler or a shared link reaches it
+   directly, which a hash route cannot give. The source is a page body with its
+   <title> in it, like index.html. */
+const PAGES = [
+  { src: 'privacy.html', dir: 'privacy/',
+    description: 'How the iOS apps by Evgeny Vinnik handle your data: no accounts, nothing sent to the developer, and ads served by Google AdMob and Unity Ads.' },
+];
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const isPlaceholder = (s) => /\[/.test(s || '');
@@ -141,18 +151,45 @@ function noscriptFor(entries) {
 
 /* The page keeps its <title> in its body, where an Artifact needs it. A real
    document wants it in the head, beside the share tags. */
+const TITLE = /<title>([\s\S]*?)<\/title>\s*/;
+const titleOf = (page) => (TITLE.exec(page) || [])[1]?.trim() || SITE.name;
+
 function documentFor(page, entries) {
-  const TITLE = /<title>([\s\S]*?)<\/title>\s*/;
-  const title = (TITLE.exec(page) || [])[1]?.trim() || SITE.name;
-  return SKELETON(noscriptFor(entries) + page.replace(TITLE, ''), headFor(title, entries));
+  return SKELETON(noscriptFor(entries) + page.replace(TITLE, ''), headFor(titleOf(page), entries));
 }
 
-/* The timeline's routes are hash fragments, so the site is one address. */
+/** A page beside the timeline: its own title, description and address, with
+    the site's share card. Its icons are at the site root, above its folder. */
+function pageFor(source, { dir, description }) {
+  const title = titleOf(source);
+  const url = SITE_URL + dir;
+  const up = '../'.repeat(dir.split('/').filter(Boolean).length);
+  const head = [
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(description)}">`,
+    `<link rel="canonical" href="${esc(url)}">`,
+    '<meta name="theme-color" content="#000000">',
+    `<link rel="icon" href="${up}favicon.svg" type="image/svg+xml">`,
+    `<link rel="apple-touch-icon" href="${up}apple-touch-icon.png">`,
+    '<meta property="og:type" content="website">',
+    `<meta property="og:site_name" content="${esc(SITE.name)}">`,
+    `<meta property="og:title" content="${esc(title)}">`,
+    `<meta property="og:description" content="${esc(description)}">`,
+    `<meta property="og:url" content="${esc(url)}">`,
+    `<meta property="og:image" content="${esc(SITE_URL + SITE.image.file)}">`,
+    '<meta name="twitter:card" content="summary_large_image">',
+  ].join('\n') + '\n';
+  return SKELETON(source.replace(TITLE, ''), head);
+}
+
+/* The timeline's routes are hash fragments, so its views share one address.
+   The pages beside it have their own. */
 function sitemap() {
   const day = new Date().toISOString().slice(0, 10);
+  const urls = [SITE_URL, ...PAGES.map((p) => SITE_URL + p.dir)];
   return '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-    `  <url><loc>${esc(SITE_URL)}</loc><lastmod>${day}</lastmod></url>\n</urlset>\n`;
+    urls.map((u) => `  <url><loc>${esc(u)}</loc><lastmod>${day}</lastmod></url>\n`).join('') + '</urlset>\n';
 }
 
 /** "2018-06", "2018" or 2018 becomes { y, m }, with m counted from zero. */
@@ -343,6 +380,11 @@ async function main(argv) {
   if (!opts.body) {
     // the share card and the icons, and what crawlers look for beside the page
     await cp(path.join(ROOT, 'prototype', 'public'), outDir, { recursive: true }).catch(() => {});
+    for (const p of PAGES) {
+      const source = await readFile(path.join(ROOT, 'prototype', p.src), 'utf8');
+      await mkdir(path.join(outDir, p.dir), { recursive: true });
+      await writeFile(path.join(outDir, p.dir, 'index.html'), pageFor(source, p));
+    }
     await writeFile(path.join(outDir, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}sitemap.xml\n`);
     await writeFile(path.join(outDir, 'sitemap.xml'), sitemap());
   }

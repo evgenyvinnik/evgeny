@@ -1,0 +1,178 @@
+<title>Privacy Policy for Evgeny Vinnik's iOS apps</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ==========================================================================
+   PRIVACY POLICY — /privacy/, the address given to App Store Connect.
+   A real file beside the timeline rather than a hash route, so it has its
+   own URL. Written in 2026, so it is a white Liquid Glass window on the
+   Tahoe wallpaper, under the same header stripe as the rest of the site.
+   ========================================================================== */
+:root{
+  color-scheme:light;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --sf:"Inter",system-ui,-apple-system,sans-serif;
+  --ink:#1D1D1F; --dim:#6E6E76; --link:#0060DF; --rule:rgba(0,0,0,.10); --tb:36px;
+}
+/* on html only: a body background would paint over the wallpaper layer */
+html{background:#0A0620}
+body{background:none}
+
+/* the Tahoe Day still where it loads, the drawn glass wallpaper beneath it */
+body::before{content:"";position:fixed;inset:0;z-index:-1;
+  background:url(../wallpapers/glass.jpg) center/cover,
+    radial-gradient(40% 32% at 14% 6%,rgba(132,84,255,.78),transparent 64%),
+    radial-gradient(36% 28% at 88% 22%,rgba(255,72,168,.58),transparent 64%),
+    radial-gradient(48% 38% at 62% 96%,rgba(40,226,240,.54),transparent 66%),
+    radial-gradient(30% 24% at 92% 76%,rgba(255,168,64,.34),transparent 68%),
+    linear-gradient(163deg,#08081A 0%,#141032 46%,#0A0620 72%,#05050E 100%)}
+
+/* the same header stripe as the timeline */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:90;
+  display:flex;align-items:center;gap:16px;padding:0 16px;height:var(--tb);
+  background:#000;border-bottom:1px solid rgba(255,255,255,.14);color:#FFF;
+}
+.nav{display:flex;gap:2px}
+.nav a{
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  text-decoration:none;padding:6px 10px;border-radius:4px;color:rgba(255,255,255,.62);
+  transition:color .2s,background-color .2s;
+}
+.nav a:hover{color:#FFF;background:rgba(255,255,255,.1)}
+.nav a:focus-visible{outline:2px solid #FFF;outline-offset:2px}
+
+.sheet{padding:calc(var(--tb) + 56px) 16px 96px}
+.doc{
+  box-sizing:border-box;max-width:760px;margin:0 auto;padding:48px 56px 40px;
+  background:#FFF;color:var(--ink);border-radius:26px;
+  box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 24px 70px rgba(0,0,0,.38);
+  font:400 16px/1.62 var(--sf);
+}
+.doc header{margin:0 0 28px}
+.doc .kicker{margin:0 0 6px;font:500 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.doc h1{margin:0;font:700 clamp(30px,5vw,40px)/1.08 var(--sf);letter-spacing:-.028em}
+.doc .meta{margin:10px 0 0;color:var(--dim);font-size:14.5px}
+.doc h2{margin:36px 0 10px;font:600 20px/1.3 var(--sf);letter-spacing:-.012em}
+.doc p,.doc ul{margin:0 0 14px}
+.doc ul{padding-left:22px}
+.doc li{margin:0 0 6px}
+.doc a{color:var(--link);text-underline-offset:2px}
+.doc a:focus-visible{outline:2px solid var(--link);outline-offset:2px;border-radius:2px}
+.doc strong{font-weight:600}
+.short{margin:0 0 8px;padding:18px 22px;border-radius:16px;background:#F2F2F7}
+.short p:last-child{margin:0}
+.doc footer{margin:40px 0 0;padding:18px 0 0;border-top:1px solid var(--rule);color:var(--dim);font-size:14.5px}
+.doc footer p{margin:0}
+
+@media (max-width:640px){
+  .sheet{padding:calc(var(--tb) + 16px) 16px 48px}
+  .doc{padding:28px 20px 24px;border-radius:20px;font-size:15.5px}
+  .short{padding:14px 16px}
+}
+@media (prefers-reduced-motion:reduce){ .nav a{transition:none} }
+</style>
+
+<header class="topbar">
+  <nav class="nav" aria-label="Site">
+    <a href="../">Timeline</a>
+    <a href="../#/projects">Projects</a>
+    <a href="../#/links">Links</a>
+  </nav>
+</header>
+
+<main class="sheet">
+  <article class="doc">
+    <header>
+      <p class="kicker">iOS apps</p>
+      <h1>Privacy Policy</h1>
+      <p class="meta">Effective 26 October 2026</p>
+    </header>
+
+    <div class="short">
+      <p><strong>In short.</strong> My apps have no accounts and send nothing to me. They show ads
+      from Google AdMob and Unity Ads. Those two ad networks collect some information about your
+      device to show and measure ads, and use it to personalise ads only if you allow it.</p>
+    </div>
+
+    <h2>Who this covers</h2>
+    <p>This policy applies to the iOS apps I publish on the App Store under the name Evgeny Vinnik
+    (“the apps”). I am an independent developer and the person responsible for them. You can reach
+    me at <a href="mailto:evgenyvinnik@gmail.com">evgenyvinnik@gmail.com</a>.</p>
+
+    <h2>What the apps collect themselves</h2>
+    <p>Nothing that identifies you. The apps have no sign-up and no analytics of my own, and they
+    have no server of mine to send anything to. Your progress and settings are stored only on your
+    device and are removed when you delete the app.</p>
+
+    <h2>Advertising</h2>
+    <p>The apps are free and paid for by ads, served through two software kits built into them:
+    the Google Mobile Ads SDK (AdMob) and the Unity Ads SDK. When an app requests or shows an ad,
+    these SDKs may collect:</p>
+    <ul>
+      <li><strong>Device identifiers.</strong> Apple’s advertising identifier (IDFA), but only if you
+      allow tracking, plus identifiers that are limited to the app or to its developer.</li>
+      <li><strong>IP address</strong>, used to estimate your general location, such as your country
+      or city. The apps never ask for or use precise location.</li>
+      <li><strong>Device and app details</strong>, such as the device model, iOS version, language,
+      time zone, network type and app version.</li>
+      <li><strong>Ad interactions</strong>, such as which ads were shown, whether you tapped or
+      watched them, and app launches.</li>
+      <li><strong>Diagnostics</strong>, such as crash logs and performance data.</li>
+    </ul>
+    <p>Google and Unity use this to deliver ads, limit how often you see the same one, measure how
+    ads perform, prevent fraud and, where you have allowed it, show ads based on your interests.
+    They handle it as independent companies under their own privacy policies, and I only use ad
+    networks whose policies protect your data at least as well as this one:</p>
+    <ul>
+      <li>Google: <a href="https://policies.google.com/technologies/partner-sites">How Google uses
+      information from sites or apps that use our services</a> and the
+      <a href="https://policies.google.com/privacy">Google Privacy Policy</a>.</li>
+      <li>Unity: <a href="https://unity.com/legal/game-player-and-app-user-privacy-policy">Game Player
+      and App User Privacy Policy</a>.</li>
+    </ul>
+
+    <h2>Your choices</h2>
+    <p><strong>Tracking.</strong> iOS asks whether an app may track you across apps and websites
+    owned by other companies. If you choose <em>Ask App Not to Track</em>, or never see the prompt,
+    the advertising identifier is not available to the app or the ad networks, and the ads you see
+    are not based on that tracking. You can change your answer at any time in
+    <em>Settings → Privacy &amp; Security → Tracking</em>.</p>
+    <p><strong>Consent in Europe.</strong> If you are in the European Economic Area, the United
+    Kingdom or Switzerland, the apps ask for your consent through Google’s consent form before your
+    data is used for personalised ads, and pass your choice on to the ad networks. You can change
+    or withdraw it at any time from the app’s privacy settings.</p>
+    <p><strong>Unity ads.</strong> Ads served by Unity carry a Data Privacy icon. Through it you can
+    see the data Unity holds about your device, opt out of personalised ads, and ask Unity to delete
+    that data.</p>
+    <p>You cannot turn ads off entirely, but you can stop them being personalised. If you would
+    rather not have any of this data collected, please do not use the apps.</p>
+
+    <h2>United States</h2>
+    <p>I do not sell personal information for money. Some state privacy laws, such as California’s,
+    treat sharing device identifiers with ad networks for targeted advertising as “selling” or
+    “sharing” personal information. To opt out, choose <em>Ask App Not to Track</em> as described
+    above, or email me.</p>
+
+    <h2>Children</h2>
+    <p>The apps are not directed at children under 13, or under the minimum age set by the law where
+    you live, and I do not knowingly collect personal information from them. If you believe a child
+    has provided personal information through one of the apps, email me and I will help have it
+    removed.</p>
+
+    <h2>Keeping and deleting data</h2>
+    <p>I keep no data about you, so there is nothing for me to export or delete. Data on your device
+    goes when you delete the app. Google and Unity keep advertising data for the periods their own
+    policies set out. You can ask them for access or deletion through the links and controls above,
+    and I will help with any request you send me.</p>
+
+    <h2>Changes</h2>
+    <p>If this policy changes, the new version will be posted on this page with a new effective
+    date. If a change affects what the apps collect, the apps will be updated to match.</p>
+
+    <footer>
+      <p>Questions about this policy or your data:
+      <a href="mailto:evgenyvinnik@gmail.com">evgenyvinnik@gmail.com</a>.</p>
+    </footer>
+  </article>
+</main>
