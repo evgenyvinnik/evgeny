@@ -594,4 +594,35 @@ test.describe('sharing and search', () => {
     const sitemap = await (await request.get('/sitemap.xml')).text();
     expect(sitemap).toContain('<loc>' + s.person.url + '</loc>');
   });
+
+  test('the privacy policy has an address of its own and names the ad networks', async ({ page, request }) => {
+    await page.goto('/privacy/');
+    const h = await head(page);
+    expect(h.lang).toBe('en');
+    expect(h.title).toMatch(/^Privacy Policy/);
+    expect(h.titleInHead, 'the title belongs in the head').toBe(true);
+    expect(h.titleInBody, 'and only there').toBe(false);
+    expect(h.description?.length).toBeGreaterThanOrEqual(70);
+    expect(h.description.length).toBeLessThanOrEqual(160);
+    expect(h.canonical).toMatch(/^https:\/\/\S+\/privacy\/$/);
+    expect(h.og['og:url'], 'the card and the canonical address agree').toBe(h.canonical);
+
+    const p = await page.evaluate(() => ({
+      h1: document.querySelector('h1')?.textContent,
+      effective: document.querySelector('.meta')?.textContent,
+      hrefs: [...document.querySelectorAll('a')].map((a) => a.getAttribute('href')),
+    }));
+    expect(p.h1).toBe('Privacy Policy');
+    expect(p.effective).toMatch(/^Effective \d{1,2} \w+ \d{4}$/);
+    // the disclosures AdMob and Unity Ads expect, and a way to reach a person
+    expect(p.hrefs).toContain('https://policies.google.com/technologies/partner-sites');
+    expect(p.hrefs).toContain('https://policies.google.com/privacy');
+    expect(p.hrefs).toContain('https://unity.com/legal/game-player-and-app-user-privacy-policy');
+    expect(p.hrefs.some((u) => u.startsWith('mailto:'))).toBe(true);
+    // the header stripe leads back to the timeline from one folder down
+    expect(p.hrefs).toContain('../');
+
+    const sitemap = await (await request.get('/sitemap.xml')).text();
+    expect(sitemap).toContain('<loc>' + h.canonical + '</loc>');
+  });
 });

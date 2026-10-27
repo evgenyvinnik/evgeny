@@ -206,12 +206,14 @@ make them real buttons.
 | `/projects/<slug>` | One project: write-up, screenshots, links, the timeline entry it came from. |
 | `/links` | Social and contact links, one canonical list. Each account is a window in the interface of the year it was opened, newest first. |
 | `/cv` | Résumé, derived from the same data as the work branch. |
+| `/privacy/` | The privacy policy for the iOS apps, the address given to App Store Connect. No accounts and nothing sent to the developer; ads from Google AdMob and Unity Ads, with the disclosures and links both networks expect. A white Liquid Glass window on the Tahoe wallpaper, under the same header stripe. |
 | `/404` | Terminal-era "bad command or file name". |
 
-Today the site is one static page. `/projects` and `/links` are hash
-routes on it (`#/projects`, `#/links`), driven directly on click so the
-nav works in sandboxes that refuse hash navigation. `/projects/<slug>`,
-`/cv` and `/404` are not built yet. When they are, each project page
+Today the timeline is one static page, and `/privacy/` is a second one
+beside it. `/projects` and `/links` are hash routes on the timeline
+(`#/projects`, `#/links`), driven directly on click so the nav works in
+sandboxes that refuse hash navigation. `/projects/<slug>`, `/cv` and
+`/404` are not built yet. When they are, each project page
 should be a real static file rather than a client-side route, because
 that keeps deep links, link previews and search indexing working, which
 a hash router on GitHub Pages does not. That is the step section 7 names
@@ -315,8 +317,9 @@ TypeScript, and nothing shipped to a visitor but the page itself.
 | Piece | What it is |
 |---|---|
 | `prototype/index.html` | The whole site in about 2,200 lines: markup, inline styles and one script. It is authored as a Claude Artifact body, with no `<head>`, so the same file publishes as a preview and builds into the deployed page. |
+| `prototype/privacy.html` | The privacy policy, authored as a page body like `index.html`. The build gives it its own head and writes it to `privacy/index.html`. |
 | `content/entries/*.md` | One Markdown file per entry: a YAML header and paragraphs. See [CONTENT.md](CONTENT.md). |
-| `scripts/build.mjs` | A Node script. It validates every entry and reports every problem at once, injects the entries into the page as JSON, and writes the head, the `<noscript>` copy, `robots.txt` and `sitemap.xml`. It also copies the wallpapers and the share card. |
+| `scripts/build.mjs` | A Node script. It validates every entry and reports every problem at once, injects the entries into the page as JSON, and writes the head, the `<noscript>` copy, `robots.txt` and `sitemap.xml`. It also copies the wallpapers and the share card, and builds the pages that have their own address, listed in its `PAGES`. |
 | `scripts/share-image.mjs` | Renders the share card and the home-screen icon with Playwright. |
 | `tests/visual.spec.js` | The Playwright suite, section 10. |
 | `.github/workflows/pages.yml` | Tests every pull request, then builds and deploys `main` to GitHub Pages, section 8. |
@@ -352,6 +355,7 @@ build injects.
 ```
 prototype/
   index.html                  the page: markup, styles, the scroll engine
+  privacy.html                the privacy policy, built to privacy/
   wallpapers/                 the real wallpapers, with their sources and rights
   public/                     share card, touch icon, favicon; copied to the root
 content/entries/*.md          one file per entry
@@ -446,10 +450,11 @@ only carrier of meaning; every entry states its year in text.
 **Motion sickness.** Cross-fades are opacity only. Nothing parallaxes
 and nothing translates on scroll.
 
-**Search.** One page, so one title, one description and one share card,
-all derived from the entries (section 8). JSON-LD `Person` on the home
+**Search.** The timeline is one page, so one title, one description and
+one share card, all derived from the entries (section 8). JSON-LD `Person` on the home
 page, a `<noscript>` copy of the timeline's facts for crawlers that run no
-script, and a one-address `sitemap.xml` written by the build. When
+script, and a `sitemap.xml` written by the build that lists the timeline
+and `/privacy/`, the one page with its own title, description and address. When
 projects become real pages, each gets its own title, description, card
 and a `CreativeWork`.
 
@@ -457,7 +462,7 @@ and a `CreativeWork`.
 
 ## 10. Tests
 
-Playwright, five projects, thirty-five tests in each, plus three sharing
+Playwright, five projects, thirty-five tests in each, plus four sharing
 and search checks that run on desktop only, because the head is the same at
 every size. `npm run test:visual` runs them; `npm run test:visual:update` accepts new
 baselines after a deliberate change.
