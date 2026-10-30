@@ -52,9 +52,8 @@ ${body}
 `;
 
 /* Where the site is served. Canonical links, share cards and the sitemap all
-   need absolute addresses. When evgeny.fyi goes live, change the default
-   here, or set SITE_URL for a single build. */
-export const SITE_URL = (process.env.SITE_URL || 'https://evgenyvinnik.github.io/evgeny/').replace(/\/?$/, '/');
+   need absolute addresses. Set SITE_URL to build for another address. */
+export const SITE_URL = (process.env.SITE_URL || 'https://evgeny.fyi/').replace(/\/?$/, '/');
 export const SITE = {
   name: 'Evgeny Vinnik',
   role: 'Software engineer',                     // the GitHub profile's own words

@@ -379,8 +379,9 @@ and window-control tests on Linux. A push to `main` that passes then runs
 `npm run build`, which validates the Markdown entries, compiles them into the
 page, wraps it in a full HTML skeleton and copies
 the wallpapers into `dist/`, and publishes that folder. The site lives at
-`https://evgenyvinnik.github.io/evgeny/`. All paths in the page are relative,
-so it works under that subpath unchanged.
+`https://evgeny.fyi/`, and the old Pages address,
+`https://evgenyvinnik.github.io/evgeny/`, redirects there. All paths in the
+page are relative, so it works at a host's root or under a subpath unchanged.
 
 The screenshot tests stay local. Their baselines are rendered on macOS, and
 Linux has none of the system fonts the Windows eras use, so every capture
@@ -404,24 +405,24 @@ wallpaper: a share card travels further than this repository's wallpapers
 are meant to. Rerun it after changing the name, the current role or the
 eras.
 
-`robots.txt` and `sitemap.xml` are written next to the page. On the Pages
-subpath the robots file is ignored, since crawlers only read it at a host's
-root; it starts to count on evgeny.fyi. Platforms cache previews, so after a
+`robots.txt` and `sitemap.xml` are written next to the page, at the host's
+root, where crawlers look for them. Platforms cache previews, so after a
 change to the card, refresh it with LinkedIn's Post Inspector or Facebook's
 Sharing Debugger. The `/projects` and `/links` routes are hash fragments, so
 they share the site's one preview until they become real pages.
 
-**Later, for evgeny.fyi.**
+**The domain.** evgeny.fyi is registered with Vercel and uses Vercel's DNS,
+but the site stays on GitHub Pages. Vercel only answers DNS queries.
 
-1. Add `CNAME` containing `evgeny.fyi` to the published folder, so each
-   deploy keeps the domain.
-2. Point the apex A and AAAA records at GitHub's Pages addresses and add a
-   `CNAME` record for `www` to `evgenyvinnik.github.io`. Take the current IPs
-   from GitHub's Pages documentation; they have changed before.
-3. Set the custom domain in the repository's Pages settings, then enable
-   **Enforce HTTPS** once the certificate is issued.
-4. Change `SITE_URL` in `scripts/build.mjs` to `https://evgeny.fyi/`, so the
-   canonical address, the share tags and the sitemap follow the domain.
+- The apex has four A and four AAAA records for GitHub's Pages addresses, and
+  `www` is a `CNAME` to `evgenyvinnik.github.io`, which Pages redirects to the
+  apex. If they ever need re-entering, take the current IPs from GitHub's
+  Pages documentation; they have changed before.
+- The custom domain is set in the repository's Pages settings, with
+  **Enforce HTTPS** on. The deploy is a custom Actions workflow, so there is
+  no `CNAME` file in the published folder; GitHub would ignore one.
+- `SITE_URL` in `scripts/build.mjs` is `https://evgeny.fyi/`, so the
+  canonical address, the share tags and the sitemap follow the domain.
 
 ---
 
