@@ -14,8 +14,8 @@ page, because the repository is the CMS.
 5. Commit to `main`, or open a pull request if you want the checks to run
    before it goes live.
 
-Once the change is on `main`, the site at
-https://evgenyvinnik.github.io/evgeny/ updates within a few minutes. The
+Once the change is on `main`, the site at https://evgeny.fyi/ updates within
+a few minutes. The
 **Actions** tab shows the run. If a check fails, the site keeps its previous
 version, and the run log names the file and the field to fix.
 
