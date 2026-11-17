@@ -207,10 +207,11 @@ make them real buttons.
 | `/links` | Social and contact links, one canonical list. Each account is a window in the interface of the year it was opened, newest first. |
 | `/cv` | Résumé, derived from the same data as the work branch. |
 | `/privacy/` | The privacy policy for the iOS apps, the address given to App Store Connect. No accounts and nothing sent to the developer; ads from Google AdMob and Unity Ads, with the disclosures and links both networks expect. A white Liquid Glass window on the Tahoe wallpaper, under the same header stripe. |
+| `/privacy/little-lantern-math/` | The privacy policy for Little Lantern Math, a paid iPad game: bought once, no ads, no accounts, nothing collected, so the App Store label is Data Not Collected. It covers Apple's part (the purchase, opt-in crash reports) and children, and replaces `/privacy/` for that game. The same window as `/privacy/`. |
 | `/404` | Terminal-era "bad command or file name". |
 
-Today the timeline is one static page, and `/privacy/` is a second one
-beside it. `/projects` and `/links` are hash routes on the timeline
+Today the timeline is one static page, and `/privacy/` and
+`/privacy/little-lantern-math/` are two more beside it. `/projects` and `/links` are hash routes on the timeline
 (`#/projects`, `#/links`), driven directly on click so the nav works in
 sandboxes that refuse hash navigation. `/projects/<slug>`, `/cv` and
 `/404` are not built yet. When they are, each project page
@@ -318,6 +319,7 @@ TypeScript, and nothing shipped to a visitor but the page itself.
 |---|---|
 | `prototype/index.html` | The whole site in about 2,200 lines: markup, inline styles and one script. It is authored as a Claude Artifact body, with no `<head>`, so the same file publishes as a preview and builds into the deployed page. |
 | `prototype/privacy.html` | The privacy policy, authored as a page body like `index.html`. The build gives it its own head and writes it to `privacy/index.html`. |
+| `prototype/privacy-little-lantern-math.html` | The policy for Little Lantern Math, built the same way to `privacy/little-lantern-math/index.html`. |
 | `content/entries/*.md` | One Markdown file per entry: a YAML header and paragraphs. See [CONTENT.md](CONTENT.md). |
 | `scripts/build.mjs` | A Node script. It validates every entry and reports every problem at once, injects the entries into the page as JSON, and writes the head, the `<noscript>` copy, `robots.txt` and `sitemap.xml`. It also copies the wallpapers and the share card, and builds the pages that have their own address, listed in its `PAGES`. |
 | `scripts/share-image.mjs` | Renders the share card and the home-screen icon with Playwright. |
@@ -356,6 +358,8 @@ build injects.
 prototype/
   index.html                  the page: markup, styles, the scroll engine
   privacy.html                the privacy policy, built to privacy/
+  privacy-little-lantern-math.html
+                              Little Lantern Math's policy, built to privacy/little-lantern-math/
   wallpapers/                 the real wallpapers, with their sources and rights
   public/                     share card, touch icon, favicon; copied to the root
 content/entries/*.md          one file per entry
@@ -455,7 +459,7 @@ and nothing translates on scroll.
 one share card, all derived from the entries (section 8). JSON-LD `Person` on the home
 page, a `<noscript>` copy of the timeline's facts for crawlers that run no
 script, and a `sitemap.xml` written by the build that lists the timeline
-and `/privacy/`, the one page with its own title, description and address. When
+and the two privacy policies, the pages with their own title, description and address. When
 projects become real pages, each gets its own title, description, card
 and a `CreativeWork`.
 
@@ -463,7 +467,7 @@ and a `CreativeWork`.
 
 ## 10. Tests
 
-Playwright, five projects, thirty-five tests in each, plus four sharing
+Playwright, five projects, thirty-five tests in each, plus five sharing
 and search checks that run on desktop only, because the head is the same at
 every size. `npm run test:visual` runs them; `npm run test:visual:update` accepts new
 baselines after a deliberate change.

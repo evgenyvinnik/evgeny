@@ -625,4 +625,39 @@ test.describe('sharing and search', () => {
     const sitemap = await (await request.get('/sitemap.xml')).text();
     expect(sitemap).toContain('<loc>' + h.canonical + '</loc>');
   });
+
+  test('the Little Lantern Math policy has its own address and names no ad network', async ({ page, request }) => {
+    await page.goto('/privacy/little-lantern-math/');
+    const h = await head(page);
+    expect(h.lang).toBe('en');
+    expect(h.title).toBe('Privacy Policy for Little Lantern Math');
+    expect(h.titleInHead, 'the title belongs in the head').toBe(true);
+    expect(h.titleInBody, 'and only there').toBe(false);
+    expect(h.description?.length).toBeGreaterThanOrEqual(70);
+    expect(h.description.length).toBeLessThanOrEqual(160);
+    expect(h.canonical).toMatch(/^https:\/\/\S+\/privacy\/little-lantern-math\/$/);
+    expect(h.og['og:url'], 'the card and the canonical address agree').toBe(h.canonical);
+
+    const p = await page.evaluate(() => ({
+      h1: document.querySelector('h1')?.textContent,
+      effective: document.querySelector('.meta')?.textContent,
+      text: document.querySelector('.doc')?.textContent,
+      hrefs: [...document.querySelectorAll('a')].map((a) => a.getAttribute('href')),
+      wallpaper: getComputedStyle(document.body, '::before').backgroundImage,
+    }));
+    expect(p.h1).toBe('Privacy Policy');
+    expect(p.effective).toMatch(/^Effective \d{1,2} \w+ \d{4}$/);
+    expect(p.text).toContain('Data Not Collected');
+    expect(p.text, 'a paid game with no ads names no ad network').not.toMatch(/AdMob|Unity|Google/);
+    expect(p.hrefs).toContain('https://www.apple.com/legal/privacy/');
+    expect(p.hrefs.some((u) => u.startsWith('mailto:'))).toBe(true);
+    // two folders down: the header stripe climbs twice, the ad-supported policy once
+    expect(p.hrefs).toContain('../../');
+    expect(p.hrefs).toContain('../');
+    expect(p.wallpaper).toContain('/wallpapers/glass.jpg');
+    expect((await request.get(new URL('../../wallpapers/glass.jpg', page.url()).href)).ok()).toBe(true);
+
+    const sitemap = await (await request.get('/sitemap.xml')).text();
+    expect(sitemap).toContain('<loc>' + h.canonical + '</loc>');
+  });
 });
