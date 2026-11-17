@@ -2,6 +2,9 @@
 
      prototype/index.html    the page, with an empty entries-data block
      prototype/privacy.html  the privacy policy for the iOS apps, built to privacy/
+     prototype/privacy-little-lantern-math.html
+                             the policy for Little Lantern Math, a paid iPad
+                             game with no ads, built to privacy/little-lantern-math/
      content/entries/*.md    one Markdown file per timeline entry (CONTENT.md)
      prototype/wallpapers/   photographs, copied next to the page
      prototype/public/       the share card and icons (npm run share-image),
@@ -68,6 +71,8 @@ export const SITE = {
 const PAGES = [
   { src: 'privacy.html', dir: 'privacy/',
     description: 'How the iOS apps by Evgeny Vinnik handle your data: no accounts, nothing sent to the developer, and ads served by Google AdMob and Unity Ads.' },
+  { src: 'privacy-little-lantern-math.html', dir: 'privacy/little-lantern-math/',
+    description: 'How Little Lantern Math, an iPad game by Evgeny Vinnik, handles your data: a one-time purchase with no ads, no accounts and no data collected.' },
 ];
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
